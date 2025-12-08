@@ -36,10 +36,9 @@
         }
         
         header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-    color: #001AE4;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
         
         header p {
@@ -71,6 +70,9 @@
             border-radius: 10px;
             margin-bottom: 30px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
         }
         
         .level-nav h2 {
@@ -113,6 +115,7 @@
             margin-bottom: 25px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
             overflow: hidden;
+            position: relative;
         }
         
         .level-header {
@@ -147,6 +150,8 @@
             margin: 0;
             tab-size: 4;
             white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
         }
         
         .copy-btn {
@@ -165,6 +170,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            z-index: 10;
         }
         
         .copy-btn:hover {
@@ -173,6 +179,29 @@
         
         .copy-btn.show {
             opacity: 1;
+        }
+        
+        .back-to-top-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.3s;
+            z-index: 10;
+        }
+        
+        .back-to-top-btn:hover {
+            background-color: #d35400;
         }
         
         .footer {
@@ -205,6 +234,39 @@
             transform: translateY(0);
         }
         
+        /* 浮动返回顶部按钮 */
+        .floating-top-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .floating-top-btn.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .floating-top-btn:hover {
+            background-color: #d35400;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        }
+        
         /* 响应式设计 */
         @media (max-width: 768px) {
             .level-header {
@@ -218,7 +280,7 @@
             }
             
             .copy-btn {
-                opacity: 1; /* 在移动设备上始终显示复制按钮 */
+                opacity: 1;
                 position: relative;
                 top: auto;
                 right: auto;
@@ -226,15 +288,31 @@
                 width: 100%;
                 justify-content: center;
             }
+            
+            .back-to-top-btn {
+                position: relative;
+                bottom: auto;
+                right: auto;
+                margin-top: 15px;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .floating-top-btn {
+                left: 20px;
+                bottom: 20px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
+        <header id="page-top">
             <h1>沙漠</h1>
-            <p>沙漠完整代码，鼠标悬停在代码区域上方显示复制按钮</p>
-            <a href="desert-levels-index.html" class="back-btn"><i class="fas fa-arrow-left"></i> 返回目录</a>
+            <p>所有25个关卡的完整代码，鼠标悬停在代码区域上方显示复制按钮</p>
+            <a href="desert-levels-index.html" class="back-btn"><i class="fas fa-arrow-left"></i> 返回目录页</a>
         </header>
         
         <section class="level-nav">
@@ -249,7 +327,12 @@
         </div>
 </div>
     
-    <footer class="footer">
+    <!-- 浮动返回顶部按钮 -->
+<button class="floating-top-btn" id="floatingTopBtn">
+        <i class="fas fa-arrow-up"></i> 返回页首
+    </button>
+    
+<footer class="footer">
         <p>沙漠关卡代码详情</p>
         <p style="color: #FF0000">注意：代码仅供参考，不建议直接抄！</p>
     </footer>
@@ -701,6 +784,9 @@ while True:
                     <button class="copy-btn" data-code="${escapeHtml(level.code)}">
                         <i class="far fa-copy"></i> 复制代码
                     </button>
+                    <button class="back-to-top-btn" data-target="#page-top">
+                        <i class="fas fa-arrow-up"></i> 返回页首
+                    </button>
                 </div>
             `;
             
@@ -712,6 +798,17 @@ while True:
             button.addEventListener('click', function() {
                 const code = this.getAttribute('data-code');
                 copyToClipboard(code);
+            });
+        });
+        
+        // 添加返回页首功能
+        document.querySelectorAll('.back-to-top-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
             });
         });
         
@@ -767,6 +864,26 @@ while True:
             
             container.addEventListener('mouseleave', function() {
                 copyBtn.classList.remove('show');
+            });
+        });
+        
+        // 浮动返回顶部按钮功能
+        const floatingTopBtn = document.getElementById('floatingTopBtn');
+        
+        // 监听滚动事件，显示/隐藏浮动按钮
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                floatingTopBtn.classList.add('show');
+            } else {
+                floatingTopBtn.classList.remove('show');
+            }
+        });
+        
+        // 点击浮动按钮返回顶部
+        floatingTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         });
     </script>
