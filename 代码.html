@@ -73,35 +73,170 @@
             position: sticky;
             top: 20px;
             z-index: 100;
+            transition: all 0.3s ease;
+            max-height: 2000px;
+            overflow: hidden;
         }
         
-        .level-nav h2 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
+        /* 收起状态 */
+        .level-nav.collapsed {
+            max-height: 70px;
+            cursor: pointer;
+            padding: 15px 20px;
         }
         
-        .level-links {
+        .level-nav.collapsed:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* 导航标题区域 */
+        .nav-header {
             display: flex;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        
+        .nav-header h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
             gap: 10px;
         }
         
-        .level-link {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #f8f9fa;
+        .nav-header h2 i {
             color: #e67e22;
-            text-decoration: none;
+            font-size: 1.3rem;
+            transition: transform 0.3s;
+        }
+        
+        .level-nav.collapsed .nav-header h2 i {
+            transform: rotate(-90deg);
+        }
+        
+        .collapse-toggle {
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+            padding: 5px 10px;
             border-radius: 5px;
-            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .collapse-toggle:hover {
+            background-color: #f0f0f0;
+            color: #e67e22;
+        }
+        
+        .level-nav.collapsed .collapse-toggle .toggle-text {
+            display: none;
+        }
+        
+        .nav-content {
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .level-nav.collapsed .nav-content {
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        #searchInput {
+            width: 100%;
+            padding: 12px 20px;
+            padding-left: 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: #f8f9fa;
+        }
+        
+        #searchInput:focus {
+            outline: none;
+            border-color: #e67e22;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+        
+        .search-results {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 8px;
             border: 1px solid #eaeaea;
+            background-color: #f8f9fa;
+        }
+        
+        .search-results.hidden {
+            display: none;
+        }
+        
+        .level-result {
+            display: block;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: #2c3e50;
+            border-bottom: 1px solid #eaeaea;
             transition: all 0.2s;
         }
         
-        .level-link:hover {
-            background-color: #e67e22;
-            color: white;
+        .level-result:hover {
+            background-color: #e8f4fc;
+            color: #e67e22;
+        }
+        
+        .level-result:last-child {
+            border-bottom: none;
+        }
+        
+        .level-result .level-id {
+            display: inline-block;
+            width: 30px;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+        
+        .level-result .level-name {
+            font-weight: 500;
+        }
+        
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .search-stats {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: center;
         }
         
         .level-content {
@@ -275,8 +410,8 @@
                 gap: 10px;
             }
             
-            .level-links {
-                justify-content: center;
+            .search-results {
+                max-height: 300px;
             }
             
             .copy-btn {
@@ -304,6 +439,20 @@
                 padding: 10px 15px;
                 font-size: 0.9rem;
             }
+            
+            .nav-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .collapse-toggle {
+                align-self: flex-end;
+            }
+            
+            .level-nav.collapsed {
+                max-height: 90px;
+            }
         }
     </style>
 </head>
@@ -311,15 +460,31 @@
     <div class="container">
         <header id="page-top">
             <h1>沙漠</h1>
-          <p>所有25个关卡的完整代码，鼠标悬停在代码区域上方显示复制按钮<br>
-          <span style="color: #001AE7">有些关卡有需要特定的装备，请自行看代码选择装备！</span></p>
+            <p>68个关卡的完整代码，鼠标悬停在代码区域上方显示复制按钮<br>
+            <span style="color: #001AE7">有些关卡有需要特定的装备，请自行看代码选择装备！</span></p>
             <a href="desert-levels-index.html" class="back-btn"><i class="fas fa-arrow-left"></i> 返回目录页</a>
         </header>
         
-        <section class="level-nav">
-          <h2>关卡快速导航</h2>
-          <div class="level-links" id="levelNav">
-                <!-- 导航链接将通过JavaScript动态生成 -->
+        <section class="level-nav" id="levelNav">
+            <div class="nav-header">
+              <h2><i class="fas fa-search"></i> 关卡搜索导航</h2>
+                <button class="collapse-toggle" id="collapseToggle">
+                    <i class="fas fa-chevron-up" id="collapseIcon"></i>
+                    <span class="toggle-text">收起搜索栏</span>
+                </button>
+          </div>
+            
+          <div class="nav-content">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="输入关卡名称或编号进行搜索...">
+                </div>
+                <div class="search-results hidden" id="searchResults">
+                    <!-- 搜索结果将在这里显示 -->
+                </div>
+                <div class="search-stats" id="searchStats">
+                    共68个关卡，输入关键词搜索
+                </div>
           </div>
         </section>
         
@@ -329,7 +494,7 @@
 </div>
     
     <!-- 浮动返回顶部按钮 -->
-<button class="floating-top-btn" id="floatingTopBtn">
+    <button class="floating-top-btn" id="floatingTopBtn">
         <i class="fas fa-arrow-up"></i> 返回页首
     </button>
     
@@ -755,10 +920,10 @@ while True:
         hero.moveXY(someItem.pos.x,someItem.pos.y)
         pass`
             },
-		 {
-				id: 26,
-				name: "双颊",
-				code: `defeatedOgres = 0;
+            {
+                id: 26,
+                name: "双颊",
+                code: `defeatedOgres = 0;
 while defeatedOgres < 6:
     enemy = hero.findNearestEnemy()
     if enemy:
@@ -773,11 +938,11 @@ while hero.gold < 30:
     if item:
         hero.moveXY(item.pos.x, item.pos.y)
 hero.moveXY(76, 32)`
-		},
-			{
-				id: 27,
-				name: "沙漠战役",
-				code: `ordersGiven = 0
+            },
+            {
+                id: 27,
+                name: "沙漠战役",
+                code: `ordersGiven = 0
 while ordersGiven < 5:
     x = hero.pos.x
     y = hero.pos.y - 10
@@ -791,11 +956,11 @@ while True:
     enemy = hero.findNearestEnemy()
     hero.attack(enemy)
 `
-			},
-			{
-				id: 28,
-				name: "尘埃",
-				code: `hits = 0
+            },
+            {
+                id: 28,
+                name: "尘埃",
+                code: `hits = 0
 while hits < 10:
     enemy = hero.findNearestEnemy()
     if (enemy):
@@ -807,11 +972,11 @@ hero.moveXY(51, 31)
 hero.moveXY(68, 27)
 hero.moveXY(79, 33)
 `
-			},
-			{
-				id: 29,
-				name: "别冲过去，安静点",
-				code: `def mod30(n):
+            },
+            {
+                id: 29,
+                name: "别冲过去，安静点",
+                code: `def mod30(n):
     if n >= 30:
         return n - 30
     else:
@@ -832,11 +997,11 @@ while True:
     else:
         hero.moveXY(x, y)
 `
-			},
-			{
-				id: 30,
-				name: "Z字形逃窜",
-				code: `def mod15(n):
+            },
+            {
+                id: 30,
+                name: "Z字形逃窜",
+                code: `def mod15(n):
     while n >= 15:
         n -= 15
     return n
@@ -856,21 +1021,21 @@ while True:
         x = 71
     hero.moveXY(x, y)
 `
-			},
-			{
-				id: 31,
-				name: "沙漠三角洲",
-				code: `enemyNames = ["Kog", "Godel", "Vorobun", "Rexxar"]
+            },
+            {
+                id: 31,
+                name: "沙漠三角洲",
+                code: `enemyNames = ["Kog", "Godel", "Vorobun", "Rexxar"]
 hero.attack(enemyNames[0])
 hero.attack(enemyNames[1])
 hero.attack(enemyNames[2])
 hero.attack(enemyNames[3])
 `
-			},
-						{
-				id: 32,
-				name: "sarven救世主",
-				code: `friendNames = ['Joan', 'Ronan', 'Nikita', 'Augustus']
+            },
+            {
+                id: 32,
+                name: "sarven救世主",
+                code: `friendNames = ['Joan', 'Ronan', 'Nikita', 'Augustus']
 friendIndex = 0
 while friendIndex < len(friendNames):
     friendName = friendNames[friendIndex]
@@ -879,22 +1044,22 @@ while friendIndex < len(friendNames):
 hero.moveXY(25, 30)
 hero.buildXY('fence', 29, 30)
 `
-			},
-			{
-				id: 33,
-				name: "团队合作",
-				code: `items = hero.findItems()
+            },
+            {
+                id: 33,
+                name: "团队合作",
+                code: `items = hero.findItems()
 gem0 = items[0]
 hero.say("Bruno " + gem0)
 hero.say("Matilda " + items[1])
 gem2 = items[2]
 hero.moveXY(gem2.pos.x, gem2.pos.y)
 `
-			},
-			{
-				id: 34,
-				name: "银行突袭",
-				code: `while True:
+            },
+            {
+                id: 34,
+                name: "银行突袭",
+                code: `while True:
     enemies = hero.findEnemies()
     enemyIndex = 0
     while enemyIndex < len(enemies):
@@ -908,11 +1073,11 @@ hero.moveXY(gem2.pos.x, gem2.pos.y)
         hero.moveXY(coin.pos.x, coin.pos.y)
         coinIndex = coinIndex + 1
 `
-			},
-			{
-				id: 35,
-				name: "潜伏",
-				code: `enemies = hero.findEnemies()
+            },
+            {
+                id: 35,
+                name: "潜伏",
+                code: `enemies = hero.findEnemies()
 enemyIndex = 0
 while enemyIndex < len(enemies):
     enemy = enemies[enemyIndex]
@@ -922,11 +1087,11 @@ while enemyIndex < len(enemies):
     enemyIndex += 1
     hero.say(enemy.type)
 `
-			},
-			{
-				id: 36,
-				name: "sarven牧羊人",
-				code: `while True:
+            },
+            {
+                id: 36,
+                name: "sarven牧羊人",
+                code: `while True:
     enemies = hero.findEnemies()
     enemyIndex = 0
     while enemyIndex < len(enemies):
@@ -935,11 +1100,11 @@ while enemyIndex < len(enemies):
             hero.attack(enemy)
         enemyIndex += 1
 `
-			},
-			{
-				id: 37,
-				name: "捡闪亮东西的人",
-				code: `while True:
+            },
+            {
+                id: 37,
+                name: "捡闪亮东西的人",
+                code: `while True:
     coins = hero.findItems()
     coinIndex = 0
     
@@ -949,11 +1114,11 @@ while enemyIndex < len(enemies):
             hero.moveXY(coin.pos.x, coin.pos.y)
         coinIndex += 1
 `
-			},
-			{
-				id: 38,
-				name: "疯狂的maxer",
-				code: `while True:
+            },
+            {
+                id: 38,
+                name: "疯狂的maxer",
+                code: `while True:
     farthest = None
     maxDistance = 0
     enemyIndex = 0
@@ -978,11 +1143,11 @@ while enemyIndex < len(enemies):
             else:
                 hero.attack(farthest)
 `
-			},
-			{
-				id: 39,
-				name: "牵引策略",
-				code: `def findFurthest(units):
+            },
+            {
+                id: 39,
+                name: "牵引策略",
+                code: `def findFurthest(units):
     furthestUnit = None
     maxDistance = 0
     unitIndex = 0
@@ -1008,11 +1173,11 @@ while True:
     if furthestOgre:
         attackWhileAlive(furthestOgre)
 `
-			},
-			{
-				id: 40,
-				name: "沙蛇",
-				code: `while True:
+            },
+            {
+                id: 40,
+                name: "沙蛇",
+                code: `while True:
     coins = hero.findItems()
     coinIndex = 0
     nearest = None
@@ -1026,11 +1191,11 @@ while True:
             nearestDistance = distance
     hero.moveXY(nearest.pos.x, nearest.pos.y)
 `
-			},
-			{
-				id: 41,
-				name: "脆弱的士气",
-				code: `def findStrongestEnemy(enemies):
+            },
+            {
+                id: 41,
+                name: "脆弱的士气",
+                code: `def findStrongestEnemy(enemies):
     strongest = None
     strongestHealth = 0
     enemies = hero.findEnemies()
@@ -1043,11 +1208,11 @@ enemies = hero.findEnemies()
 if enemies:
     hero.say(findStrongestEnemy(enemies))
 `
-			},
-			{
-				id: 42,
-				name: "一打宝石",
-				code: `def findMostHealth(enemies):
+            },
+            {
+                id: 42,
+                name: "一打宝石",
+                code: `def findMostHealth(enemies):
     target = None
     targetHealth = 0
     enemyIndex = 0
@@ -1082,11 +1247,11 @@ while True:
             else:
                 hero.moveXY(coin.pos.x, coin.pos.y)
 `
-			},
-			{
-				id: 43,
-				name: "毒气攻击",
-				code: `def healthSum(units):
+            },
+            {
+                id: 43,
+                name: "毒气攻击",
+                code: `def healthSum(units):
     summ = 0
     for unit in units:
         summ = summ + unit.health
@@ -1095,11 +1260,11 @@ cannon = hero.findNearest(hero.findFriends())
 enemies = cannon.findEnemies()
 hero.say("cnm" + healthSum(enemies) + " lgb.")
 `
-			},
-			{
-				id: 44,
-				name: "许愿井",
-				code: `less = "Nimis"
+            },
+            {
+                id: 44,
+                name: "许愿井",
+                code: `less = "Nimis"
 more = "Non satis"
 requiredGold = 104
 def sumCoinValues(coins):
@@ -1126,11 +1291,11 @@ while True:
     if item:
         hero.move(item.pos)
 `
-			},
-			{
-				id: 45,
-				name: "sarven拯救",
-				code: `array = [[3, 35], [72, 36], [71, 52], [119,29],[130, 106],[27, 106]]
+            },
+            {
+                id: 45,
+                name: "sarven拯救",
+                code: `array = [[3, 35], [72, 36], [71, 52], [119,29],[130, 106],[27, 106]]
 arrayIndex = 0;
 while arrayIndex < len(array):
     enemy = hero.findNearestEnemy()
@@ -1159,11 +1324,11 @@ while arrayIndex < len(array):
             hero.moveXY(array[arrayIndex][0], array[arrayIndex][1])
         arrayIndex += 1
 `
-			},
-			{
-				id: 46,
-				name: "地下商业",
-				code: `def onSpawn(event):
+            },
+            {
+                id: 46,
+                name: "地下商业",
+                code: `def onSpawn(event):
     # Send the pet to walk around the dungeon:
     pet.moveXY(26, 55)
     pet.moveXY(71, 57)
@@ -1186,11 +1351,11 @@ while True:
         break
 hero.moveXY(50, 34)
 `
-			},
-			{
-				id: 47,
-				name: "追逐他们",
-				code: `def onSpawn(e):
+            },
+            {
+                id: 47,
+                name: "追逐他们",
+                code: `def onSpawn(e):
     while True:
         enemy = pet.findNearestByType("munchkin")
         if enemy and pet.isReady("chase"):
@@ -1200,11 +1365,11 @@ hero.moveXY(50, 34)
             pet.fetch(potion)
 pet.on('spawn', onSpawn)
 `
-			},
-			{
-				id: 48,
-				name: "峡谷风暴",
-				code: `yak = hero.findNearestEnemy()
+            },
+            {
+                id: 48,
+                name: "峡谷风暴",
+                code: `yak = hero.findNearestEnemy()
 while yak:
     item = hero.findNearestItem()
     if item:
@@ -1212,11 +1377,11 @@ while yak:
     yak = hero.findNearestEnemy()
 hero.moveXY(38, 58)
 `
-			},
-			{
-				id: 49,
-				name: "吸引牦牛",
-				code: `while True:
+            },
+            {
+                id: 49,
+                name: "吸引牦牛",
+                code: `while True:
     flag = hero.findFlag()
     item = hero.findNearestItem()
     if flag:
@@ -1225,11 +1390,11 @@ hero.moveXY(38, 58)
     elif item:
         hero.move(item.pos)
 `
-			},
-			{
-				id: 50,
-				name: "诱饵和开关",
-				code: `def collectUntil(enoughGold):
+            },
+            {
+                id: 50,
+                name: "诱饵和开关",
+                code: `def collectUntil(enoughGold):
     while enoughGold>hero.gold:
         item = hero.findNearestItem()
         hero.move(item.pos)
@@ -1241,11 +1406,11 @@ collectUntil(50)
 hero.buildXY("decoy", 68, 22)
 hero.buildXY("decoy", 30, 20)
 `
-			},
-			{
-				id: 51,
-				name: "守书人",
-				code: `defeated = 0
+            },
+            {
+                id: 51,
+                name: "守书人",
+                code: `defeated = 0
 while True:
     enemy = hero.findNearestEnemy()
     if enemy:
@@ -1276,11 +1441,11 @@ while True:
 hero.moveXY(59, 33)
 hero.say(defeated)
 `
-			},
-			{
-				id: 52,
-				name: "蘑菇之声",
-				code: `def onSpawn (event):
+            },
+            {
+                id: 52,
+                name: "蘑菇之声",
+                code: `def onSpawn (event):
     potion = pet.findNearestByType("potion")
     pet.fetch(potion)
     goldKey = pet.findNearestByType("gold-key")
@@ -1293,21 +1458,21 @@ while True:
     else:
         hero.moveXY(31, 38)
 `
-			},
-			{
-				id: 53,
-				name: "先有付出才有回报",
-				code: `while hero.health>200: # Δ Change this!
+            },
+            {
+                id: 53,
+                name: "先有付出才有回报",
+                code: `while hero.health>200: # Δ Change this!
     hero.moveXY(48, 24)
     hero.moveXY(16, 24)
 # Move to Okar.
 hero.moveXY(32, 40);
 `
-			},
-			{
-				id: 54,
-				name: "菠菜力量",
-				code: `potionCount = 0
+            },
+            {
+                id: 54,
+                name: "菠菜力量",
+                code: `potionCount = 0
 while potionCount != 7:
     item = hero.findNearestItem()
     if item:
@@ -1318,11 +1483,11 @@ while True:
     if enemy:
         hero.attack(enemy)
 `
-			},
-			{
-				id: 55,
-				name: "sarven前哨基地",
-				code: `while True:
+            },
+            {
+                id: 55,
+                name: "sarven前哨基地",
+                code: `while True:
     polarPos = hero.now() / 4
     xPos = 40 + Math.cos(polarPos) * 20
     yPos = 34 + Math.sin(polarPos) * 20
@@ -1332,11 +1497,11 @@ while True:
         hero.attack(enemy)
         enemy = hero.findNearestEnemy()
 `
-			},
-			{
-				id: 56,
-				name: "钥匙陷阱",
-				code: `def onSpawn(event):
+            },
+            {
+                id: 56,
+                name: "钥匙陷阱",
+                code: `def onSpawn(event):
     potion = pet.findNearestByType("bronze-key")
     if potion:
         pet.fetch(potion)
@@ -1358,11 +1523,11 @@ while True:
         if potion:
             hero.moveXY(potion.pos.x, potion.pos.y)
 `
-			},
-			{
-				id: 57,
-				name: "海市蜃楼",
-				code: `def pickUpNearestItem():
+            },
+            {
+                id: 57,
+                name: "海市蜃楼",
+                code: `def pickUpNearestItem():
     while True:
         items = hero.findItems()
         if (hero.gold < 25):
@@ -1379,11 +1544,11 @@ while True:
     else:
         hero.moveXY(21, 16)
 `
-			},
-			{
-				id: 58,
-				name: "立方雷区",
-				code: `def mult(number, times):
+            },
+            {
+                id: 58,
+                name: "立方雷区",
+                code: `def mult(number, times):
     total = 0
     while times > 0:
         total += number
@@ -1406,11 +1571,11 @@ while True:
     hero.moveXY(x, y)
     x = x + 5
 `
-			},
-			{
-				id: 59,
-				name: "基数沙尘暴",
-				code: `everybody = ['Yetu', 'Tabitha', 'Rasha', 'Max', 'Yazul', 'Todd']
+            },
+            {
+                id: 59,
+                name: "基数沙尘暴",
+                code: `everybody = ['Yetu', 'Tabitha', 'Rasha', 'Max', 'Yazul', 'Todd']
 enemyIndex = 0
 while enemyIndex < len(everybody):
     if (everybody[enemyIndex]):
@@ -1418,11 +1583,11 @@ while enemyIndex < len(everybody):
     enemyIndex += 2
 hero.moveXY(36, 54)
 `
-			},
-			{
-				id: 60,
-				name: "掠夺者",
-				code: `while True:
+            },
+            {
+                id: 60,
+                name: "掠夺者",
+                code: `while True:
     coin = hero.findNearestItem()
     while coin:
         # Collect the coin.
@@ -1434,11 +1599,11 @@ hero.moveXY(36, 54)
             # Attack it.
             hero.attack(enemy)
 `
-			},
-			{
-				id: 61,
-				name: "最大公约数",
-				code: `friends = hero.findFriends()
+            },
+            {
+                id: 61,
+                name: "最大公约数",
+                code: `friends = hero.findFriends()
 number1 = friends[0].secretNumber
 number2 = friends[1].secretNumber
 if number2 > number1:
@@ -1473,11 +1638,11 @@ hero.moveXY(48, 34)
 hero.say(secretNumber)
 hero.moveXY(68, 34)
 `
-			},
-			{
-				id: 62,
-				name: "安全毯",
-				code: `names = [
+            },
+            {
+                id: 62,
+                name: "安全毯",
+                code: `names = [
     "Thabt", "Victor",
     "Leerer", "Alianor",
     "Gorylo", "Millicent",
@@ -1487,11 +1652,11 @@ hero.attack(names[4])
 hero.attack(names[2])
 hero.attack(names[6])
 `
-			},
-			{
-				id: 63,
-				name: "协助防御",
-				code: `while True:
+            },
+            {
+                id: 63,
+                name: "协助防御",
+                code: `while True:
     # Get an array of enemies.
     enemies = hero.findEnemies()
     if len(enemies) > 0:
@@ -1499,11 +1664,11 @@ hero.attack(names[6])
         hero.moveXY(40, 20)
         pass
 `
-			},
-			{
-				id: 64,
-				name: "招募队伍",
-				code: `neutrals = hero.findEnemies()
+            },
+            {
+                id: 64,
+                name: "招募队伍",
+                code: `neutrals = hero.findEnemies()
 while True:
     if len(neutrals):
         hero.say(neutrals[0].id)
@@ -1512,11 +1677,11 @@ while True:
         hero.say("Nobody here")
     neutrals = hero.findEnemies()
 `
-			},
-			{
-				id: 65,
-				name: "第二宝石",
-				code: `while True:
+            },
+            {
+                id: 65,
+                name: "第二宝石",
+                code: `while True:
     items = hero.findItems()
     if (len(items) > 1):
         hero.moveXY(items[1].pos.x, items[1].pos.y)
@@ -1524,11 +1689,11 @@ while True:
     else:
         hero.moveXY(40, 34)
 `
-			},
-			{
-				id: 66,
-				name: "游魂",
-				code: `while True:
+            },
+            {
+                id: 66,
+                name: "游魂",
+                code: `while True:
     enemies = hero.findEnemies()
     enemyIndex = 0
     while enemyIndex < len(enemies):
@@ -1544,11 +1709,11 @@ while True:
             hero.moveXY(item.pos.x, item.pos.y)
         itemIndex += 1
 `
-			},
-			{
-				id: 67,
-				name: "优待",
-				code: `enemies = hero.findEnemies()
+            },
+            {
+                id: 67,
+                name: "优待",
+                code: `enemies = hero.findEnemies()
 enemyIndex = 0
 while enemyIndex < len(enemies):
     if enemies[enemyIndex].type == 'thrower':
@@ -1561,11 +1726,11 @@ while enemyIndex < len(enemies):
         hero.attack(enemies[enemyIndex])
     enemyIndex = enemyIndex + 1
 `
-			},
-			{
-				id: 68,
-				name: "猛砸他们全家",
-				code: `while True:
+            },
+            {
+                id: 68,
+                name: "猛砸他们全家",
+                code: `while True:
     enemy = hero.findNearestEnemy()
     if enemy:
         if hero.isReady("bash"):
@@ -1581,18 +1746,8 @@ while enemyIndex < len(enemies):
         else:
             hero.moveXY(40, 34)
 `
-			},
+            }
         ];
-        
-        // 生成导航链接
-        const levelNav = document.getElementById('levelNav');
-        levelCodes.forEach(level => {
-            const link = document.createElement('a');
-            link.href = `#level-${level.id}`;
-            link.className = 'level-link';
-            link.textContent = level.name;
-            levelNav.appendChild(link);
-        });
         
         // 生成关卡内容
         const levelContent = document.getElementById('levelContent');
@@ -1604,7 +1759,7 @@ while enemyIndex < len(enemies):
             
             section.innerHTML = `
                 <div class="level-header">
-                    <h3>${level.name}</h3>
+                    <h3>${level.id}. ${level.name}</h3>
                 </div>
                 <div class="code-container">
                     <pre><code>${escapeHtml(level.code)}</code></pre>
@@ -1619,6 +1774,144 @@ while enemyIndex < len(enemies):
             
             levelContent.appendChild(section);
         });
+        
+        // 导航条收起功能
+        const levelNav = document.getElementById('levelNav');
+        const collapseToggle = document.getElementById('collapseToggle');
+        const collapseIcon = document.getElementById('collapseIcon');
+        const navHeader = document.querySelector('.nav-header');
+        
+        // 切换收起状态
+        function toggleNavCollapse() {
+            levelNav.classList.toggle('collapsed');
+            
+            // 更新图标和文本
+            if (levelNav.classList.contains('collapsed')) {
+                collapseIcon.className = 'fas fa-chevron-down';
+                collapseToggle.querySelector('.toggle-text').textContent = '展开搜索栏';
+            } else {
+                collapseIcon.className = 'fas fa-chevron-up';
+                collapseToggle.querySelector('.toggle-text').textContent = '收起搜索栏';
+                
+                // 展开时自动聚焦搜索框
+                setTimeout(() => {
+                    document.getElementById('searchInput').focus();
+                }, 300);
+            }
+        }
+        
+        // 点击切换按钮收起/展开
+        collapseToggle.addEventListener('click', function(e) {
+            e.stopPropagation(); // 防止事件冒泡
+            toggleNavCollapse();
+        });
+        
+        // 点击导航标题也可以收起/展开
+        navHeader.addEventListener('click', function(e) {
+            // 如果点击的不是切换按钮本身
+            if (!e.target.closest('.collapse-toggle')) {
+                toggleNavCollapse();
+            }
+        });
+        
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchStats = document.getElementById('searchStats');
+        
+        // 初始显示所有关卡
+        updateSearchResults(levelCodes);
+        
+        // 搜索输入事件
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                // 显示所有关卡
+                updateSearchResults(levelCodes);
+            } else {
+                // 过滤关卡
+                const filteredLevels = levelCodes.filter(level => {
+                    return level.name.toLowerCase().includes(searchTerm) || 
+                           level.id.toString().includes(searchTerm) ||
+                           level.code.toLowerCase().includes(searchTerm);
+                });
+                
+                updateSearchResults(filteredLevels);
+            }
+            
+            // 如果有搜索结果，确保导航条是展开状态
+            if (!levelNav.classList.contains('collapsed')) {
+                levelNav.classList.remove('collapsed');
+            }
+        });
+        
+        // 搜索框获得焦点时展开导航条
+        searchInput.addEventListener('focus', function() {
+            if (levelNav.classList.contains('collapsed')) {
+                toggleNavCollapse();
+            }
+        });
+        
+        // 更新搜索结果
+        function updateSearchResults(levels) {
+            searchResults.innerHTML = '';
+            
+            if (levels.length === 0) {
+                searchResults.innerHTML = '<div class="no-results">未找到匹配的关卡</div>';
+                searchResults.classList.remove('hidden');
+                searchStats.textContent = '共68个关卡，未找到匹配项';
+                return;
+            }
+            
+            levels.forEach(level => {
+                const result = document.createElement('a');
+                result.href = `#level-${level.id}`;
+                result.className = 'level-result';
+                result.innerHTML = `
+                    <span class="level-id">${level.id}</span>
+                    <span class="level-name">${level.name}</span>
+                `;
+                
+                // 添加点击事件，平滑滚动到对应关卡
+                result.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        // 高亮显示当前关卡
+                        document.querySelectorAll('.level-section').forEach(section => {
+                            section.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.08)';
+                        });
+                        
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(230, 126, 34, 0.3)';
+                        
+                        // 3秒后移除高亮
+                        setTimeout(() => {
+                            targetElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.08)';
+                        }, 3000);
+                        
+                        // 点击搜索结果后收起导航条（可选）
+                        // if (window.innerWidth < 768) {
+                        //     if (!levelNav.classList.contains('collapsed')) {
+                        //         toggleNavCollapse();
+                        //     }
+                        // }
+                    }
+                });
+                
+                searchResults.appendChild(result);
+            });
+            
+            searchResults.classList.remove('hidden');
+            searchStats.textContent = `共68个关卡，找到${levels.length}个匹配项`;
+        }
         
         // 添加复制功能
         document.querySelectorAll('.copy-btn').forEach(button => {
@@ -1676,6 +1969,14 @@ while enemyIndex < len(enemies):
                 if (targetElement) {
                     setTimeout(() => {
                         targetElement.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // 高亮显示当前关卡
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(230, 126, 34, 0.3)';
+                        
+                        // 3秒后移除高亮
+                        setTimeout(() => {
+                            targetElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.08)';
+                        }, 3000);
                     }, 100);
                 }
             }
@@ -1713,6 +2014,9 @@ while enemyIndex < len(enemies):
                 behavior: 'smooth'
             });
         });
+        
+        // 初始加载时显示所有关卡
+        updateSearchResults(levelCodes);
     </script>
 </body>
 </html>
