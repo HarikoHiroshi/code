@@ -340,7 +340,6 @@
     <div class="copy-notification" id="copyNotification">代码已复制到剪贴板！</div>
 
 <script>
-        // 关卡代码数据
         const levelCodes = [
             {
                 id: 1,
@@ -754,7 +753,834 @@ while True:
     if someItem and hero.health > hero.maxHealth / 3:
         hero.moveXY(someItem.pos.x,someItem.pos.y)
         pass`
-            }
+            },
+		 {
+				id: 26,
+				name: "双颊",
+				code: `defeatedOgres = 0;
+while defeatedOgres < 6:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)
+        defeatedOgres += 1
+    else:
+        hero.say("Ogres!")
+hero.moveXY(49, 36)
+while hero.gold < 30:
+    # Find and collect coins.
+    item = hero.findNearestItem()
+    if item:
+        hero.moveXY(item.pos.x, item.pos.y)
+hero.moveXY(76, 32)`
+		},
+			{
+				id: 27,
+				name: "沙漠战役",
+				code: `ordersGiven = 0
+while ordersGiven < 5:
+    x = hero.pos.x
+    y = hero.pos.y - 10
+    hero.moveXY(x, y)
+    hero.say("Attack!")
+    ordersGiven += 1;
+    if (ordersGiven >= 5):
+        break;
+hero.moveXY(48, 31)
+while True:
+    enemy = hero.findNearestEnemy()
+    hero.attack(enemy)
+`
+			},
+			{
+				id: 28,
+				name: "尘埃",
+				code: `hits = 0
+while hits < 10:
+    enemy = hero.findNearestEnemy()
+    if (enemy):
+        hero.attack(enemy)
+        hits += 1
+if (enemy and hero.isReady('cleave')):
+    hero.cleave(enemy)
+hero.moveXY(51, 31)
+hero.moveXY(68, 27)
+hero.moveXY(79, 33)
+`
+			},
+			{
+				id: 29,
+				name: "别冲过去，安静点",
+				code: `def mod30(n):
+    if n >= 30:
+        return n - 30
+    else:
+        return n
+def mod40(n):
+    if n >= 40:
+        return n - 30
+    else:
+        return n
+while True:
+    time = hero.now()
+    x = mod30(time) + 25
+    y = mod40(time) + 10
+    item = hero.findNearestItem()
+    if (item and hero.distanceTo(item) < 7):
+        hero.moveXY(item.pos.x, item.pos.y)
+        hero.moveXY(x, y)
+    else:
+        hero.moveXY(x, y)
+`
+			},
+			{
+				id: 30,
+				name: "Z字形逃窜",
+				code: `def mod15(n):
+    while n >= 15:
+        n -= 15
+    return n
+def mod9(n):
+    while n >= 9:
+        n -= 9
+    return n
+while True:
+    time = hero.now()
+    x = 10 + time
+    if time < 30:
+        y = 10 + 3 * mod15(time)
+    elif time < 35:
+        y = 20 + 3 * mod9(time)
+    else:
+        y = 34
+        x = 71
+    hero.moveXY(x, y)
+`
+			},
+			{
+				id: 31,
+				name: "沙漠三角洲",
+				code: `enemyNames = ["Kog", "Godel", "Vorobun", "Rexxar"]
+hero.attack(enemyNames[0])
+hero.attack(enemyNames[1])
+hero.attack(enemyNames[2])
+hero.attack(enemyNames[3])
+`
+			},
+						{
+				id: 32,
+				name: "sarven救世主",
+				code: `friendNames = ['Joan', 'Ronan', 'Nikita', 'Augustus']
+friendIndex = 0
+while friendIndex < len(friendNames):
+    friendName = friendNames[friendIndex]
+    hero.say(friendName + ', go home!')
+    friendIndex += 1
+hero.moveXY(25, 30)
+hero.buildXY('fence', 29, 30)
+`
+			},
+			{
+				id: 33,
+				name: "团队合作",
+				code: `items = hero.findItems()
+gem0 = items[0]
+hero.say("Bruno " + gem0)
+hero.say("Matilda " + items[1])
+gem2 = items[2]
+hero.moveXY(gem2.pos.x, gem2.pos.y)
+`
+			},
+			{
+				id: 34,
+				name: "银行突袭",
+				code: `while True:
+    enemies = hero.findEnemies()
+    enemyIndex = 0
+    while enemyIndex < len(enemies):
+        enemy = enemies[enemyIndex]
+        hero.attack(enemy)
+        enemyIndex += 1
+    coins = hero.findItems()
+    coinIndex = 0
+    while coinIndex < len(coins):
+        coin = coins[coinIndex]
+        hero.moveXY(coin.pos.x, coin.pos.y)
+        coinIndex = coinIndex + 1
+`
+			},
+			{
+				id: 35,
+				name: "潜伏",
+				code: `enemies = hero.findEnemies()
+enemyIndex = 0
+while enemyIndex < len(enemies):
+    enemy = enemies[enemyIndex]
+    if enemy.type == 'shaman':
+        while enemy.health > 0:
+            hero.attack(enemy)
+    enemyIndex += 1
+    hero.say(enemy.type)
+`
+			},
+			{
+				id: 36,
+				name: "sarven牧羊人",
+				code: `while True:
+    enemies = hero.findEnemies()
+    enemyIndex = 0
+    while enemyIndex < len(enemies):
+        enemy = enemies[enemyIndex]
+        if enemy.type != "sand-yak" and enemy.health > 0:
+            hero.attack(enemy)
+        enemyIndex += 1
+`
+			},
+			{
+				id: 37,
+				name: "捡闪亮东西的人",
+				code: `while True:
+    coins = hero.findItems()
+    coinIndex = 0
+    
+    while coinIndex < len(coins):
+        coin = coins[coinIndex]
+        if coin.value == 3:
+            hero.moveXY(coin.pos.x, coin.pos.y)
+        coinIndex += 1
+`
+			},
+			{
+				id: 38,
+				name: "疯狂的maxer",
+				code: `while True:
+    farthest = None
+    maxDistance = 0
+    enemyIndex = 0
+    enemies = hero.findEnemies()
+    
+    while enemyIndex < len(enemies):
+        target = enemies[enemyIndex]
+        enemyIndex += 1
+        
+        distance = hero.distanceTo(target)
+        if distance > maxDistance:
+            maxDistance = distance
+            farthest = target
+    if farthest:
+        while farthest.health > 0:
+            if (hero.isReady("cleave")):
+                hero.cleave(farthest)
+            elif (hero.isReady("bash")):
+                hero.bash(farthest)
+            elif (hero.isReady("power-up")):
+                hero.powerUp()
+            else:
+                hero.attack(farthest)
+`
+			},
+			{
+				id: 39,
+				name: "牵引策略",
+				code: `def findFurthest(units):
+    furthestUnit = None
+    maxDistance = 0
+    unitIndex = 0
+    while unitIndex < len(units):
+        currentUnit = units[unitIndex]
+        distance = hero.distanceTo(currentUnit)
+        if distance > maxDistance:
+            furthestUnit = currentUnit
+            maxDistance = distance
+        unitIndex += 1
+    return furthestUnit
+def findFurthestEnemy():
+    enemies = hero.findEnemies()
+    furthestEnemy = findFurthest(enemies)
+    # Return furthestEnemy:
+    return furthestEnemy
+def attackWhileAlive(target):
+    while target.health > 0:
+        hero.attack(target)
+    pass
+while True:
+    furthestOgre = findFurthestEnemy()
+    if furthestOgre:
+        attackWhileAlive(furthestOgre)
+`
+			},
+			{
+				id: 40,
+				name: "沙蛇",
+				code: `while True:
+    coins = hero.findItems()
+    coinIndex = 0
+    nearest = None
+    nearestDistance = 9999
+    while coinIndex < len(coins):
+        coin = coins[coinIndex]
+        coinIndex += 1
+        distance = hero.distanceTo(coin)
+        if (distance < nearestDistance):
+            nearest = coin
+            nearestDistance = distance
+    hero.moveXY(nearest.pos.x, nearest.pos.y)
+`
+			},
+			{
+				id: 41,
+				name: "脆弱的士气",
+				code: `def findStrongestEnemy(enemies):
+    strongest = None
+    strongestHealth = 0
+    enemies = hero.findEnemies()
+    for enemy in enemies:
+        if enemy.health > strongestHealth:
+            strongestHealth = enemy.health
+            strongest = enemy
+    return strongest
+enemies = hero.findEnemies()
+if enemies:
+    hero.say(findStrongestEnemy(enemies))
+`
+			},
+			{
+				id: 42,
+				name: "一打宝石",
+				code: `def findMostHealth(enemies):
+    target = None
+    targetHealth = 0
+    enemyIndex = 0
+    while enemyIndex < len(enemies):
+        enemy = enemies[enemyIndex]
+        if enemy.health > targetHealth:
+            target = enemy
+            targetHealth = enemy.health
+        enemyIndex += 1
+    return target
+def findOptimalCoin(coins):
+    optimal = -1000
+    thione = None
+    for coin in coins:
+        if coin.value / hero.distanceTo(coin) > optimal:
+            optimal = coin.value / hero.distanceTo(coin)
+            thione = coin
+    return thione
+while True:
+    enemies = hero.findEnemies()
+    enemy = findMostHealth(enemies)
+    if enemy and enemy.health > 15:
+        while enemy.health > 0:
+            hero.attack(enemy)
+    else:
+        coins = hero.findItems()
+        coin = None
+        coin = findOptimalCoin(coins)
+        if coin:
+            if hero.isReady('jump'):
+                hero.jumpTo(coin)
+            else:
+                hero.moveXY(coin.pos.x, coin.pos.y)
+`
+			},
+			{
+				id: 43,
+				name: "毒气攻击",
+				code: `def healthSum(units):
+    summ = 0
+    for unit in units:
+        summ = summ + unit.health
+    return summ
+cannon = hero.findNearest(hero.findFriends())
+enemies = cannon.findEnemies()
+hero.say("cnm" + healthSum(enemies) + " lgb.")
+`
+			},
+			{
+				id: 44,
+				name: "许愿井",
+				code: `less = "Nimis"
+more = "Non satis"
+requiredGold = 104
+def sumCoinValues(coins):
+    i = 0
+    total = 0
+    while i < len(coins):
+        total += coins[i].value
+        i += 1
+    return total
+while True:
+    items = hero.findItems()
+    goldAmount = sumCoinValues(items)
+    if len(items) != 0:
+        if goldAmount > 104:
+            hero.say(less)
+        if goldAmount < 104:
+            hero.say(more)
+        pass
+        if goldAmount == 104:
+            break
+while True:
+    items = hero.findItems()
+    item = hero.findNearest(items)
+    if item:
+        hero.move(item.pos)
+`
+			},
+			{
+				id: 45,
+				name: "sarven拯救",
+				code: `array = [[3, 35], [72, 36], [71, 52], [119,29],[130, 106],[27, 106]]
+arrayIndex = 0;
+while arrayIndex < len(array):
+    enemy = hero.findNearestEnemy()
+    item = hero.findNearestItem()
+    if (enemy and hero.distanceTo(enemy) < 50):
+        if (hero.isReady('jump') and hero.distanceTo(enemy) > 10):
+            hero.jumpTo(enemy.pos)
+        elif (hero.isReady("cleave")):
+            hero.cleave(enemy)
+        elif (hero.isReady("bash")):
+            hero.bash(enemy)
+        elif (hero.isReady("power-up")):
+            hero.powerUp()
+            hero.attack(enemy)
+        else:
+            hero.attack(enemy)
+    elif (item and hero.distanceTo(item)<40):
+        if (hero.isReady('jump')):
+            hero.jumpTo(item.pos)
+        else:
+            hero.move(item.pos)
+    else:
+        if (hero.isReady('jump')):
+            hero.jumpTo({'x': array[arrayIndex][0], 'y': array[arrayIndex][1]})
+        else:
+            hero.moveXY(array[arrayIndex][0], array[arrayIndex][1])
+        arrayIndex += 1
+`
+			},
+			{
+				id: 46,
+				name: "地下商业",
+				code: `def onSpawn(event):
+    # Send the pet to walk around the dungeon:
+    pet.moveXY(26, 55)
+    pet.moveXY(71, 57)
+    pet.moveXY(71, 11)
+    pet.moveXY(20, 11)
+    pet.moveXY(21, 36)
+    pet.moveXY(15, 36)
+    pet.moveXY(hero.pos.x, hero.pos.y)
+    
+    
+    pass
+pet.on("spawn", onSpawn)
+while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)
+    else:
+        hero.moveXY(21, 34)
+    if hero.gold>=300:
+        break
+hero.moveXY(50, 34)
+`
+			},
+			{
+				id: 47,
+				name: "追逐他们",
+				code: `def onSpawn(e):
+    while True:
+        enemy = pet.findNearestByType("munchkin")
+        if enemy and pet.isReady("chase"):
+            pet.chase(enemy)
+        potion = pet.findNearestByType("potion")
+        if potion:
+            pet.fetch(potion)
+pet.on('spawn', onSpawn)
+`
+			},
+			{
+				id: 48,
+				name: "峡谷风暴",
+				code: `yak = hero.findNearestEnemy()
+while yak:
+    item = hero.findNearestItem()
+    if item:
+        hero.move(item.pos)
+    yak = hero.findNearestEnemy()
+hero.moveXY(38, 58)
+`
+			},
+			{
+				id: 49,
+				name: "吸引牦牛",
+				code: `while True:
+    flag = hero.findFlag()
+    item = hero.findNearestItem()
+    if flag:
+        hero.buildXY("decoy", flag.pos.x, flag.pos.y)
+        hero.pickUpFlag(flag)
+    elif item:
+        hero.move(item.pos)
+`
+			},
+			{
+				id: 50,
+				name: "诱饵和开关",
+				code: `def collectUntil(enoughGold):
+    while enoughGold>hero.gold:
+        item = hero.findNearestItem()
+        hero.move(item.pos)
+
+collectUntil(25)
+hero.buildXY("decoy", 40, 52)
+hero.moveXY(20, 52)
+collectUntil(50)
+hero.buildXY("decoy", 68, 22)
+hero.buildXY("decoy", 30, 20)
+`
+			},
+			{
+				id: 51,
+				name: "守书人",
+				code: `defeated = 0
+while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)
+        if enemy.health <= 0:
+            defeated += 1
+    if hero.time > 15:
+        break
+hero.moveXY(59, 33)
+hero.say(defeated)
+gold = 0
+while True:
+    item = hero.findNearestItem()
+    if(item):
+        hero.moveXY(item.pos.x, item.pos.y)
+    if hero.time > 30:
+        break
+hero.say(hero.gold)
+defeated = 0
+while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)
+        if enemy.health <= 0:
+            defeated += 1
+    if hero.time > 45:
+        break
+hero.moveXY(59, 33)
+hero.say(defeated)
+`
+			},
+			{
+				id: 52,
+				name: "蘑菇之声",
+				code: `def onSpawn (event):
+    potion = pet.findNearestByType("potion")
+    pet.fetch(potion)
+    goldKey = pet.findNearestByType("gold-key")
+    pet.fetch(goldKey)
+skeleton = pet.findNearestByType("skeleton")
+pet.on("spawn", onSpawn)
+while True:
+    if skeleton.health > 0:
+        hero.attack(skeleton)
+    else:
+        hero.moveXY(31, 38)
+`
+			},
+			{
+				id: 53,
+				name: "先有付出才有回报",
+				code: `while hero.health>200: # Δ Change this!
+    hero.moveXY(48, 24)
+    hero.moveXY(16, 24)
+# Move to Okar.
+hero.moveXY(32, 40);
+`
+			},
+			{
+				id: 54,
+				name: "菠菜力量",
+				code: `potionCount = 0
+while potionCount != 7:
+    item = hero.findNearestItem()
+    if item:
+        hero.moveXY(item.pos.x, item.pos.y)
+        potionCount += 1
+while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)
+`
+			},
+			{
+				id: 55,
+				name: "sarven前哨基地",
+				code: `while True:
+    polarPos = hero.now() / 4
+    xPos = 40 + Math.cos(polarPos) * 20
+    yPos = 34 + Math.sin(polarPos) * 20
+    hero.moveXY(xPos, yPos)
+    enemy = hero.findNearestEnemy()
+    while enemy:
+        hero.attack(enemy)
+        enemy = hero.findNearestEnemy()
+`
+			},
+			{
+				id: 56,
+				name: "钥匙陷阱",
+				code: `def onSpawn(event):
+    potion = pet.findNearestByType("bronze-key")
+    if potion:
+        pet.fetch(potion)
+    potion = pet.findNearestByType("silver-key")
+    if potion:
+        pet.fetch(potion)
+    potion = pet.findNearestByType("gold-key")
+    if potion:
+        pet.fetch(potion)
+    
+pet.on("spawn", onSpawn)
+while True:
+    enemy = hero.findNearestEnemy()
+    if enemy and enemy.team == "ogres":
+        hero.attack(enemy)
+    if hero.health < 300:
+        # You can use pets in the main thread too.
+        potion = pet.findNearestByType("potion")
+        if potion:
+            hero.moveXY(potion.pos.x, potion.pos.y)
+`
+			},
+			{
+				id: 57,
+				name: "海市蜃楼",
+				code: `def pickUpNearestItem():
+    while True:
+        items = hero.findItems()
+        if (hero.gold < 25):
+            nearestItem = hero.findNearest(items)
+            if nearestItem:
+                hero.moveXY(nearestItem.pos.x, nearestItem.pos.y)
+        else:
+            break
+pickUpNearestItem()
+hero.buildXY('decoy', 72, 68)
+while True:
+    if (hero.health == hero.maxHealth):
+        hero.say('waka')
+    else:
+        hero.moveXY(21, 16)
+`
+			},
+			{
+				id: 58,
+				name: "立方雷区",
+				code: `def mult(number, times):
+    total = 0
+    while times > 0:
+        total += number
+        times -= 1
+    return total
+def power(number, exponent):
+    total = 1
+    while exponent > 0:
+        total = number * total
+        exponent = exponent - 1
+    return total
+tower = hero.findFriends()[0]
+a = tower.a
+b = tower.b
+c = tower.c
+d = tower.d
+x = hero.pos.x
+while True:
+    y = a * power(x, 3) + b * power(x, 2) + c * power(x, 1) + d * power(x, 0)
+    hero.moveXY(x, y)
+    x = x + 5
+`
+			},
+			{
+				id: 59,
+				name: "基数沙尘暴",
+				code: `everybody = ['Yetu', 'Tabitha', 'Rasha', 'Max', 'Yazul', 'Todd']
+enemyIndex = 0
+while enemyIndex < len(everybody):
+    if (everybody[enemyIndex]):
+        hero.attack(everybody[enemyIndex])
+    enemyIndex += 2
+hero.moveXY(36, 54)
+`
+			},
+			{
+				id: 60,
+				name: "掠夺者",
+				code: `while True:
+    coin = hero.findNearestItem()
+    while coin:
+        # Collect the coin.
+        hero.moveXY(coin.pos.x, coin.pos.y)
+        coin = hero.findNearestItem()
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        while enemy.health>0:
+            # Attack it.
+            hero.attack(enemy)
+`
+			},
+			{
+				id: 61,
+				name: "最大公约数",
+				code: `friends = hero.findFriends()
+number1 = friends[0].secretNumber
+number2 = friends[1].secretNumber
+if number2 > number1:
+    swap = number1
+    number1 = number2
+    number2 = swap
+def bruteforceGCD (a, b):
+    hero.say("The naive algorithm.")
+    cycles = 0
+    counter = b
+    while True:
+        cycles += 1
+        if cycles > 100:
+            hero.say("Calculating is hard. I'm tired.")
+            break
+        if a % counter == 0 and b % counter == 0:
+            break
+        counter -= 1
+    hero.say("I used " + cycles + " cycles")
+    return counter
+def euclidianGCD (a, b):
+    cycles = 0
+    while b:
+        cycles += 1
+        swap = b
+        b = a % b
+        a = swap
+    hero.say("I used " + cycles + " cycles")
+    return a
+secretNumber = euclidianGCD(number1, number2)
+hero.moveXY(48, 34)
+hero.say(secretNumber)
+hero.moveXY(68, 34)
+`
+			},
+			{
+				id: 62,
+				name: "安全毯",
+				code: `names = [
+    "Thabt", "Victor",
+    "Leerer", "Alianor",
+    "Gorylo", "Millicent",
+    "Weeb", "Brom",
+hero.attack(names[0])
+hero.attack(names[4])
+hero.attack(names[2])
+hero.attack(names[6])
+`
+			},
+			{
+				id: 63,
+				name: "协助防御",
+				code: `while True:
+    # Get an array of enemies.
+    enemies = hero.findEnemies()
+    if len(enemies) > 0:
+        hero.attack(enemies[0])
+        hero.moveXY(40, 20)
+        pass
+`
+			},
+			{
+				id: 64,
+				name: "招募队伍",
+				code: `neutrals = hero.findEnemies()
+while True:
+    if len(neutrals):
+        hero.say(neutrals[0].id)
+        pass
+    else:
+        hero.say("Nobody here")
+    neutrals = hero.findEnemies()
+`
+			},
+			{
+				id: 65,
+				name: "第二宝石",
+				code: `while True:
+    items = hero.findItems()
+    if (len(items) > 1):
+        hero.moveXY(items[1].pos.x, items[1].pos.y)
+    # Else:
+    else:
+        hero.moveXY(40, 34)
+`
+			},
+			{
+				id: 66,
+				name: "游魂",
+				code: `while True:
+    enemies = hero.findEnemies()
+    enemyIndex = 0
+    while enemyIndex < len(enemies):
+        enemy = enemies[enemyIndex]
+        while enemy.health > 0:
+            hero.attack(enemy)
+        enemyIndex += 1
+    items = hero.findItems()
+    itemIndex = 0
+    while itemIndex < len(items):
+        item = items[itemIndex]
+        while item and hero.distanceTo(item)>4:
+            hero.moveXY(item.pos.x, item.pos.y)
+        itemIndex += 1
+`
+			},
+			{
+				id: 67,
+				name: "优待",
+				code: `enemies = hero.findEnemies()
+enemyIndex = 0
+while enemyIndex < len(enemies):
+    if enemies[enemyIndex].type == 'thrower':
+        hero.attack(enemies[enemyIndex])
+    enemyIndex = enemyIndex + 1
+enemies = hero.findEnemies()
+enemyIndex = 0
+while enemyIndex < len(enemies):
+    if enemies[enemyIndex]:
+        hero.attack(enemies[enemyIndex])
+    enemyIndex = enemyIndex + 1
+`
+			},
+			{
+				id: 68,
+				name: "猛砸他们全家",
+				code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        if hero.isReady("bash"):
+            hero.bash(enemy)
+        else:
+            hero.moveXY(40, 34)
+            hero.shield()
+    else:
+        gem = hero.findNearestItem()
+        if gem:
+            hero.moveXY(gem.pos.x, gem.pos.y)
+            hero.moveXY(40, 34)
+        else:
+            hero.moveXY(40, 34)
+`
+			},
         ];
         
         // 生成导航链接
