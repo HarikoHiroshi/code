@@ -17,6 +17,7 @@
             background-color: #f5f5f5;
             color: #333;
             line-height: 1.6;
+            padding-top: 100px; /* 为导航条预留空间，防止遮挡 */
         }
         
         .container {
@@ -33,6 +34,8 @@
             border-radius: 10px;
             margin-bottom: 30px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
         }
         
         header h1 {
@@ -70,9 +73,13 @@
             border-radius: 10px;
             margin-bottom: 30px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-            position: sticky;
+            position: fixed; /* 改为fixed定位，固定在顶部 */
             top: 20px;
-            z-index: 100;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 1200px;
+            z-index: 1000; /* 提高z-index确保在最上层 */
             transition: all 0.3s ease;
             max-height: 2000px;
             overflow: hidden;
@@ -83,6 +90,8 @@
             max-height: 70px;
             cursor: pointer;
             padding: 15px 20px;
+            width: auto; /* 收起时宽度自适应 */
+            min-width: 300px;
         }
         
         .level-nav.collapsed:hover {
@@ -316,27 +325,9 @@
             opacity: 1;
         }
         
+        /* 删除每个关卡内的返回页首按钮 */
         .back-to-top-btn {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background-color: #e67e22;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: background-color 0.3s;
-            z-index: 10;
-        }
-        
-        .back-to-top-btn:hover {
-            background-color: #d35400;
+            display: none; /* 隐藏所有关卡内的返回页首按钮 */
         }
         
         .footer {
@@ -373,7 +364,7 @@
         .floating-top-btn {
             position: fixed;
             bottom: 30px;
-            left: 30px;
+            right: 30px; /* 改为右侧，不遮挡内容 */
             background-color: #e67e22;
             color: white;
             border: none;
@@ -404,6 +395,22 @@
         
         /* 响应式设计 */
         @media (max-width: 768px) {
+            body {
+                padding-top: 80px; /* 移动端减少padding */
+            }
+            
+            .level-nav {
+                top: 10px;
+                width: calc(100% - 20px);
+                padding: 15px;
+            }
+            
+            .level-nav.collapsed {
+                max-height: 60px;
+                padding: 10px 15px;
+                min-width: 250px;
+            }
+            
             .level-header {
                 flex-direction: column;
                 align-items: flex-start;
@@ -424,22 +431,6 @@
                 justify-content: center;
             }
             
-            .back-to-top-btn {
-                position: relative;
-                bottom: auto;
-                right: auto;
-                margin-top: 15px;
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .floating-top-btn {
-                left: 20px;
-                bottom: 20px;
-                padding: 10px 15px;
-                font-size: 0.9rem;
-            }
-            
             .nav-header {
                 flex-direction: column;
                 align-items: flex-start;
@@ -450,8 +441,37 @@
                 align-self: flex-end;
             }
             
+            .level-nav.collapsed .nav-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .floating-top-btn {
+                right: 20px;
+                bottom: 20px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding-top: 70px;
+            }
+            
+            .level-nav {
+                top: 5px;
+                width: calc(100% - 10px);
+                padding: 12px;
+            }
+            
             .level-nav.collapsed {
-                max-height: 90px;
+                max-height: 55px;
+                padding: 8px 12px;
+                min-width: 200px;
+            }
+            
+            .nav-header h2 {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -460,21 +480,21 @@
     <div class="container">
         <header id="page-top">
             <h1>沙漠</h1>
-            <p>68个关卡的完整代码，鼠标悬停在代码区域上方显示复制按钮<br>
+            <p>所有68个关卡的完整代码，鼠标悬停在代码区域上方显示复制按钮<br>
             <span style="color: #001AE7">有些关卡有需要特定的装备，请自行看代码选择装备！</span></p>
             <a href="desert-levels-index.html" class="back-btn"><i class="fas fa-arrow-left"></i> 返回目录页</a>
         </header>
         
         <section class="level-nav" id="levelNav">
             <div class="nav-header">
-              <h2><i class="fas fa-search"></i> 关卡搜索导航</h2>
+                <h2><i class="fas fa-search"></i> 关卡搜索导航</h2>
                 <button class="collapse-toggle" id="collapseToggle">
                     <i class="fas fa-chevron-up" id="collapseIcon"></i>
                     <span class="toggle-text">收起搜索栏</span>
                 </button>
-          </div>
+            </div>
             
-          <div class="nav-content">
+            <div class="nav-content">
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" id="searchInput" placeholder="输入关卡名称或编号进行搜索...">
@@ -485,27 +505,27 @@
                 <div class="search-stats" id="searchStats">
                     共68个关卡，输入关键词搜索
                 </div>
-          </div>
+            </div>
         </section>
         
         <div class="level-content" id="levelContent">
             <!-- 关卡代码将通过JavaScript动态生成 -->
         </div>
-</div>
+    </div>
     
     <!-- 浮动返回顶部按钮 -->
     <button class="floating-top-btn" id="floatingTopBtn">
         <i class="fas fa-arrow-up"></i> 返回页首
     </button>
     
-<footer class="footer">
+    <footer class="footer">
         <p>沙漠关卡代码详情</p>
         <p style="color: #FF0000">注意：代码仅供参考，不建议直接抄！</p>
     </footer>
     
     <div class="copy-notification" id="copyNotification">代码已复制到剪贴板！</div>
 
-<script>
+    <script>
         const levelCodes = [
             {
                 id: 1,
@@ -1749,7 +1769,7 @@ while enemyIndex < len(enemies):
             }
         ];
         
-        // 生成关卡内容
+        // 生成关卡内容 - 删除每个关卡的返回页首按钮
         const levelContent = document.getElementById('levelContent');
         
         levelCodes.forEach(level => {
@@ -1765,9 +1785,6 @@ while enemyIndex < len(enemies):
                     <pre><code>${escapeHtml(level.code)}</code></pre>
                     <button class="copy-btn" data-code="${escapeHtml(level.code)}">
                         <i class="far fa-copy"></i> 复制代码
-                    </button>
-                    <button class="back-to-top-btn" data-target="#page-top">
-                        <i class="fas fa-arrow-up"></i> 返回页首
                     </button>
                 </div>
             `;
@@ -1896,13 +1913,6 @@ while enemyIndex < len(enemies):
                         setTimeout(() => {
                             targetElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.08)';
                         }, 3000);
-                        
-                        // 点击搜索结果后收起导航条（可选）
-                        // if (window.innerWidth < 768) {
-                        //     if (!levelNav.classList.contains('collapsed')) {
-                        //         toggleNavCollapse();
-                        //     }
-                        // }
                     }
                 });
                 
@@ -1918,17 +1928,6 @@ while enemyIndex < len(enemies):
             button.addEventListener('click', function() {
                 const code = this.getAttribute('data-code');
                 copyToClipboard(code);
-            });
-        });
-        
-        // 添加返回页首功能
-        document.querySelectorAll('.back-to-top-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const targetId = this.getAttribute('data-target');
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth' });
-                }
             });
         });
         
