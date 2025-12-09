@@ -482,7 +482,7 @@
             <h1>沙漠</h1>
             <p>沙漠关卡代码，可点击复制<br>
             <span style="color: #001AE7">有些关卡有需要特定的装备，请自行看代码选择装备</span></p>
-            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> 返回目录页</a>
+            <a href="index.html" class=can"back-btn"><i class="fas fa-arrow-left"></i> 返回目录页</a>
         </header>
         
         <section class="level-nav" id="levelNav">
@@ -953,7 +953,6 @@ while defeatedOgres < 6:
         hero.say("Ogres!")
 hero.moveXY(49, 36)
 while hero.gold < 30:
-    # Find and collect coins.
     item = hero.findNearestItem()
     if item:
         hero.moveXY(item.pos.x, item.pos.y)
@@ -1182,7 +1181,6 @@ while enemyIndex < len(enemies):
 def findFurthestEnemy():
     enemies = hero.findEnemies()
     furthestEnemy = findFurthest(enemies)
-    # Return furthestEnemy:
     return furthestEnemy
 def attackWhileAlive(target):
     while target.health > 0:
@@ -1349,7 +1347,6 @@ while arrayIndex < len(array):
                 id: 46,
                 name: "地下商业",
                 code: `def onSpawn(event):
-    # Send the pet to walk around the dungeon:
     pet.moveXY(26, 55)
     pet.moveXY(71, 57)
     pet.moveXY(71, 11)
@@ -1482,10 +1479,9 @@ while True:
             {
                 id: 53,
                 name: "先有付出才有回报",
-                code: `while hero.health>200: # Δ Change this!
+                code: `while hero.health>200: 
     hero.moveXY(48, 24)
     hero.moveXY(16, 24)
-# Move to Okar.
 hero.moveXY(32, 40);
 `
             },
@@ -1538,7 +1534,6 @@ while True:
     if enemy and enemy.team == "ogres":
         hero.attack(enemy)
     if hero.health < 300:
-        # You can use pets in the main thread too.
         potion = pet.findNearestByType("potion")
         if potion:
             hero.moveXY(potion.pos.x, potion.pos.y)
@@ -1610,13 +1605,11 @@ hero.moveXY(36, 54)
                 code: `while True:
     coin = hero.findNearestItem()
     while coin:
-        # Collect the coin.
         hero.moveXY(coin.pos.x, coin.pos.y)
         coin = hero.findNearestItem()
     enemy = hero.findNearestEnemy()
     if enemy:
         while enemy.health>0:
-            # Attack it.
             hero.attack(enemy)
 `
             },
@@ -1677,7 +1670,6 @@ hero.attack(names[6])
                 id: 63,
                 name: "协助防御",
                 code: `while True:
-    # Get an array of enemies.
     enemies = hero.findEnemies()
     if len(enemies) > 0:
         hero.attack(enemies[0])
@@ -1705,7 +1697,6 @@ while True:
     items = hero.findItems()
     if (len(items) > 1):
         hero.moveXY(items[1].pos.x, items[1].pos.y)
-    # Else:
     else:
         hero.moveXY(40, 34)
 `
