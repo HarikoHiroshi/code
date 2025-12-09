@@ -973,8 +973,7 @@ while ordersGiven < 5:
 hero.moveXY(48, 31)
 while True:
     enemy = hero.findNearestEnemy()
-    hero.attack(enemy)
-`
+    hero.attack(enemy)`
             },
             {
                 id: 28,
@@ -989,8 +988,7 @@ if (enemy and hero.isReady('cleave')):
     hero.cleave(enemy)
 hero.moveXY(51, 31)
 hero.moveXY(68, 27)
-hero.moveXY(79, 33)
-`
+hero.moveXY(79, 33)`
             },
             {
                 id: 29,
@@ -1014,8 +1012,7 @@ while True:
         hero.moveXY(item.pos.x, item.pos.y)
         hero.moveXY(x, y)
     else:
-        hero.moveXY(x, y)
-`
+        hero.moveXY(x, y)`
             },
             {
                 id: 30,
@@ -1038,8 +1035,7 @@ while True:
     else:
         y = 34
         x = 71
-    hero.moveXY(x, y)
-`
+    hero.moveXY(x, y)`
             },
             {
                 id: 31,
@@ -1048,8 +1044,7 @@ while True:
 hero.attack(enemyNames[0])
 hero.attack(enemyNames[1])
 hero.attack(enemyNames[2])
-hero.attack(enemyNames[3])
-`
+hero.attack(enemyNames[3])`
             },
             {
                 id: 32,
@@ -1061,8 +1056,7 @@ while friendIndex < len(friendNames):
     hero.say(friendName + ', go home!')
     friendIndex += 1
 hero.moveXY(25, 30)
-hero.buildXY('fence', 29, 30)
-`
+hero.buildXY('fence', 29, 30)`
             },
             {
                 id: 33,
@@ -1072,8 +1066,7 @@ gem0 = items[0]
 hero.say("Bruno " + gem0)
 hero.say("Matilda " + items[1])
 gem2 = items[2]
-hero.moveXY(gem2.pos.x, gem2.pos.y)
-`
+hero.moveXY(gem2.pos.x, gem2.pos.y)`
             },
             {
                 id: 34,
@@ -1090,8 +1083,7 @@ hero.moveXY(gem2.pos.x, gem2.pos.y)
     while coinIndex < len(coins):
         coin = coins[coinIndex]
         hero.moveXY(coin.pos.x, coin.pos.y)
-        coinIndex = coinIndex + 1
-`
+        coinIndex = coinIndex + 1`
             },
             {
                 id: 35,
@@ -1104,8 +1096,7 @@ while enemyIndex < len(enemies):
         while enemy.health > 0:
             hero.attack(enemy)
     enemyIndex += 1
-    hero.say(enemy.type)
-`
+    hero.say(enemy.type)`
             },
             {
                 id: 36,
@@ -1117,8 +1108,7 @@ while enemyIndex < len(enemies):
         enemy = enemies[enemyIndex]
         if enemy.type != "sand-yak" and enemy.health > 0:
             hero.attack(enemy)
-        enemyIndex += 1
-`
+        enemyIndex += 1`
             },
             {
                 id: 37,
@@ -1131,8 +1121,7 @@ while enemyIndex < len(enemies):
         coin = coins[coinIndex]
         if coin.value == 3:
             hero.moveXY(coin.pos.x, coin.pos.y)
-        coinIndex += 1
-`
+        coinIndex += 1`
             },
             {
                 id: 38,
@@ -1160,8 +1149,7 @@ while enemyIndex < len(enemies):
             elif (hero.isReady("power-up")):
                 hero.powerUp()
             else:
-                hero.attack(farthest)
-`
+                hero.attack(farthest)`
             },
             {
                 id: 39,
@@ -1189,8 +1177,7 @@ def attackWhileAlive(target):
 while True:
     furthestOgre = findFurthestEnemy()
     if furthestOgre:
-        attackWhileAlive(furthestOgre)
-`
+        attackWhileAlive(furthestOgre)`
             },
             {
                 id: 40,
@@ -1207,8 +1194,7 @@ while True:
         if (distance < nearestDistance):
             nearest = coin
             nearestDistance = distance
-    hero.moveXY(nearest.pos.x, nearest.pos.y)
-`
+    hero.moveXY(nearest.pos.x, nearest.pos.y)`
             },
             {
                 id: 41,
@@ -1224,8 +1210,7 @@ while True:
     return strongest
 enemies = hero.findEnemies()
 if enemies:
-    hero.say(findStrongestEnemy(enemies))
-`
+    hero.say(findStrongestEnemy(enemies))`
             },
             {
                 id: 42,
@@ -1263,8 +1248,7 @@ while True:
             if hero.isReady('jump'):
                 hero.jumpTo(coin)
             else:
-                hero.moveXY(coin.pos.x, coin.pos.y)
-`
+                hero.moveXY(coin.pos.x, coin.pos.y)`
             },
             {
                 id: 43,
@@ -1276,8 +1260,7 @@ while True:
     return summ
 cannon = hero.findNearest(hero.findFriends())
 enemies = cannon.findEnemies()
-hero.say("cnm" + healthSum(enemies) + " lgb.")
-`
+hero.say("cnm" + healthSum(enemies) + " lgb.")`
             },
             {
                 id: 44,
@@ -1307,8 +1290,7 @@ while True:
     items = hero.findItems()
     item = hero.findNearest(items)
     if item:
-        hero.move(item.pos)
-`
+        hero.move(item.pos)`
             },
             {
                 id: 45,
@@ -1340,8 +1322,7 @@ while arrayIndex < len(array):
             hero.jumpTo({'x': array[arrayIndex][0], 'y': array[arrayIndex][1]})
         else:
             hero.moveXY(array[arrayIndex][0], array[arrayIndex][1])
-        arrayIndex += 1
-`
+        arrayIndex += 1`
             },
             {
                 id: 46,
@@ -1366,8 +1347,7 @@ while True:
         hero.moveXY(21, 34)
     if hero.gold>=300:
         break
-hero.moveXY(50, 34)
-`
+hero.moveXY(50, 34)`
             },
             {
                 id: 47,
@@ -1380,8 +1360,7 @@ hero.moveXY(50, 34)
         potion = pet.findNearestByType("potion")
         if potion:
             pet.fetch(potion)
-pet.on('spawn', onSpawn)
-`
+pet.on('spawn', onSpawn)`
             },
             {
                 id: 48,
@@ -1392,8 +1371,7 @@ while yak:
     if item:
         hero.move(item.pos)
     yak = hero.findNearestEnemy()
-hero.moveXY(38, 58)
-`
+hero.moveXY(38, 58)`
             },
             {
                 id: 49,
@@ -1405,8 +1383,7 @@ hero.moveXY(38, 58)
         hero.buildXY("decoy", flag.pos.x, flag.pos.y)
         hero.pickUpFlag(flag)
     elif item:
-        hero.move(item.pos)
-`
+        hero.move(item.pos)`
             },
             {
                 id: 50,
@@ -1421,8 +1398,7 @@ hero.buildXY("decoy", 40, 52)
 hero.moveXY(20, 52)
 collectUntil(50)
 hero.buildXY("decoy", 68, 22)
-hero.buildXY("decoy", 30, 20)
-`
+hero.buildXY("decoy", 30, 20)`
             },
             {
                 id: 51,
@@ -1456,8 +1432,7 @@ while True:
     if hero.time > 45:
         break
 hero.moveXY(59, 33)
-hero.say(defeated)
-`
+hero.say(defeated)`
             },
             {
                 id: 52,
@@ -1473,8 +1448,7 @@ while True:
     if skeleton.health > 0:
         hero.attack(skeleton)
     else:
-        hero.moveXY(31, 38)
-`
+        hero.moveXY(31, 38)`
             },
             {
                 id: 53,
@@ -1482,8 +1456,7 @@ while True:
                 code: `while hero.health>200: 
     hero.moveXY(48, 24)
     hero.moveXY(16, 24)
-hero.moveXY(32, 40);
-`
+hero.moveXY(32, 40);`
             },
             {
                 id: 54,
@@ -1497,8 +1470,7 @@ while potionCount != 7:
 while True:
     enemy = hero.findNearestEnemy()
     if enemy:
-        hero.attack(enemy)
-`
+        hero.attack(enemy)`
             },
             {
                 id: 55,
@@ -1511,8 +1483,7 @@ while True:
     enemy = hero.findNearestEnemy()
     while enemy:
         hero.attack(enemy)
-        enemy = hero.findNearestEnemy()
-`
+        enemy = hero.findNearestEnemy()`
             },
             {
                 id: 56,
@@ -1536,8 +1507,7 @@ while True:
     if hero.health < 300:
         potion = pet.findNearestByType("potion")
         if potion:
-            hero.moveXY(potion.pos.x, potion.pos.y)
-`
+            hero.moveXY(potion.pos.x, potion.pos.y)`
             },
             {
                 id: 57,
@@ -1557,8 +1527,7 @@ while True:
     if (hero.health == hero.maxHealth):
         hero.say('waka')
     else:
-        hero.moveXY(21, 16)
-`
+        hero.moveXY(21, 16)`
             },
             {
                 id: 58,
@@ -1584,8 +1553,7 @@ x = hero.pos.x
 while True:
     y = a * power(x, 3) + b * power(x, 2) + c * power(x, 1) + d * power(x, 0)
     hero.moveXY(x, y)
-    x = x + 5
-`
+    x = x + 5`
             },
             {
                 id: 59,
@@ -1596,8 +1564,7 @@ while enemyIndex < len(everybody):
     if (everybody[enemyIndex]):
         hero.attack(everybody[enemyIndex])
     enemyIndex += 2
-hero.moveXY(36, 54)
-`
+hero.moveXY(36, 54)`
             },
             {
                 id: 60,
@@ -1610,8 +1577,7 @@ hero.moveXY(36, 54)
     enemy = hero.findNearestEnemy()
     if enemy:
         while enemy.health>0:
-            hero.attack(enemy)
-`
+            hero.attack(enemy)`
             },
             {
                 id: 61,
@@ -1649,8 +1615,7 @@ def euclidianGCD (a, b):
 secretNumber = euclidianGCD(number1, number2)
 hero.moveXY(48, 34)
 hero.say(secretNumber)
-hero.moveXY(68, 34)
-`
+hero.moveXY(68, 34)`
             },
             {
                 id: 62,
@@ -1663,8 +1628,7 @@ hero.moveXY(68, 34)
 hero.attack(names[0])
 hero.attack(names[4])
 hero.attack(names[2])
-hero.attack(names[6])
-`
+hero.attack(names[6])`
             },
             {
                 id: 63,
@@ -1674,8 +1638,7 @@ hero.attack(names[6])
     if len(enemies) > 0:
         hero.attack(enemies[0])
         hero.moveXY(40, 20)
-        pass
-`
+        pass`
             },
             {
                 id: 64,
@@ -1687,8 +1650,7 @@ while True:
         pass
     else:
         hero.say("Nobody here")
-    neutrals = hero.findEnemies()
-`
+    neutrals = hero.findEnemies()`
             },
             {
                 id: 65,
@@ -1698,8 +1660,7 @@ while True:
     if (len(items) > 1):
         hero.moveXY(items[1].pos.x, items[1].pos.y)
     else:
-        hero.moveXY(40, 34)
-`
+        hero.moveXY(40, 34)`
             },
             {
                 id: 66,
@@ -1718,8 +1679,7 @@ while True:
         item = items[itemIndex]
         while item and hero.distanceTo(item)>4:
             hero.moveXY(item.pos.x, item.pos.y)
-        itemIndex += 1
-`
+        itemIndex += 1`
             },
             {
                 id: 67,
@@ -1735,8 +1695,7 @@ enemyIndex = 0
 while enemyIndex < len(enemies):
     if enemies[enemyIndex]:
         hero.attack(enemies[enemyIndex])
-    enemyIndex = enemyIndex + 1
-`
+    enemyIndex = enemyIndex + 1`
             },
             {
                 id: 68,
@@ -1755,8 +1714,7 @@ while enemyIndex < len(enemies):
             hero.moveXY(gem.pos.x, gem.pos.y)
             hero.moveXY(40, 34)
         else:
-            hero.moveXY(40, 34)
-`
+            hero.moveXY(40, 34)`
             }
         ];
         
