@@ -61,6 +61,8 @@
             text-decoration: none;
             font-weight: 600;
             transition: background-color 0.3s;
+            position: relative;
+            z-index: 10;
         }
         
         .back-btn:hover {
@@ -295,6 +297,7 @@
             tab-size: 4;
             white-space: pre-wrap;
             max-height: 500px;
+
             overflow-y: auto;
         }
         
@@ -339,11 +342,11 @@
             font-size: 0.9rem;
         }
         
-        /* 复制成功提示 - 移动到左下角，避免与返回顶部按钮冲突 */
+        /* 复制成功提示 - 电脑端样式 */
         .copy-notification {
             position: fixed;
             bottom: 20px;
-            left: 20px; /* 改为左下角 */
+            left: 20px;
             background-color: #2ecc71;
             color: white;
             padding: 15px 25px;
@@ -353,6 +356,7 @@
             transform: translateY(10px);
             transition: opacity 0.3s, transform 0.3s;
             z-index: 1000;
+            max-width: 300px;
         }
         
         .copy-notification.show {
@@ -360,11 +364,11 @@
             transform: translateY(0);
         }
         
-        /* 浮动返回顶部按钮 - 保持在右下角 */
+        /* 浮动返回顶部按钮 - 电脑端样式 */
         .floating-top-btn {
             position: fixed;
             bottom: 30px;
-            right: 30px; /* 改为右侧，不遮挡内容 */
+            right: 30px;
             background-color: #e67e22;
             color: white;
             border: none;
@@ -415,10 +419,28 @@
             font-size: 0.9rem;
         }
         
-        /* 响应式设计 */
+        /* 电脑端特定样式 */
+        @media (min-width: 769px) {
+            .copy-notification {
+                bottom: 20px;
+                left: 20px;
+                max-width: 300px;
+            }
+            
+            .floating-top-btn {
+                bottom: 30px;
+                right: 30px;
+            }
+            
+            .back-btn {
+                z-index: 10;
+            }
+        }
+        
+        /* 移动端响应式设计 */
         @media (max-width: 768px) {
             body {
-                padding-top: 80px; /* 移动端减少padding */
+                padding-top: 80px;
             }
             
             .level-nav {
@@ -467,19 +489,47 @@
                 font-size: 1.3rem;
             }
             
-            .floating-top-btn {
-                right: 20px;
-                bottom: 20px;
-                padding: 10px 15px;
+            /* 移动端复制弹窗样式 */
+            .copy-notification {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) translateY(10px);
+                width: 90%;
+                max-width: 280px;
+                text-align: center;
+                padding: 15px 20px;
+                bottom: auto;
+                right: auto;
                 font-size: 0.9rem;
+                z-index: 1001;
             }
             
-            .copy-notification {
-                left: 10px;
-                right: 10px;
-                bottom: 10px;
-                text-align: center;
-                padding: 12px 20px;
+            .copy-notification.show {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+            
+            /* 移动端返回顶部按钮 */
+            .floating-top-btn {
+                right: 15px;
+                bottom: 15px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                z-index: 1000;
+            }
+            
+            /* 移动端header确保按钮可点击 */
+            header {
+                padding: 20px 15px;
+                position: relative;
+            }
+            
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                position: relative;
+                z-index: 10;
+                margin-top: 10px;
             }
         }
         
@@ -502,6 +552,28 @@
             
             .nav-header h2 {
                 font-size: 1.2rem;
+            }
+            
+            .copy-notification {
+                width: 85%;
+                max-width: 250px;
+                padding: 12px 15px;
+                font-size: 0.85rem;
+            }
+            
+            .floating-top-btn {
+                right: 10px;
+                bottom: 10px;
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
             }
         }
     </style>
@@ -2091,7 +2163,7 @@ while True:
             },
         ];
         
-        // 生成关卡内容 - 删除每个关卡的返回页首按钮
+        // 生成关卡内容
         const levelContent = document.getElementById('levelContent');
         
         levelCodes.forEach(level => {
