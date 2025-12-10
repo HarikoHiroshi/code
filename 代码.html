@@ -297,7 +297,6 @@
             tab-size: 4;
             white-space: pre-wrap;
             max-height: 500px;
-
             overflow-y: auto;
         }
         
@@ -636,7 +635,7 @@
     enemy = hero.findNearestEnemy()
     Item = hero.findNearestItem()
     if enemy:
-        if enemy.type == &quot;sand-yak&quot; or enemy.type == &quot;burl&quot;:
+        if enemy.type == "sand-yak" or enemy.type == "burl":
             pass
         else:
             hero.attack(enemy)
@@ -692,11 +691,11 @@ hero.moveXY(x, y)`
                 code: `while True:
     enemy = hero.findNearestEnemy()
     if enemy:
-        if hero.isReady(&quot;cleave&quot;):
+        if hero.isReady("cleave"):
             hero.cleave(enemy)
-        elif hero.isReady(&quot;bash&quot;):
+        elif hero.isReady("bash"):
             hero.bash(enemy)
-        Elif hero.isReady(&quot;power-up&quot;):
+        Elif hero.isReady("power-up"):
             hero.powerUp()
         else:
             hero.attack(enemy)
@@ -712,19 +711,19 @@ hero.moveXY(x, y)`
     enemy = hero.findNearestEnemy()
     if enemy:
         if enemy.pos.x < 25:
-            hero.buildXY(&quot;fire-trap&quot;, 25, 34)
+            hero.buildXY("fire-trap", 25, 34)
             hero.moveXY(40, 34)
             pass
         elif enemy.pos.x > 55:
-            hero.buildXY(&quot;fire-trap&quot;, 55, 34)
+            hero.buildXY("fire-trap", 55, 34)
             hero.moveXY(40, 34)
             pass
         elif enemy.pos.y < 20:
-            hero.buildXY(&quot;fire-trap&quot;, 40, 20)
+            hero.buildXY("fire-trap", 40, 20)
             hero.moveXY(40, 34)
             pass
         elif enemy.pos.y > 50:
-            hero.buildXY(&quot;fire-trap&quot;, 40, 50)
+            hero.buildXY("fire-trap", 40, 50)
             hero.moveXY(40, 34)
             pass
     hero.moveXY(40, 34)`
@@ -769,11 +768,11 @@ while True:
     else:
         enemy = hero.findNearestEnemy()
         if enemy:
-            if (hero.isReady(&quot;cleave&quot;)):
+            if (hero.isReady("cleave")):
                 hero.cleave(enemy)
-            elif (hero.isReady(&quot;bash&quot;)):
+            elif (hero.isReady("bash")):
                 hero.bash(enemy)
-            elif (hero.isReady(&quot;power-up&quot;)):
+            elif (hero.isReady("power-up")):
                 hero.powerUp()
             else:
                 hero.attack(enemy)`
@@ -787,11 +786,11 @@ while True:
         if enemy:
             if hero.health < hero.maxHealth / 4:
                 hero.moveXY(21, 52)
-            elif hero.isReady(&quot;cleave&quot;):
+            elif hero.isReady("cleave"):
                 hero.cleave(enemy)
-            elif hero.isReady(&quot;bash&quot;):
+            elif hero.isReady("bash"):
                 hero.bash(enemy)
-            elif hero.isReady(&quot;power-up&quot;):
+            elif hero.isReady("power-up"):
                 hero.powerUp()
             else:
                 hero.attack(enemy)
@@ -817,7 +816,7 @@ while True:
                 name: "诅咒谷",
                 code: `while (True):
     enemy = hero.findNearestEnemy()
-    if enemy and enemy.team == &quot;ogres&quot; and enemy.type == &quot;skeleton&quot;:
+    if enemy and enemy.team == "ogres" and enemy.type == "skeleton":
         hero.attack(enemy)
     item = hero.findNearestItem()
     if hero.health < hero.maxHealth / 7 and item and item.type == 'potion':
@@ -831,7 +830,7 @@ while True:
     healingThreshold = hero.maxHealth / 2
     if hero.health < healingThreshold:
         hero.moveXY(hero.pos.x - 10, hero.pos.y)
-        hero.say(&quot;Can I get a heal?&quot;)
+        hero.say("Can I get a heal?")
         pass
     elif coin:
         hero.moveXY(coin.pos.x, coin.pos.y)`
@@ -889,12 +888,12 @@ while routeIndex < len(route):
 def buildRightOf(something):
     x = something.pos.x + 20
     y = something.pos.y
-    hero.buildXY(&quot;fence&quot;, x, y)
+    hero.buildXY("fence", x, y)
 
 def buildLeftOf(something):
     x = something.pos.x - 20
     y = something.pos.y
-    hero.buildXY(&quot;fence&quot;, x, y)
+    hero.buildXY("fence", x, y)
 
 while True:
     ogre = hero.findNearestEnemy()
@@ -911,7 +910,7 @@ while True:
                 code: `hero.moveXY(54, 18)
 hero.moveXY(12, 38)
 hero.moveXY(19, 54)
-hero.buildXY(&quot;fence&quot;, 38, 54)`
+hero.buildXY("fence", 38, 54)`
             },
             {
                 id: 19,
@@ -924,13 +923,13 @@ hero.buildXY(&quot;fence&quot;, 38, 54)`
         isUnder = hero.pos.y > enemy.pos.y
         isRight = hero.pos.x < enemy.pos.x
         if isLeft and isAbove:
-            hero.buildXY(&quot;fire-trap&quot;, 40 - 20, 34 + 17)
+            hero.buildXY("fire-trap", 40 - 20, 34 + 17)
         elif isRight and isAbove:
-            hero.buildXY(&quot;fire-trap&quot;, 40 + 20, 34 + 17)
+            hero.buildXY("fire-trap", 40 + 20, 34 + 17)
         elif isLeft and isUnder:
-            hero.buildXY(&quot;fire-trap&quot;, 40 - 20, 34 - 17)
+            hero.buildXY("fire-trap", 40 - 20, 34 - 17)
         elif isRight and isUnder:
-            hero.buildXY(&quot;fire-trap&quot;, 40 + 20, 34 - 17)
+            hero.buildXY("fire-trap", 40 + 20, 34 - 17)
         hero.moveXY(40, 34)
     else:
         hero.moveXY(40, 34)`
@@ -939,9 +938,9 @@ hero.buildXY(&quot;fence&quot;, 38, 54)`
                 id: 20,
                 name: "sarven哨兵",
                 code: `while True:
-    flagGreen = hero.findFlag(&quot;green&quot;)
-    flagBlack = hero.findFlag(&quot;black&quot;)
-    flagViolet = hero.findFlag(&quot;violet&quot;)
+    flagGreen = hero.findFlag("green")
+    flagBlack = hero.findFlag("black")
+    flagViolet = hero.findFlag("violet")
     if flagGreen:
         hero.buildXY('fence', flagGreen.pos.x, flagGreen.pos.y)
         hero.pickUpFlag(flagGreen)
@@ -1003,7 +1002,7 @@ while True:
         break
         pass
     
-hero.say(&quot;完成诱饵建造！&quot;)
+hero.say("完成诱饵建造！")
 hero.moveXY(14, 36)
 hero.say(decoysBuilt)`
             },
@@ -1018,7 +1017,7 @@ hero.say(decoysBuilt)`
         continue
     
     if not item:
-        hero.say(&quot;给我点喝的！&quot;)
+        hero.say("给我点喝的！")
         continue
     if item.type=='poison':
         continue
@@ -1030,11 +1029,11 @@ hero.say(decoysBuilt)`
                 name: "沙漠蘑菇",
                 code: `def onSpawn(event):
     while True:
-        potion = pet.findNearestByType(&quot;potion&quot;)
+        potion = pet.findNearestByType("potion")
         if potion:
             pet.fetch(potion)
 
-pet.on(&quot;spawn&quot;, onSpawn)
+pet.on("spawn", onSpawn)
 
 while True:
     someItem = hero.findNearestItem()
@@ -1052,7 +1051,7 @@ while defeatedOgres < 6:
         hero.attack(enemy)
         defeatedOgres += 1
     else:
-        hero.say(&quot;Ogres!&quot;)
+        hero.say("Ogres!")
 hero.moveXY(49, 36)
 while hero.gold < 30:
     item = hero.findNearestItem()
@@ -1068,7 +1067,7 @@ while ordersGiven < 5:
     x = hero.pos.x
     y = hero.pos.y - 10
     hero.moveXY(x, y)
-    hero.say(&quot;Attack!&quot;)
+    hero.say("Attack!")
     ordersGiven += 1;
     if (ordersGiven >= 5):
         break;
@@ -1143,7 +1142,7 @@ while True:
             {
                 id: 31,
                 name: "沙漠三角洲",
-                code: `enemyNames = [&quot;Kog&quot;, &quot;Godel&quot;, &quot;Vorobun&quot;, &quot;Rexxar&quot;]
+                code: `enemyNames = ["Kog", "Godel", "Vorobun", "Rexxar"]
 hero.attack(enemyNames[0])
 hero.attack(enemyNames[1])
 hero.attack(enemyNames[2])
@@ -1166,8 +1165,8 @@ hero.buildXY('fence', 29, 30)`
                 name: "团队合作",
                 code: `items = hero.findItems()
 gem0 = items[0]
-hero.say(&quot;Bruno &quot; + gem0)
-hero.say(&quot;Matilda &quot; + items[1])
+hero.say("Bruno " + gem0)
+hero.say("Matilda " + items[1])
 gem2 = items[2]
 hero.moveXY(gem2.pos.x, gem2.pos.y)`
             },
@@ -1209,7 +1208,7 @@ while enemyIndex < len(enemies):
     enemyIndex = 0
     while enemyIndex < len(enemies):
         enemy = enemies[enemyIndex]
-        if enemy.type != &quot;sand-yak&quot; and enemy.health > 0:
+        if enemy.type != "sand-yak" and enemy.health > 0:
             hero.attack(enemy)
         enemyIndex += 1`
             },
@@ -1245,11 +1244,11 @@ while enemyIndex < len(enemies):
             farthest = target
     if farthest:
         while farthest.health > 0:
-            if (hero.isReady(&quot;cleave&quot;)):
+            if (hero.isReady("cleave")):
                 hero.cleave(farthest)
-            elif (hero.isReady(&quot;bash&quot;)):
+            elif (hero.isReady("bash")):
                 hero.bash(farthest)
-            elif (hero.isReady(&quot;power-up&quot;)):
+            elif (hero.isReady("power-up")):
                 hero.powerUp()
             else:
                 hero.attack(farthest)`
@@ -1363,13 +1362,13 @@ while True:
     return summ
 cannon = hero.findNearest(hero.findFriends())
 enemies = cannon.findEnemies()
-hero.say(&quot;cnm&quot; + healthSum(enemies) + &quot; lgb.&quot;)`
+hero.say("cnm" + healthSum(enemies) + " lgb.")`
             },
             {
                 id: 44,
                 name: "许愿井",
-                code: `less = &quot;Nimis&quot;
-more = &quot;Non satis&quot;
+                code: `less = "Nimis"
+more = "Non satis"
 requiredGold = 104
 def sumCoinValues(coins):
     i = 0
@@ -1406,11 +1405,11 @@ while arrayIndex < len(array):
     if (enemy and hero.distanceTo(enemy) < 50):
         if (hero.isReady('jump') and hero.distanceTo(enemy) > 10):
             hero.jumpTo(enemy.pos)
-        elif (hero.isReady(&quot;cleave&quot;)):
+        elif (hero.isReady("cleave")):
             hero.cleave(enemy)
-        elif (hero.isReady(&quot;bash&quot;)):
+        elif (hero.isReady("bash")):
             hero.bash(enemy)
-        elif (hero.isReady(&quot;power-up&quot;)):
+        elif (hero.isReady("power-up")):
             hero.powerUp()
             hero.attack(enemy)
         else:
@@ -1441,7 +1440,7 @@ while arrayIndex < len(array):
     
     
     pass
-pet.on(&quot;spawn&quot;, onSpawn)
+pet.on("spawn", onSpawn)
 while True:
     enemy = hero.findNearestEnemy()
     if enemy:
@@ -1457,10 +1456,10 @@ hero.moveXY(50, 34)`
                 name: "追逐他们",
                 code: `def onSpawn(e):
     while True:
-        enemy = pet.findNearestByType(&quot;munchkin&quot;)
-        if enemy and pet.isReady(&quot;chase&quot;):
+        enemy = pet.findNearestByType("munchkin")
+        if enemy and pet.isReady("chase"):
             pet.chase(enemy)
-        potion = pet.findNearestByType(&quot;potion&quot;)
+        potion = pet.findNearestByType("potion")
         if potion:
             pet.fetch(potion)
 pet.on('spawn', onSpawn)`
@@ -1483,7 +1482,7 @@ hero.moveXY(38, 58)`
     flag = hero.findFlag()
     item = hero.findNearestItem()
     if flag:
-        hero.buildXY(&quot;decoy&quot;, flag.pos.x, flag.pos.y)
+        hero.buildXY("decoy", flag.pos.x, flag.pos.y)
         hero.pickUpFlag(flag)
     elif item:
         hero.move(item.pos)`
@@ -1497,11 +1496,11 @@ hero.moveXY(38, 58)`
         hero.move(item.pos)
 
 collectUntil(25)
-hero.buildXY(&quot;decoy&quot;, 40, 52)
+hero.buildXY("decoy", 40, 52)
 hero.moveXY(20, 52)
 collectUntil(50)
-hero.buildXY(&quot;decoy&quot;, 68, 22)
-hero.buildXY(&quot;decoy&quot;, 30, 20)`
+hero.buildXY("decoy", 68, 22)
+hero.buildXY("decoy", 30, 20)`
             },
             {
                 id: 51,
@@ -1541,12 +1540,12 @@ hero.say(defeated)`
                 id: 52,
                 name: "蘑菇之声",
                 code: `def onSpawn (event):
-    potion = pet.findNearestByType(&quot;potion&quot;)
+    potion = pet.findNearestByType("potion")
     pet.fetch(potion)
-    goldKey = pet.findNearestByType(&quot;gold-key&quot;)
+    goldKey = pet.findNearestByType("gold-key")
     pet.fetch(goldKey)
-skeleton = pet.findNearestByType(&quot;skeleton&quot;)
-pet.on(&quot;spawn&quot;, onSpawn)
+skeleton = pet.findNearestByType("skeleton")
+pet.on("spawn", onSpawn)
 while True:
     if skeleton.health > 0:
         hero.attack(skeleton)
@@ -1592,23 +1591,23 @@ while True:
                 id: 56,
                 name: "钥匙陷阱",
                 code: `def onSpawn(event):
-    potion = pet.findNearestByType(&quot;bronze-key&quot;)
+    potion = pet.findNearestByType("bronze-key")
     if potion:
         pet.fetch(potion)
-    potion = pet.findNearestByType(&quot;silver-key&quot;)
+    potion = pet.findNearestByType("silver-key")
     if potion:
         pet.fetch(potion)
-    potion = pet.findNearestByType(&quot;gold-key&quot;)
+    potion = pet.findNearestByType("gold-key")
     if potion:
         pet.fetch(potion)
     
-pet.on(&quot;spawn&quot;, onSpawn)
+pet.on("spawn", onSpawn)
 while True:
     enemy = hero.findNearestEnemy()
-    if enemy and enemy.team == &quot;ogres&quot;:
+    if enemy and enemy.team == "ogres":
         hero.attack(enemy)
     if hero.health < 300:
-        potion = pet.findNearestByType(&quot;potion&quot;)
+        potion = pet.findNearestByType("potion")
         if potion:
             hero.moveXY(potion.pos.x, potion.pos.y)`
             },
@@ -1693,18 +1692,18 @@ if number2 > number1:
     number1 = number2
     number2 = swap
 def bruteforceGCD (a, b):
-    hero.say(&quot;The naive algorithm.&quot;)
+    hero.say("The naive algorithm.")
     cycles = 0
     counter = b
     while True:
         cycles += 1
         if cycles > 100:
-            hero.say(&quot;Calculating is hard. I'm tired.&quot;)
+            hero.say("Calculating is hard. I'm tired.")
             break
         if a % counter == 0 and b % counter == 0:
             break
         counter -= 1
-    hero.say(&quot;I used &quot; + cycles + &quot; cycles&quot;)
+    hero.say("I used " + cycles + " cycles")
     return counter
 def euclidianGCD (a, b):
     cycles = 0
@@ -1713,7 +1712,7 @@ def euclidianGCD (a, b):
         swap = b
         b = a % b
         a = swap
-    hero.say(&quot;I used &quot; + cycles + &quot; cycles&quot;)
+    hero.say("I used " + cycles + " cycles")
     return a
 secretNumber = euclidianGCD(number1, number2)
 hero.moveXY(48, 34)
@@ -1724,10 +1723,10 @@ hero.moveXY(68, 34)`
                 id: 62,
                 name: "安全毯",
                 code: `names = [
-    &quot;Thabt&quot;, &quot;Victor&quot;,
-    &quot;Leerer&quot;, &quot;Alianor&quot;,
-    &quot;Gorylo&quot;, &quot;Millicent&quot;,
-    &quot;Weeb&quot;, &quot;Brom&quot;,
+    "Thabt", "Victor",
+    "Leerer", "Alianor",
+    "Gorylo", "Millicent",
+    "Weeb", "Brom",
 ]
 hero.attack(names[0])
 hero.attack(names[4])
@@ -1753,7 +1752,7 @@ while True:
         hero.say(neutrals[0].id)
         pass
     else:
-        hero.say(&quot;Nobody here&quot;)
+        hero.say("Nobody here")
     neutrals = hero.findEnemies()`
             },
             {
@@ -1807,7 +1806,7 @@ while enemyIndex < len(enemies):
                 code: `while True:
     enemy = hero.findNearestEnemy()
     if enemy:
-        if hero.isReady(&quot;bash&quot;):
+        if hero.isReady("bash"):
             hero.bash(enemy)
         else:
             hero.moveXY(40, 34)
@@ -1825,18 +1824,18 @@ while enemyIndex < len(enemies):
                 name: "宠物翻译家",
                 code: `def onHear(event):
     message = event.message
-    if message == &quot;North&quot;:
-        pet.say(&quot;Htron&quot;)
-    if message == &quot;South&quot;:
-        pet.say(&quot;Htuos&quot;)
+    if message == "North":
+        pet.say("Htron")
+    if message == "South":
+        pet.say("Htuos")
         pass
-    if message==&quot;East&quot;:
-        pet.say(&quot;Tsae&quot;)
+    if message=="East":
+        pet.say("Tsae")
         
-pet.on(&quot;hear&quot;, onHear)
+pet.on("hear", onHear)
 while True:
     enemy = hero.findNearestEnemy()
-    if enemy and enemy.type != &quot;brawler&quot;:
+    if enemy and enemy.type != "brawler":
         hero.attack(enemy)`
             },
             {
@@ -1844,12 +1843,12 @@ while True:
                 name: "命运链",
                 code: `def onHear(event):
     if event.speaker == hero:
-        pet.say(&quot;WOOF&quot;)
-pet.on(&quot;hear&quot;, onHear)
+        pet.say("WOOF")
+pet.on("hear", onHear)
 while True:
     enemy = hero.findNearestEnemy()
     if enemy:
-        hero.say(&quot;操你冯&quot;)
+        hero.say("操你冯")
         hero.moveXY(30,33)
         hero.moveXY(30,22)`
             },
@@ -1913,23 +1912,23 @@ while True:
     friendIndex = 0
     friends = hero.findFriends()
     for friend in friends:
-        if leastHealth > friend.health and friend.type != &quot;archer&quot;:
+        if leastHealth > friend.health and friend.type != "archer":
             weakestFriend = friend
             leastHealth = friend.health
     if weakestFriend:
-        hero.say(&quot;Hey &quot; + weakestFriend.id + &quot;, go home!&quot;)`
+        hero.say("Hey " + weakestFriend.id + ", go home!")`
             },
             {
                 id: 75,
                 name: "宠物工程师",
                 code: `def hearGuards(event):
-    archer = pet.findNearestByType(&quot;archer&quot;)
-    soldier = pet.findNearestByType(&quot;soldier&quot;)
+    archer = pet.findNearestByType("archer")
+    soldier = pet.findNearestByType("soldier")
     if event.speaker == archer:
         pet.moveXY(32, 30)
     if event.speaker == soldier:
         pet.moveXY(48, 30)
-pet.on(&quot;hear&quot;, hearGuards)
+pet.on("hear", hearGuards)
 while True:
     enemy = hero.findNearestEnemy()
     if enemy:
@@ -1939,63 +1938,63 @@ while True:
                 id: 76,
                 name: "危险钥匙",
                 code: `def onHear(event):
-    paladin = pet.findNearestByType(&quot;paladin&quot;)
-    goldKey = pet.findNearestByType(&quot;gold-key&quot;)
-    silverKey = pet.findNearestByType(&quot;silver-key&quot;)
-    bronzeKey = pet.findNearestByType(&quot;bronze-key&quot;)
+    paladin = pet.findNearestByType("paladin")
+    goldKey = pet.findNearestByType("gold-key")
+    silverKey = pet.findNearestByType("silver-key")
+    bronzeKey = pet.findNearestByType("bronze-key")
     if event.speaker == paladin:
-        if event.message == &quot;Gold&quot;:
+        if event.message == "Gold":
             pet.fetch(goldKey)
-        if event.message == &quot;Silver&quot;:
+        if event.message == "Silver":
             pet.fetch(silverKey)
-        if event.message == &quot;Bronze&quot;:
+        if event.message == "Bronze":
             pet.fetch(bronzeKey)
-pet.on(&quot;hear&quot;, onHear)`
+pet.on("hear", onHear)`
             },
             {
                 id: 77,
                 name: "奥林匹克比赛",
                 code: `def waitAndRun(event):
-    referee = pet.findNearestByType(&quot;wizard&quot;)
-    if event.speaker==referee and event.message == &quot;Start&quot;:
+    referee = pet.findNearestByType("wizard")
+    if event.speaker==referee and event.message == "Start":
         pet.moveXY(54, 27)
         pet.moveXY(6, 28)
-pet.on(&quot;hear&quot;, waitAndRun)`
+pet.on("hear", waitAndRun)`
             },
             {
                 id: 78,
                 name: "宠物副官",
                 code: `def deliverCommand(event):
-    if event.message == &quot;Fire&quot;:
+    if event.message == "Fire":
         pet.moveXY(64, 16)
-        pet.say(&quot;say&quot;)
+        pet.say("say")
         pass
-    elif event.message == &quot;Heal&quot;:
+    elif event.message == "Heal":
         pet.moveXY(64, 52)
-        pet.say(&quot;say&quot;)
+        pet.say("say")
         pass
-pet.on(&quot;hear&quot;, deliverCommand)
+pet.on("hear", deliverCommand)
 while True:
     enemy = hero.findNearestEnemy()
     if enemy:
-        if enemy.type == &quot;brawler&quot;:
-            hero.say(&quot;Fire&quot;)
+        if enemy.type == "brawler":
+            hero.say("Fire")
         else:
             hero.attack(enemy)
     else:
         if hero.health < hero.maxHealth / 2:
-            hero.say(&quot;Heal&quot;)`
+            hero.say("Heal")`
             },
             {
                 id: 79,
                 name: "炼金术",
                 code: `def waitFetch(event):
-    potion = pet.findNearestByType(&quot;potion&quot;)
-    if event.message == &quot;Fetch&quot;:
+    potion = pet.findNearestByType("potion")
+    if event.message == "Fetch":
         pet.fetch(potion)
     else:
         pet.moveXY(54, 34)
-pet.on(&quot;hear&quot;, waitFetch)
+pet.on("hear", waitFetch)
 while True:
     enemy = hero.findNearestEnemy()
     if enemy:
@@ -2010,16 +2009,16 @@ while True:
     enemy = pet.findNearestEnemy()
     if not enemy:
         continue
-    if enemy.type == &quot;scout&quot;:
+    if enemy.type == "scout":
         distance = pet.distanceTo(enemy)
-        if pet.isReady(&quot;cold-blast&quot;) and  distance < 5:
+        if pet.isReady("cold-blast") and  distance < 5:
             pet.coldBlast()
     else:
         if enemy.pos.x<pet.pos.x:
-            # Say  &quot;left&quot;.
-            pet.say(&quot;left&quot;)
+            # Say  "left".
+            pet.say("left")
         else:
-            pet.say(&quot;right&quot;)
+            pet.say("right")
         pass`
             },
             {
@@ -2027,10 +2026,10 @@ while True:
                 name: "神圣树林",
                 code: `def onSpawn():
     while True:
-        scout = pet.findNearestByType(&quot;scout&quot;)
-        if scout and pet.isReady(&quot;charm&quot;):
+        scout = pet.findNearestByType("scout")
+        if scout and pet.isReady("charm"):
             pet.charm(scout)
-pet.on(&quot;spawn&quot;, onSpawn)
+pet.on("spawn", onSpawn)
 while True:
     enemy = hero.findNearestEnemy()
     if enemy and enemy.pos.x<20: 
@@ -2055,14 +2054,14 @@ hero.moveXY(63, 62)`
     remainingPeasants = 3
     while remainingPeasants > 0:
         pet.moveXY(40, 55)
-        peasant = pet.findNearestByType(&quot;peasant&quot;)
+        peasant = pet.findNearestByType("peasant")
         if peasant:
             pet.carryUnit(peasant, 40, 34)
             remainingPeasants -= 1
-    enemy = pet.findNearestByType(&quot;munchkin&quot;)
+    enemy = pet.findNearestByType("munchkin")
     if enemy:
         pet.carryUnit(enemy, 40, 19)
-pet.on(&quot;spawn&quot;, onSpawn)
+pet.on("spawn", onSpawn)
 while True:
     enemy = None
     enemies = hero.findEnemies()
@@ -2088,7 +2087,7 @@ while True:
     friends = hero.findFriends()
     enemies = hero.findEnemies()
     if Calc(friends, enemies):
-        hero.say(&quot;Attack&quot;)`
+        hero.say("Attack")`
             },
             {
                 id: 85,
@@ -2106,11 +2105,11 @@ while True:
     dist = 999
     while(index<len(enemys)):
         distance = self.distanceTo(enemys[index])
-        if(enemys[index].health>0 and enemys[index].type != &quot;sand-yak&quot; ):
-            if(enemys[index].type == &quot;archer&quot; and distance<archer_dist):
+        if(enemys[index].health>0 and enemys[index].type != "sand-yak" ):
+            if(enemys[index].type == "archer" and distance<archer_dist):
                 archer_dist=distance
                 closest_archer = enemys[index]
-            if(enemys[index].type == &quot;soldier&quot; and distance<soldier_dist):
+            if(enemys[index].type == "soldier" and distance<soldier_dist):
                 soldier_dist=distance
                 closest_soldier = enemys[index]
             if(distance<dist):
@@ -2130,14 +2129,14 @@ while True:
         elif(self.health<self.maxHealth/5 and back==1):
             self.moveXY(40, 85)
             back = 2
-        elif(self.isReady(&quot;jump&quot;) and self.distanceTo>15):
+        elif(self.isReady("jump") and self.distanceTo>15):
             self.jumpTo(enemy.pos)
-        elif(self.isReady(&quot;bash&quot;)):
+        elif(self.isReady("bash")):
             self.bash(enemy)
-        elif(self.isReady(&quot;power-up&quot;)):
+        elif(self.isReady("power-up")):
             self.powerUp()
             self.attack(enemy)
-        elif(self.isReady(&quot;cleave&quot;)):
+        elif(self.isReady("cleave")):
             self.cleave(enemy)
         else:
             self.attack(enemy)`
@@ -2176,12 +2175,16 @@ while True:
                     <h3>${level.id}. ${level.name}</h3>
                 </div>
                 <div class="code-container">
-                    <pre><code>${escapeHtml(level.code)}</code></pre>
+                    <pre><code></code></pre>
                     <button class="copy-btn" data-code="${escapeHtml(level.code)}">
                         <i class="far fa-copy"></i> 复制代码
                     </button>
                 </div>
             `;
+            
+            // 使用 textContent 设置代码内容，这样会正确显示双引号
+            const codeElement = section.querySelector('code');
+            codeElement.textContent = level.code;
             
             levelContent.appendChild(section);
         });
