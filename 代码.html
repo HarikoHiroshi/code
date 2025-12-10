@@ -2170,20 +2170,21 @@ while True:
             section.className = 'level-section';
             section.id = `level-${level.id}`;
             
-            section.innerHTML = `
-                <div class="level-header">
-                    <h3>${level.id}. ${level.name}</h3>
-                </div>
-                <div class="code-container">
-                    <pre><code></code></pre>
-                    <button class="copy-btn" data-code="${escapeHtml(level.code)}">
-                        <i class="far fa-copy"></i> 复制代码
-                    </button>
-                </div>
-            `;
+            // 使用innerText来安全地显示代码，避免HTML解析问题
+            const codeHtml = `<div class="level-header">
+                <h3>${level.id}. ${level.name}</h3>
+            </div>
+            <div class="code-container">
+                <pre><code id="code-${level.id}"></code></pre>
+                <button class="copy-btn" data-code-id="${level.id}">
+                    <i class="far fa-copy"></i> 复制代码
+                </button>
+            </div>`;
             
-            // 使用 textContent 设置代码内容，这样会正确显示双引号
-            const codeElement = section.querySelector('code');
+            section.innerHTML = codeHtml;
+            
+            // 使用textContent设置代码内容，这样能正确显示特殊字符
+            const codeElement = section.querySelector(`#code-${level.id}`);
             codeElement.textContent = level.code;
             
             levelContent.appendChild(section);
@@ -2337,8 +2338,11 @@ while True:
         // 添加复制功能
         document.querySelectorAll('.copy-btn').forEach(button => {
             button.addEventListener('click', function() {
-                const code = this.getAttribute('data-code');
-                copyToClipboard(decodeHtmlEntities(code));
+                const codeId = this.getAttribute('data-code-id');
+                const codeElement = document.getElementById(`code-${codeId}`);
+                if (codeElement) {
+                    copyToClipboard(codeElement.textContent);
+                }
             });
         });
         
@@ -2363,20 +2367,6 @@ while True:
             setTimeout(() => {
                 copyNotification.classList.remove('show');
             }, 3000);
-        }
-        
-        // 辅助函数：转义HTML特殊字符
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // 辅助函数：解码HTML实体
-        function decodeHtmlEntities(text) {
-            const textarea = document.createElement('textarea');
-            textarea.innerHTML = text;
-            return textarea.value;
         }
         
         // 检查URL中的锚点，滚动到对应位置
