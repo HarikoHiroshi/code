@@ -2594,6 +2594,24 @@ while True:
     else:
         enemy = hero.findNearestEnemy()
         attack(enemy)`
+			},
+			{
+				id: 97,
+				name: "金色幻影",
+				code:`def Coin(coins):
+    for coin1 in coins:
+        count = 0
+        for coin2 in coins:
+            if coin1.value == coin2.value:
+                count = count + 1
+        if count == 1:
+            return coin1
+while True:
+    coins = hero.findItems()
+    if coins and len(coins):
+        coin = Coin(coins)
+        hero.say(coin.value);
+        hero.moveXY(coin.pos.x, coin.pos.y);`
 			}
         ];
         
