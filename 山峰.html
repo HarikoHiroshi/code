@@ -888,7 +888,7 @@ while hero.pos.x > 16:
 hero.buildXY('fence', 20, 38)`
             },
             {
-                id: 8,
+                id: 7,
                 name: "安息之云指挥官",
 				code: `while hero.gold > hero.costOf("soldier"):
     hero.summon("soldier")
@@ -902,7 +902,7 @@ while soldierIndex<len(soldiers):
 hero.moveXY(50,40)`
             },
             {
-                id: 9,
+                id: 8,
                 name: "佣兵山",
                 code: `while True:
     item = hero.findNearestItem()
@@ -920,7 +920,7 @@ hero.moveXY(50,40)`
             soldierIndex += 1`
             },
             {
-                id: 10,
+                id: 9,
                 name: "木材守卫",
                 code: `while True:
     item = hero.findNearestItem()
@@ -945,7 +945,7 @@ hero.moveXY(50,40)`
                 down = True`
             },
             {
-                id: 11,
+                id: 10,
                 name: "木材的叛徒",
                 code: `while True:
     item = hero.findNearestItem()
@@ -962,7 +962,7 @@ hero.moveXY(50,40)`
                 hero.command(friend, "move", {'x': 85, 'y': 46})`
             },
             {
-                id: 12,
+                id: 11,
                 name: "士兵的痛苦之源",
                 code: `def commandSoldier(soldier, index):
     target = hero.findNearestEnemy()
@@ -976,7 +976,7 @@ while True:
         commandSoldier(friend, index)`
             },
             {
-                id: 13,
+                id: 12,
                 name: "动物园管理员",
                 code: `points = []
 points[0] = {"x": 33, "y": 42}
@@ -1004,7 +1004,7 @@ while True:
             hero.command(friend, 'move', point)`
             },
             {
-                id: 14,
+                id: 13,
                 name: "壮烈牺牲",
                 code: `while hero.gold < 80:
     item = hero.findNearestItem()
@@ -1028,7 +1028,7 @@ for j in range(len(friends)):
     hero.command(friend, 'move', point)`
             },
             {
-                id: 15,
+                id: 14,
                 name: "混战",
                 multiCode: true, // 标记为多代码块关卡
                 codes: [
@@ -1054,12 +1054,12 @@ for j in range(len(friends)):
                     },
                     {
                         title: "第二关",
-                        code: `还没做`
+                        code: `和上面一样`
                     }
                 ]
             },
             {
-                id: 16,
+                id: 15,
                 name: "宝藏洞穴",
                 code: `hero.buildXY('fire-trap', 64, 44)
 hero.moveXY(73, 15)
@@ -1075,7 +1075,7 @@ while item:
 hero.moveXY(73, 15)`
             },
             {
-                id: 17,
+                id: 16,
                 name: "借刀",
                 code: `def commandTroops():
     for index, friend in enumerate(hero.findFriends()):
@@ -1097,7 +1097,7 @@ while True:
     commandTroops()`
             },
             {
-                id: 18,
+                id: 17,
                 name: "戒指运送人",
                 code: `def findSoldierOffset(soldiers, i):
     soldier = soldiers[i]
@@ -1119,7 +1119,7 @@ while True:
     hero.move({"x": hero.pos.x + 0.2, "y": hero.pos.y})`
             },
             {
-                id: 19,
+                id: 18,
                 name: "躁动的死亡",
                 code: `while True:
     flag = hero.findFlag("green")
@@ -1146,7 +1146,7 @@ while True:
             hero.command(friend,"move",{'x':hero.pos.x-7,'y':hero.pos.y-7})`
             },
             {
-                id: 20,
+                id: 19,
                 name: "狩猎派对",
                 code: `index = 0
 while True:
@@ -1196,7 +1196,7 @@ while True:
             hero.command(friend, 'move', pos)`
             },
             {
-                id: 21,
+                id: 20,
                 name: "关键力量",
                 code: `def onSpawn():
     while True:
@@ -1235,7 +1235,7 @@ while True:
     skillAndAttack()`
             },
             {
-                id: 22,
+                id: 21,
                 name: "双生花",
                 code: `def summonSoldiers():
     if hero.gold >= hero.costOf("soldier"):
@@ -1257,7 +1257,7 @@ while True:
     pickUpNearestCoin()`
             },
             {
-                id: 23,
+                id: 22,
                 name: "花的几何学",
                 code: `def drawCircle(x, y, size):
     angle = 0
@@ -1309,7 +1309,7 @@ while angle <= Math.PI * 2:
     angle += 0.2`
             },
             {
-                id: 24,
+                id: 23,
                 name: "康乃馨的力量",
                 code: `twoPi = 2 * Math.PI
 def degreesToRadians(degrees):
@@ -1397,7 +1397,7 @@ drawSpiral(whiteX2, 15, 1, 3 * Math.PI / 2)
 drawSpiral(whiteX2, 15, -1, 3 * Math.PI / 2)`
             },
             {
-                id: 25,
+                id: 24,
                 name: "山花林",
                 code: `def yuan(center,size,loops):
     angle=0
@@ -1413,7 +1413,7 @@ center={'x':85,'y':70}
 yuan(center,35,4)`
             },
             {
-                id: 26,
+                id: 25,
                 name: "雾岛矿",
                 code: `def findBestItem(friend, excludedItems):
     items = friend.findItems()
@@ -1441,7 +1441,7 @@ while True:
             hero.command(peasant, 'move', item.pos)`
             },
             {
-                id: 27,
+                id: 26,
                 name: "猎手和猎物",
                 code: `def pickUpCoin():
     items = hero.findItems()
@@ -1472,7 +1472,7 @@ while True:
             commandArcher(friend)`
             },
             {
-                id: 28,
+                id: 27,
                 name: "讨厌的牦牛",
                 code: `def removeByType(enemies, excludedType):
     tempList = []
@@ -1489,7 +1489,7 @@ while True:
         hero.attack(enemy)`
             },
             {
-                id: 29,
+                id: 28,
                 name: "图书馆谋士",
                 code: `def commandSoldier(soldier, soldierIndex, numSoldiers):
     angle = Math.PI * 2 * soldierIndex / numSoldiers
@@ -1529,7 +1529,7 @@ while True:
         commandArcher(archer)`
             },
             {
-                id: 30,
+                id: 29,
                 name: "不安的休战",
                 code: `def findSouthernUnits(units):
     southernUnits = []
@@ -1545,7 +1545,7 @@ while True:
         hero.summon("soldier")`
             },
             {
-                id: 31,
+                id: 30,
                 name: "分诊",
                 code: `doctor = hero.findByType("paladin")[0]
 mage = hero.findByType("pixie")[0]
@@ -1566,7 +1566,7 @@ doctor["patients"] = doctorPatients
 helper["patients"] = helperPatients`
             },
             {
-                id: 32,
+                id: 31,
                 name: "我们中间的间谍",
                 code: `def numberInArray(array, number):
     for i in range(len(array)):
@@ -1590,7 +1590,7 @@ for j in range(len(friends)):
         hero.say(friendName + " is a friend.")`
             },
             {
-                id: 33,
+                id: 32,
                 name: "以我的名义",
                 code: `def letterIndex(word, letter):
     for index in range(0, len(word), 1):
@@ -1603,7 +1603,7 @@ chestIndex = letterIndex(shaman.id, "z")
 hero.moveXY(16 + chestIndex * 8, 36)`
             },
             {
-                id: 34,
+                id: 33,
                 name: "战争回响",
                 code: `def isLetterInWord(word, letter):
     for index in range(len(word)):
@@ -1620,7 +1620,7 @@ for index in range(len(enemies)):
             hero.attack(enemy)`
             },
             {
-                id: 35,
+                id: 34,
                 name: "冰猎人",
                 code: `def isSubstring(word, substring):
     rightEdge = len(word) - len(substring)
@@ -1640,7 +1640,7 @@ for e  in range(len(enemies)):
             hero.attack(enemy)`
             },
             {
-                id: 36,
+                id: 35,
                 name: "西北",
                 code: `def wordInText(text, word):
     for i in range(len(text) - len(word)):
@@ -1663,7 +1663,7 @@ def onHear(event):
 pet.on("hear", onHear)`
             },
             {
-                id: 37,
+                id: 36,
                 name: "高原者",
                 code: `highlanderName = "mac"
 def wordInString(string, word):
@@ -1681,7 +1681,7 @@ for soldier in soldiers:
 hero.say("attack")`
             },
             {
-                id: 38,
+                id: 37,
                 name: "逃离雪人",
                 code: `def startsWith(phrase, word):
     if len(word) > len(phrase):
@@ -1698,7 +1698,7 @@ for gIndex in range(len(guides)):
             hero.move(guide.pos)`
             },
             {
-                id: 39,
+                id: 38,
                 name: "杂乱的走廊",
                 code: `def onHear(event):
     word = event.message
@@ -1714,7 +1714,7 @@ for gIndex in range(len(guides)):
 pet.on('hear', onHear)`
             },
             {
-                id: 40,
+                id: 39,
                 name: "吵闹 宁静",
                 code: `def onHear(event):
     words = event.message.split(" ")
@@ -1741,7 +1741,7 @@ passDoor()
 passDoor()`
             },
             {
-                id: 41,
+                id: 40,
                 name: "模拟侵略",
                 code: `def startsWith(text, word):
     if len(word) > len(text):
@@ -1762,7 +1762,7 @@ while True:
         hero.moveXY(27, 27)`
             },
             {
-                id: 42,
+                id: 41,
                 name: "资源谷",
                 code: `def commandPeasant(peasant, coins):
     item = peasant.findNearest(coins)
@@ -1792,7 +1792,7 @@ while True:
     commandPeasant(peasants.Cuprum, bronzeCoins)`
             },
             {
-                id: 43,
+                id: 42,
                 name: "播种火苗",
                 code: `def chooseStrategy():
     enemies = hero.findEnemies()
@@ -1846,7 +1846,7 @@ while True:
         commandRetreat()`
             },
             {
-                id: 44,
+                id: 43,
                 name: "FizzBuzz的路",
                 code: `steps = 1
 while True:
@@ -1861,7 +1861,7 @@ while True:
     steps += 1`
             },
             {
-                id: 45,
+                id: 44,
                 name: "钢爪的间隙",
                 code: `defendPoints = [{"x": 35, "y": 63}, {"x": 61, "y": 63}, {"x": 32, "y": 26}, {"x": 64, "y": 26}]
 summonTypes = ["soldier", "soldier", "soldier", "soldier", "archer", "archer", "archer", "archer"]
@@ -1879,7 +1879,7 @@ while True:
     commandTroops()`
             },
             {
-                id: 46,
+                id: 45,
                 name: "联合作战",
                 code: `summonTypes = ['archer', 'archer', 'archer', 'archer', 'archer', 'archer', 'soldier']
 def moveTo(position, fast=True):
@@ -1921,7 +1921,7 @@ while True:
         pickUpNearestItem()`
             },
             {
-                id: 47,
+                id: 46,
                 name: "零和",
                 code: `while True:
     items = hero.findItems()
@@ -1958,7 +1958,7 @@ while True:
             soldierIndex += 1`
             },
             {
-                id: 48,
+                id: 47,
                 name: "收割火焰",
                 code: `def moveTo(position, fast=True):
     if (hero.isReady("jump") and hero.distanceTo > 10 and fast):
@@ -2009,7 +2009,7 @@ while True:
         pickUpCoin()`
             },
             {
-                id: 49,
+                id: 48,
                 name: "三步密码",
                 code: `hero.moveXY(52, 50)
 friend = hero.findNearest(hero.findFriends())
@@ -2030,7 +2030,7 @@ while True:
         hero.attack(enemy)`
             },
             {
-                id: 50,
+                id: 49,
                 name: "方便敌方",
                 code: `for x in range(8, 73, 16):
     hero.moveXY(x, 22)
@@ -2049,7 +2049,7 @@ while True:
         hero.attack(enemy)`
             },
             {
-                id: 51,
+                id: 50,
                 name: "医学院",
                 code: `def startsWith(phrase, word):
     if len(word) > len(phrase):
@@ -2072,7 +2072,7 @@ while True:
         hero.moveXY(nearest.pos.x, nearest.pos.y)`
             },
             {
-                id: 52,
+                id: 51,
                 name: "阅读噪声",
                 code: `while True:
     enemy = hero.findNearestEnemy()
@@ -2083,7 +2083,7 @@ while True:
     pass`
             },
             {
-                id: 53,
+                id: 52,
                 name: "理性防御",
                 code: `def hideUnits(units):
     for i in range(len(units)):
@@ -2110,7 +2110,7 @@ while True:
         hero.attack(enemy)`
             },
             {
-                id: 54,
+                id: 53,
                 name: "提前思考",
                 code: `def findNearestPair(units):
     minDistance = 9001
@@ -2129,7 +2129,7 @@ while True:
         hero.say(pairOfNames[0] + " " + pairOfNames[1])`
             },
             {
-                id: 55,
+                id: 54,
                 name: "无暇的宝石对",
                 code: `def findValuePair(items):
     for i in range(len(items) - 1):
@@ -2147,7 +2147,7 @@ while True:
         hero.moveXY(40, 44)`
             },
             {
-                id: 56,
+                id: 55,
                 name: "驯鹿苏醒",
                 code: `deerStatus = ['asleep', 'asleep', 'asleep', 'asleep', 'asleep']
 friends = hero.findFriends()
@@ -2162,7 +2162,7 @@ for statusIndex in range(len(deerStatus)):
     pass`
             },
             {
-                id: 57,
+                id: 56,
                 name: "孪生力量",
                 code: `def areTwins(unit1, unit2):
     name1 = unit1.id
@@ -2182,7 +2182,7 @@ hero.moveXY(63, 38)
 hero.moveXY(16, 38)`
             },
             {
-                id: 58,
+                id: 57,
                 name: "驯鹿观察者",
                 code: `penPositions = [{'x': 20, 'y': 24}, {'x': 28, 'y': 24}, {'x': 36, 'y': 24}, {'x': 44, 'y': 24}, {'x': 52, 'y': 24}]
 penOccupants = ['empty', 'empty', 'empty', 'empty', 'empty']
@@ -2200,7 +2200,7 @@ for occIndex in range(len(penOccupants)):
     pass`
             },
             {
-                id: 59,
+                id: 58,
                 name: "大炮陆战队",
                 code: `landingMap = hero.findNearest(hero.findFriends()).landingMap
 cell = landingMap[0][0]
@@ -2212,7 +2212,7 @@ hero.say("row 0 column 2 " + landingMap[0][2])
 hero.say("row 1 column 3 " + landingMap[1][3])`
             },
             {
-                id: 60,
+                id: 59,
                 name: "驯鹿招标",
                 code: `penPositions = [{"x": 20, "y": 24}, {"x": 28, "y": 24}, {"x": 36, "y": 24}, {"x": 44, "y": 24}, {"x": 52, "y": 24}]
 assignments = [None, None, None, None, None, ]
@@ -2238,7 +2238,7 @@ for deerIndex in range(len(friends)):
             pass`
             },
             {
-                id: 61,
+                id: 60,
                 name: "力量的源点",
                 code: `spell = "VENI"
 wizard = hero.findNearest(hero.findFriends())
@@ -2261,7 +2261,7 @@ for i in range(len(powerMap)):
                 hero.moveXY(item.pos.x, item.pos.y)`
             },
             {
-                id: 62,
+                id: 61,
                 name: "危险谷",
                 code: `for i in range(len(hero.grid)):
     row = hero.grid[i]
@@ -2272,7 +2272,7 @@ hero.moveXY(20, 42)
 hero.moveXY(29, 66)`
             },
             {
-                id: 63,
+                id: 62,
                 name: "梦游者",
                 code: `hunter = hero.findNearest(hero.findFriends())
 fenceMap = hunter.getMap()
@@ -2286,7 +2286,7 @@ for ri, row in enumerate(fenceMap):
 hero.moveXY(22, 15)`
             },
             {
-                id: 64,
+                id: 63,
                 name: "边缘防御",
                 code: `for x in range(40, 81, 20):
     hero.moveXY(x, 60)
@@ -2303,7 +2303,7 @@ for y in range(40, 61, 20):
 hero.moveXY(50, 40)`
             },
             {
-                id: 65,
+                id: 64,
                 name: "危险的路线",
                 code: `def buildNorthLine():
     for x in range(40, 113, 24):
@@ -2326,7 +2326,7 @@ buildWestLine();
 hero.moveXY(40, 94);`
             },
             {
-                id: 66,
+                id: 65,
                 name: "快速堡垒",
                 code: `foreman = hero.findNearest(hero.findFriends())
 workerNameList = foreman.workerList
@@ -2338,7 +2338,7 @@ for i in range(2, len(workerNameList), 3):
     hero.say(workerNameList[i] + " - fence")`
             },
             {
-                id: 67,
+                id: 66,
                 name: "退寻子组数",
                 code: `def dynamicMaxSum (gems):
     cycles = 0
@@ -2387,7 +2387,7 @@ hero.moveXY(x2, 40)
 hero.moveXY(40,64)`
             },
             {
-                id: 68,
+                id: 67,
                 name: "网格搜索",
                 code: `leftBorder = 20
 rightBorder = 61
@@ -2401,7 +2401,7 @@ for x in range(leftBorder, rightBorder, step):
 hero.moveXY(20, 10)`
             },
             {
-                id: 69,
+                id: 68,
                 name: "拿起武器！",
                 code: `sergeant = hero.findNearest(hero.findFriends())
 stepX = sergeant.tentDistanceX
@@ -2416,7 +2416,7 @@ for y in range(firstY, stepY * tentsInColumn + stepY, stepY):
         hero.say('alarm')`
             },
             {
-                id: 70,
+                id: 69,
                 name: "网格雷区",
                 code: `for x in range(12, 12 + 8 * 6, 8):
     for y in range(12, 12 + 8 * 7, 8):
@@ -2429,7 +2429,7 @@ while True:
         hero.moveXY(x, y)`
             },
             {
-                id: 71,
+                id: 70,
                 name: "雪花莲",
                 code: `forestMap = hero.findNearest(hero.findFriends()).forestMap
 hero.say("Row " + 0 + " Column " + 1 + " Fire!")
@@ -2447,7 +2447,7 @@ for cell in cells:
                 hero.say("Row " + row + " Column " + col + " Fire!")`
             },
             {
-                id: 72,
+                id: 71,
                 name: "劳心劳力",
                 code: `def moveTo(position, fast=True):
     if (hero.isReady("jump") and hero.distanceTo > 10 and fast):
@@ -2486,7 +2486,7 @@ while True:
     attack(hero.findNearestEnemy())`
             },
             {
-                id: 73,
+                id: 72,
                 name: "推进",
                 code: `while True:
     friends = hero.findFriends()
@@ -2506,7 +2506,7 @@ while True:
         pass`
             },
             {
-                id: 74,
+                id: 73,
                 name: "云层围攻",
                 code: `def moveTo(position, fast=True):
     if (hero.isReady("jump") and fast):
@@ -2530,7 +2530,7 @@ while True:
     buildTroops()`
             },
             {
-                id: 75,
+                id: 74,
                 name: "黑暗中的突袭者",
                 code: `arryn = hero.findByType("raider")[0]
 peasant = hero.findByType("peasant")[0]
@@ -2577,7 +2577,7 @@ while True:
         peasantAdvance()`
             },
             {
-                id: 76,
+                id: 75,
                 name: "形状和性状",
                 code: `def toTernary(number):
     string = ""
@@ -2609,7 +2609,7 @@ def findMostDangerous(enemies):
     return mostDangerous`
             },
             {
-                id: 77,
+                id: 76,
                 name: "匹配火线",
                 code: `fieldMap = hero.findFriends()[0].getMap()
 map = []
@@ -2656,7 +2656,7 @@ for j in range(0, len(map[0])):
         find(map, 0, j)`
             },
             {
-                id: 78,
+                id: 77,
                 name: "云层宝藏（选速度快的英雄）",
                 code: `def onSpawn(event):
     while True:
@@ -2716,7 +2716,7 @@ while True:
     heroAttack()`
             },
             {
-                id: 79,
+                id: 78,
                 name: "致命的光盘",
                 code: `targets = []
 targets.append({ "x": hero.pos.x-5, "y": hero.pos.y})
@@ -2730,7 +2730,7 @@ while len(targets) > 0:
         hero.wait(0.01)`
             },
             {
-                id: 80,
+                id: 79,
                 name: "多少钱？",
                 code: `fencePrice = 3
 lawnPrice = 2
@@ -2749,7 +2749,7 @@ hero.say("The total price is " + totalCost)
 foreman.bill(totalCost)`
             },
             {
-                id: 81,
+                id: 80,
                 name: "矩形仪式",
                 code: `def almostEqual(valueA, valueB):
     pass
@@ -2771,7 +2771,7 @@ while True:
         break`
             },
             {
-                id: 82,
+                id: 81,
                 name: "易爆工程",
                 code: `perimeter = 160
 leftBottom = {"x": hero.pos.x, "y": hero.pos.y}
@@ -2786,7 +2786,7 @@ area = width*height
 hero.say(area)`
             },
             {
-                id: 83,
+                id: 82,
                 name: "火山战士",
                 code: `def findMostLeft (units):
     if len(units) == 0:
@@ -2814,7 +2814,7 @@ while True:
     hero.shield()`
             },
             {
-                id: 84,
+                id: 83,
                 name: "方盾",
                 code: `def findByName(name, thangs):
     for i in range(len(thangs)):
@@ -2832,7 +2832,7 @@ hero.command(illumina, 'move', {'x': celadia.pos.x, 'y': celadia.pos.y - sideLen
 hero.command(vaelia, 'move', {'x': dedalia.pos.x, 'y': dedalia.pos.y - sideLength})`
             },
             {
-                id: 85,
+                id: 84,
                 name: "森林公园",
                 code: `gardener = hero.findNearest(hero.findFriends())
 gardenWidth = gardener.gardenWidth
@@ -2846,7 +2846,7 @@ hero.moveXY(x, y-gardenHeight)
 hero.moveXY(x, y)`
             },
             {
-                id: 86,
+                id: 85,
                 name: "矩形形态",
                 code: `step = 8
 sergeant = hero.findNearest(hero.findByType("soldier"))
@@ -2871,7 +2871,7 @@ for x in range(archerX1, archerX2 + 1, 8):
         hero.command(lastUnit, "move", {'x':x, 'y':y })`
             },
 			{
-				id: 87,
+				id: 86,
 				name: "人神",
 				code: `def summonAndSend(type, x, y):
     hero.summon(type)
@@ -2896,7 +2896,7 @@ summonAndSend("archer", rightBottomX, rightBottomY)
 hero.moveXY(68, 58)`
 			},
 			{
-				id: 88,
+				id: 87,
 				name: "栅栏制造者",
 				code: `customer = hero.findNearest(hero.findFriends())
 x1 = customer.leftBottom.x
@@ -2914,7 +2914,7 @@ for y in range(y2 - step,y1 -1, -step):
     hero.buildXY("fence", x1, y);`
 			},
 			{
-				id: 89,
+				id: 88,
 				name: "园丁",
 				code: `def growSquare(cx, cy, side):
     width = side/2
@@ -2933,7 +2933,7 @@ for pos in points:
     growSquare(pos.x, pos.y, squareSize)`
 			},
 			{
-				id: 90,
+				id: 89,
 				name: "笨拙的圆",
 				code: `circleRadius = 20
 def onCircle(unit, radius):
@@ -2950,7 +2950,7 @@ while True:
         pass`
 			},
 			{
-				id: 91,
+				id: 90,
 				name: "安全点",
 				code: `def almostEqual(n1, n2):
     return abs(n1 - n2) <= 0.5
@@ -2972,7 +2972,7 @@ for x in range(36, 45):
 hero.say("Heh. Nothing.");`
 			},
 			{
-				id: 92,
+				id: 91,
 				name: "开采宝石",
 				code: `innerRadius = hero.distanceTo(hero.findNearestItem())
 def definitelyGreater(a, b):
@@ -2985,7 +2985,7 @@ for gem in gems:
         hero.moveXY(centre.x, centre.y)`
 			},
 			{
-				id: 93,
+				id: 92,
 				name: "牦牛行径",
 				code: `yak1 = hero.findNearestEnemy()
 radius1 = hero.distanceTo(yak1)
@@ -2998,7 +2998,7 @@ circumference2 = 2 * Math.PI * radius2
 hero.say(circumference2)`
 			},
 			{
-				id: 94,
+				id: 93,
 				name: "雪人面积",
 				code: `chosen = hero.findFriends()[0]
 radius = chosen.distanceTo(chosen.findNearestEnemy())
@@ -3010,7 +3010,7 @@ while True:
         hero.attack(enemyattack)`
 			},
 			{
-				id: 95,
+				id: 94,
 				name: "危险撬锁",
 				code: `def almostEqual(a, b):
     return Math.abs(a - b) < (b * 0.05)
@@ -3024,7 +3024,7 @@ while True:
         hero.say('Run, Forest, Run')`
 			},
 			{
-				id: 96,
+				id: 95,
 				name: "骨头舞蹈",
 				code: `def almostEqual(a, b):
     return Math.abs(a - b) < 1
@@ -3036,7 +3036,7 @@ while True:
         hero.say('CNM!')`
 			},
 			{
-				id: 97,
+				id: 96,
 				name: "分散的地牢",
 				code: `def moveBothTo(point):
     while hero.distanceTo(point) > 1:
@@ -3056,7 +3056,7 @@ while True:
     moveBothTo(nextPoint)`
 			},
 			{
-				id: 98,
+				id: 97,
 				name: "严峻的决心",
 				code: `summonTypes = ['griffin-rider']
 def summonTroops():
@@ -3109,7 +3109,7 @@ while True:
     summonTroops()`
 			},
 			{
-				id: 99,
+				id: 98,
 				name: "拓地",
 				code: `def areAntipodes(unit1, unit2):
     reversed1 = ""
@@ -3128,7 +3128,7 @@ while len(enemies) == 1:
     hero.attack(hero.findNearestEnemy())`
 			},
 			{
-				id: 100,
+				id: 99,
 				name: "雪人食人族",
 				code: `wizard = hero.findNearest(hero.findFriends())
 yetis = wizard.findEnemies()
@@ -3139,7 +3139,7 @@ while index>=0:
     index = index - 1`
 			},
 			{
-				id: 101,
+				id: 100,
 				name: "寻找开始",
 				code: `def averageSize(burls):
     sum = sumSize(burls)
@@ -3154,7 +3154,7 @@ while True:
     hero.say(averageSize(enemies))`
 			},
 			{
-				id: 102,
+				id: 101,
 				name: "诱骗牦牛",
 				code: `def averageSize(yaks):
     sum = 0
@@ -3175,7 +3175,7 @@ for i in range(len(yaks)):
 hero.say(bestYak)`
 			},
 			{
-				id: 103,
+				id: 102,
 				name: "睡眠样本",
 				code: `def average(array):
     sum = 0
@@ -3189,7 +3189,7 @@ enemies = hero.findEnemies()
 hero.say(average(enemies))`
 			},
 			{
-				id: 104,
+				id: 103,
 				name: "空虚数",
 				code: `def moveNSteps(n):
     hero.moveXY(hero.pos.x + 8 * n, hero.pos.y)
@@ -3200,7 +3200,7 @@ moveNSteps(spot)
 hero.say("CNM")`
 			},
 			{
-				id: 105,
+				id: 104,
 				name: "特洛伊雪人",
 				multiCode: true, // 标记为多代码块关卡
                 codes: [
@@ -3228,7 +3228,7 @@ for i in range(len(wereNames)):
                 ]
 			},
 			{
-				id: 106,
+				id: 105,
 				name: "双重间谍",
 				code: `def passagePosByNum(n):
     return {"x": 60, "y": n * 12 + 8}
@@ -3245,7 +3245,7 @@ while True:
     hero.moveXY(pet.pos.x, pet.pos.y)`
 			},
 			{
-				id: 107,
+				id: 106,
 				name: "匿名银行",
 				code: `message = hero.findNearest(hero.findFriends()).message
 passwords = []
@@ -3267,7 +3267,7 @@ for i in range(4):
         hero.say("qwerty")`
 			},
 			{
-				id: 108,
+				id: 107,
 				name: "食人魔幻象",
 				code: `def findRealEnemy(enemies):
     for index in range(len(enemies)):
@@ -3285,7 +3285,7 @@ while True:
             hero.attack(realOgre)`
 			},
 			{
-				id: 109,
+				id: 108,
 				name: "巅峰之门",
 				code: `def attackSikll():
     enemy=hero.findNearestEnemy()
@@ -3326,6 +3326,27 @@ while True:
     for friend in friends:
         commandFriend(friend)
     attackSikll()`
+			},
+			{
+				id: 109,
+				name: "保护和服务",
+				code:`defend = []
+defend[0] = { "x": 98, "y": 28 }
+defend[1] = { "x": 84, "y": 7 }
+soldiers = []
+friends = hero.findFriends()
+for friend in friends:
+    if friend.type == "soldier":
+        soldiers.append(friend)
+    else:
+        defend.append(friend)
+while True:
+    for i in range(len(soldiers)):
+        soldier = soldiers[i]
+        self.command(soldier, "defend", defend[i%len(soldiers)])
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)`
 			}
         ];
         // 为第19关添加哔哩哔哩视频跳转按钮
@@ -3364,8 +3385,8 @@ while True:
         }, 150);
 		// 为第109关添加哔哩哔哩视频跳转按钮
         setTimeout(() => {
-            const level109Section = document.getElementById('level-109');
-            if (level109Section) {
+            const level108Section = document.getElementById('level-108');
+            if (level108Section) {
                 const buttonContainer = document.createElement('div');
                 buttonContainer.className = 'video-container';
                 buttonContainer.innerHTML = `
@@ -3380,7 +3401,7 @@ while True:
                     </div>
                     <p class="video-caption">点击上方按钮跳转到哔哩哔哩观看完整通关流程</p>
                 `;
-                level109Section.appendChild(buttonContainer);
+                level108Section.appendChild(buttonContainer);
             }
         }, 200);
         // 生成关卡内容
@@ -3594,7 +3615,7 @@ while True:
             });
             
             searchResults.classList.remove('hidden');
-            searchStats.textContent = `共109个关卡，找到109个匹配项`;
+            searchStats.textContent = `共109个关卡，找到${levels.length}个匹配项`;
         }
         
         // 添加复制功能（事件委托）
