@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>地牢关卡代码详情</title>
+    <title>冰川关卡代码详情</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -42,7 +42,7 @@
     font-size: 2.5rem;
     margin-bottom: 10px;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-    color: #534819;
+    color: #7BDEFC;
         }
         
         header p {
@@ -731,8 +731,8 @@
 <body>
     <div class="container">
         <header id="page-top">
-            <h1>kithgard地牢</h1>
-            <p>地牢关卡代码，可点击复制<br>
+            <h1>kelvintaph冰川</h1>
+            <p>冰川关卡代码，可点击复制<br>
 				<span style="color: #001AE7">有些关卡有需要特定的装备，请自行看代码选择装备</span></p>
             <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> 返回目录页</a>
         </header>
@@ -771,7 +771,7 @@
     </button>
     
     <footer class="footer">
-        <p>地牢关卡代码详情</p>
+        <p>冰川关卡代码详情</p>
         <p style="color: #FF0000">注意：代码仅供参考，不建议直接抄！</p>
     </footer>
     
@@ -781,553 +781,866 @@
         const levelCodes = [
             {
                 id: 1,
-                name: "kithgard地牢",
-                code: `hero.moveRight()
-hero.moveDown()
-hero.moveRight()`
+                name: "绕圈",
+                code: `center = Vector(40, 34)
+partner = hero.findByType("peasant")[0]
+while True:
+    vector = Vector.subtract(partner.pos, center)
+    moveToPos = Vector.subtract(center, vector)
+    hero.move(moveToPos)`
             },
             {
                 id: 2,
-                name: "健忘的宝石将",
-                code: `hero.moveRight()
-hero.moveDown()
-hero.moveRight(2)
-hero.moveUp()
-hero.moveRight()`
+                name: "滑走",
+                code: `goalPoint = Vector(78, 34)
+while True:
+    goal = Vector.subtract(goalPoint, hero.pos)
+    goal = Vector.normalize(goal)
+    goal = Vector.multiply(goal, 10)
+    yak = hero.findNearestEnemy()
+    distance = hero.distanceTo(yak)
+    if distance < 10:
+        yak_vector = Vector.subtract(hero.pos, yak.pos)
+        yak_vector = Vector.normalize(yak_vector)
+        yak_vector = Vector.multiply(yak_vector, 10)
+        goal = Vector.add(yak_vector, goal)
+    moveToPos = Vector.add(hero.pos, goal)
+    hero.move(moveToPos)`
             },
             {
                 id: 3,
-                name: "深藏的宝石",
-                code: `hero.moveRight()
-hero.moveDown()
-hero.moveUp()
-hero.moveUp()
-hero.moveRight()`
+                name: "调剂团",
+                code: `def avoidNearest(target):
+    nearest = hero.findNearest(firetraps)
+    h2t = Vector.subtract(target, hero.pos)
+    h2n = Vector.subtract(nearest.pos, hero.pos)
+    if hero.distanceTo(nearest) > 4:
+        step = Vector.normalize(h2t)
+        nPos = Vector.add(hero.pos, step)
+        hero.moveXY(nPos.x, nPos.y)
+        return
+    angle1 = Vector.heading(h2t)
+    angle2 = Vector.heading(h2n)
+    if target.x < nearest.pos.x:
+        angle1 = - angle1
+        angle2 = - angle2
+        angle1 = Math.PI - angle1
+        angle2 = Math.PI - angle2
+    if angle1 > angle2:
+        adVec = Vector.rotate(h2n, Math.PI / 2)
+    else:
+        adVec = Vector.rotate(h2n, - Math.PI / 2)
+        pass
+    nPos = Vector.add(hero.pos, adVec)
+    hero.moveXY(nPos.x, nPos.y)
+while True:
+    potion = hero.findFriendlyMissiles()[0]
+    firetraps = hero.findHazards()
+    omarn = hero.findByType("potion-master")[0]
+    if potion:
+        dest = potion.targetPos
+        avoidNearest(dest)
+        pass
+    else:
+        if omarn and hero.distanceTo(omarn) > 10:
+            # Move back to Omarn.
+            avoidNearest(omarn.pos)
+            pass
+        else:
+            hero.say("Hup, hup!")`
             },
             {
                 id: 4,
-                name: "逆时针回转",
-                code: `hero.moveDown(2)
-hero.moveRight()
-hero.moveUp()
-hero.moveRight()`
+                name: "轰炸行动",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy and hero.distanceTo(enemy) < 70:
+        O = Math.abs(enemy.pos.y - hero.pos.y)
+        A = Math.abs(enemy.pos.x - hero.pos.x)
+        angle = Math.atan2(O, A)
+        angle = angle * 180 / Math.PI
+        if enemy.pos.x < hero.pos.x:
+            angle = 180 - angle
+        hero.say(angle)`
             },
             {
                 id: 5,
-                name: "幽影守卫",
-                code: `hero.moveRight()
-hero.moveUp()
-hero.moveRight()
-hero.moveDown()
-hero.moveRight()`
+                name: "冷藏的生命",
+                code: `innerField = [
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,1,0,0,0,0,0,0],
+        [0,0,0,0,1,0,0,0,0,0],
+        [0,0,0,0,0,1,0,0,0,0],
+        [0,0,0,0,0,0,1,0,0,0],
+        [0,0,0,0,0,0,1,0,0,0],
+        [0,0,0,0,0,1,1,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0]
+        ]
+hero.findNearestEnemy().initField(innerField)
+while True:
+    hero.wait(60)`
             },
             {
                 id: 6,
-                name: "不详的征兆",
-                code: `hero.moveRight(2)
-hero.moveUp()
-hero.moveRight(3)
-hero.moveDown()
-hero.moveRight()
-hero.moveDown()
-hero.moveRight()`
+                name: "冰上的雪花",
+                code: `def degreesToRadians(degrees):
+    return Math.PI / 180 * degrees
+def line(start, end):
+    full = Vector.subtract(end, start)
+    distance = full.magnitude()
+    if distance < 4:
+        hero.toggleFlowers(False)
+        hero.moveXY(start.x, start.y)
+        hero.toggleFlowers(True)
+        hero.moveXY(end.x, end.y)
+        return
+    half = Vector.divide(full, 2)
+    A = Vector.add(half, start)
+    rotate = Vector.rotate(half, degreesToRadians(90))
+    rotate = Vector.multiply(rotate, 2 / 3)
+    B = Vector.add(rotate, A)
+    line(start, A)
+    line(A, B)
+    line(B, A)
+    line(A, end)
+def flake(start, end):
+    side = Vector.subtract(end, start)
+    a = start
+    b = end
+    for i in range(6):
+        line(a, b)
+        a = b
+        side = Vector.rotate(side, degreesToRadians(60))
+        b = Vector.add(side, a)
+whiteXs = [Vector(12, 10), Vector(60, 10)]
+redXs = [Vector(64, 52), Vector(52, 52)]
+flake(redXs[0], redXs[1])
+line(whiteXs[0], whiteXs[1])`
             },
-			{
-				id: 7,
-				name: "狭路相逢",
-				code:`hero.moveRight()
-hero.moveLeft()
-hero.moveRight(2)`
-			},
+	        {
+		        id: 7,
+		        name: "冰球",
+		        code:`def commandAttacker(friend, item):
+    flag = hero.findFlag()
+    if flag:
+        self.command(friend, "move", flag.pos)
+        if friend.distanceTo(flag) < 2:
+            hero.removeFlag(flag)
+    else:
+        if item.pos.x > friend.pos.x:
+            self.command(friend, "move", item.pos)
+        else:
+            self.command(friend, "move", Vector(27, 38))
+def commandSoldiers(x, y, base=False):
+    move = 0;
+    for index, friend in enumerate(self.findFriends()):
+        if (index == 1 and y > 36):
+            if base:
+                self.command(friend, "move", {'x': 18, 'y': 43})
+            else:
+                self.command(friend, "move", {'x': x, 'y': y})
+        elif y <= 36 and index == 0:
+            if base:
+                self.command(friend, "move", {'x': 18, 'y': 39})
+            else:
+                self.command(friend, "move", {'x': x, 'y': y})
+def findTheY(x1, x2, y1, y2, x):
+    if (y2 != y1):
+        y = (x - x1) / (x2 - x1) * (y2 - y1) + y1
+    else:
+        y = y1
+    return y
+friends = self.findFriends()
+pos1 = []
+pos2 = []
+while True:
+    base = False
+    item = self.findNearest(self.findByType('ball'))
+    if pos2[1] != item.pos.y or pos2[0] != item.pos.x:
+        pos1[0] = pos2[0]
+        pos1[1] = pos2[1]
+        pos2[0] = item.pos.x
+        pos2[1] = item.pos.y
+    if len(pos1) > 0 and len(pos2) > 0:
+        yCatch = findTheY(pos1[0], pos2[0], pos1[1], pos2[1], 18)
+        if yCatch > 50:
+            yCatch = 50 - (yCatch - 50)
+        elif yCatch < 20:
+            yCatch = 20 - (20 - yCatch)
+        if (yCatch > 44 or yCatch < 28):
+            yCatch = 39
+        # self.say(yCatch)
+        if (item and yCatch):
+            if pos2[1] > pos1[1] and yCatch > 5 and yCatch < 20:
+                base = True
+            commandSoldiers(18, yCatch, base)
+    commandAttacker(friends[2], item)`
+	        },
             {
                 id: 8,
-                name: "敌人的陷阱",
-				code: `hero.moveRight(3)
-hero.moveUp()
-hero.moveRight()
-hero.moveDown(3)
-hero.moveRight(2)`
+                name: "kelvintaph十字军",
+		        code: `def moveTo(position, fast=True):
+    if (hero.isReady("jump") and fast):
+        hero.jumpTo(position)
+    else:
+        hero.move(position)
+def commandTroops():
+    for index, friend in enumerate(hero.findFriends()):
+        enemies = hero.findEnemies()
+        witch = hero.findNearest(hero.findByType('witch'))
+        if len(enemies) > 0 and witch:
+            if friend.type == 'paladin':
+                CommandPaladin(friend)
+            else:
+                CommandSoldier(friend)
+        elif hero.now() < 10 and hero.now() > 5 and friend.type == 'paladin':
+            if (friend.canCast("heal")):
+                hero.command(friend, "cast", "heal", friend)
+            elif hero.now() < 7:
+                hero.command(friend, "move", {'x': 31, 'y': 40})
+            elif hero.now() < 12:
+                hero.command(friend, "move", {'x': 7, 'y': 40})
+        elif hero.now() < 15 and friend.type != 'archer':
+            worst = findWorstEnemy()
+            if (worst and friend.pos.x - worst.pos.x < 10):
+                hero.command(friend, "move", {'x': 50, 'y': 58})
+        elif friend.type == 'archer' and hero.now() < 15:
+            if hero.now() < 7:
+                hero.command(friend, "move", {'x': 6, 'y': 58})
+            else:
+                hero.command(friend, "move", {'x': 49, 'y': 58})
+        elif hero.now() < 17:
+            hero.command(friend, "move", {'x': 50, 'y': 39})
+        else:
+            hero.command(friend, "move", {'x': 78, 'y': 40})
+def CommandPaladin(paladin):
+    if (paladin.canCast("heal")):
+        target = lowestHealthFriend()
+        if target:
+            hero.command(paladin, "cast", "heal", target)
+    elif (paladin.health < 100):
+        hero.command(paladin, "shield")
+    else:
+        target = findWorstEnemy()
+        if (target):
+            hero.command(paladin, "attack", target)
+def CommandSoldier(soldier):
+    target = findWorstEnemy()
+    if (target):
+        hero.command(soldier, "attack", target)
+def findWorstEnemy():
+    witch = hero.findNearest(hero.findByType('witch'))
+    ogre = hero.findNearest(hero.findByType('ogre'))
+    skeleton = hero.findNearest(hero.findByType('skeleton'))
+    if witch:
+        return witch
+    elif ogre:
+        return ogre
+    elif skeleton:
+        return skeleton
+    else:
+        return None
+def lowestHealthFriend():
+    lowestHealth = 99999
+    lowestFriend = None
+    friends = hero.findFriends()
+    for friend in friends:
+        if friend.health < lowestHealth and friend.health < friend.maxHealth:
+            lowestHealth = friend.health
+            lowestFriend = friend
+    return lowestFriend
+def attack(target):
+    if target:
+        if (hero.distanceTo(target) > 10):
+            moveTo(target.pos)
+        elif (hero.isReady("bash")):
+            hero.bash(target)
+        else:
+            hero.attack(target)
+while True:
+    commandTroops()
+    brawler = hero.findNearest(hero.findByType('brawler'))
+    catapult = hero.findNearest(hero.findByType('catapult'))
+    if brawler and hero.distanceTo(brawler) > 15:
+        moveTo(brawler.pos, False)
+    elif brawler:
+        runaway = Vector.subtract(hero.pos, brawler.pos)
+        runaway = Vector.normalize(runaway)
+        runaway = Vector.multiply(runaway, 15)
+        direction = Vector.add(runaway, hero.pos)
+        moveTo(direction, False)
+    elif catapult:
+        attack(catapult)
+    else:
+        hero.move({'x': 78, 'y': 15})`
             },
             {
                 id: 9,
-                name: "虚幻干扰",
-                code: `hero.moveRight()
-hero.moveDown(2)
-hero.moveUp(2)
-hero.moveRight(3)`
+                name: "法蛇储蓄",
+                code: `def onSpawn(event):
+    global coors
+    while True:
+        if friend:
+            if friend.distanceTo(Vector(coors[0], coors[1]))<40:
+                pet.moveXY(coorsn[0], coorsn[1])
+            else:
+                pet.moveXY(coors[0], coors[1])
+            pet.moveXY(friend.pos.x, friend.pos.y)
+        
+coors =  [60, 60]
+coorsn = [60, 60]
+friends = hero.findFriends()
+friend = friends[0]
+pet.on("spawn", onSpawn)
+path = [
+    [70, 57],#right top
+    #[72, 45],
+    #[14, 45],
+    #[14, 21],
+    #[70, 21],
+    [70, 11],#right bottom
+    [7, 8],#left bottom
+    [7, 57]#left Top
+]
+index = 0
+while True:    
+    friends = hero.findFriends()
+    friend = friends[0]
+    coors = path[index%len(path)]
+    coorsn = path[(index+1)%len(path)]
+    item = friend.findNearestItem()    
+    if item and friend.distanceTo(item.pos)<10:
+        moveto = item.pos
+    else:
+        moveto = Vector(coors[0], coors[1])
+    enemies = friend.findEnemies()
+    for enemy in enemies:
+        if friend.distanceTo(enemy) < 5:
+            vectorToH = Vector.subtract(friend.pos, enemy.pos)
+            vectorToH = Vector.normalize(vectorToH)
+            vectorToH = Vector.multiply(vectorToH, 5)
+            moveto = Vector.add(vectorToH, moveto)
+    hero.command(friend, "move", moveto)
+    if friend.distanceTo(Vector(coors[0], coors[1]))<5:
+        index+=1
+    if hero.canCast('haste', friend):
+        hero.cast('haste', friend)`
             },
             {
                 id: 10,
-                name: "工作中睡着",
-                code: `hero.moveUp()
-hero.moveRight(2)
-hero.attack("Bas")
-hero.attack("Bas")
-hero.attack("Vera")
-hero.attack("Vera")
-hero.moveRight()`
+                name: "队列管理",
+                code: `PHRASE_IN = " in"
+PHRASE_OUT = " out"
+IDLE = "idle"
+workers = hero.findByType("peasant", hero.findFriends())
+queue = []
+while True:
+    for worker in workers:
+        if worker.status is IDLE:
+            hero.say(worker.id + PHRASE_IN)
+            queue.append(worker)
+    item = hero.findNearestItem()
+    if item and len(queue)>0:
+        worker =  queue[0]
+        hero.say(worker.id + PHRASE_OUT)
+        queue.remove(worker)`
             },
             {
                 id: 11,
-                name: "机会有利",
-                code: `hero.moveRight()
-hero.attack("Krug")
-hero.attack("Krug")
-hero.moveRight()
-hero.moveUp()
-hero.attack("Grump")
-hero.attack("Grump")
-hero.moveLeft(2)`
+                name: "双队列",
+                code: `while True:
+    item = hero.findNearestItem()
+    unit = hero.findNearestFriend()
+    if not item or not unit:
+        continue
+    if item.type == 'potion' and unit.type == "soldier":
+        hero.say(unit.id)
+    elif item.type == 'sword' and unit.type == "peasant":
+        hero.say(unit.id)
+    hero.say("Next")`
             },
             {
                 id: 12,
-                name: "祸之火焰",
-                code: `hero.moveRight()
-hero.moveUp()
-hero.attack("Grumus")
-hero.attack("Grumus")
-hero.attack("Grumus")
-hero.attack("Grumus")
-hero.attack("Grumus")
-hero.attack("Grumus")
-hero.attack("Grumus")`
+                name: "第一个出局",
+                code: `units = hero.findFriends()
+sergeant = hero.findByType("paladin", units)[0]
+scout = hero.findByType("griffin-rider", units)[0]
+soldiers = hero.findByType("soldier", units)
+peasants = hero.findByType("peasant", units)
+for soldier in soldiers:
+    sergeant.enqueue(soldier)
+for peasant in peasants:
+    sergeant.enqueue(peasant)
+while True:
+    enemy = scout.findNearestEnemy()
+    if enemy:
+        for s in soldiers:
+            sergeant.dequeue()
+        break
+while True:
+    enemy = scout.findNearestEnemy()
+    if not enemy:
+        for s in peasants:
+            sergeant.dequeue()
+        break`
             },
             {
                 id: 13,
-                name: "循环又循环",
-                code: `while True:
-    hero.moveRight()
-    hero.moveUp()
-    hero.moveLeft()
-    hero.moveDown()`
+                name: "链接的钥匙",
+                code: `peasantLinkedList = hero.findNearest(hero.findFriends())
+doorIndex = 0
+doorDistance = 12
+currentPeasant = peasantLinkedList
+while True:
+    pos = {"x": 20 + doorIndex * doorDistance, "y": 34}
+    hero.command(currentPeasant, "dropItem", pos)
+    hero.command(currentPeasant, "move", Vector(hero.pos.x+10+doorIndex, hero.pos.y))
+    currentPeasant = currentPeasant.next
+    if not currentPeasant:
+        break
+    doorIndex +=1
+hero.say('all')
+hero.moveXY(16, 34)
+while True:
+    enemy = hero.findNearestEnemy()
+    item = hero.findNearestItem()
+    if enemy:
+        hero.attack(enemy)
+    elif item:
+        hero.move(item.pos)
+    else:
+        hero.moveXY(64, 34)`
             },
             {
                 id: 14,
-                name: "迷失在书库中",
-                code: `while True:
-    hero.moveRight()
-    hero.moveUp()
-    hero.moveLeft()
-    hero.moveDown()`
+                name: "密钥栈",
+                code: `hero.moveXY(45, 34)
+peasant = hero.findByType("peasant")[0]
+goldKey = peasant.findByType("gold-key")[0]
+silverKey = peasant.findByType("silver-key")[0]
+bronzeKey = peasant.findByType("bronze-key")[0]
+hero.command(peasant, "pickUpItem", goldKey)
+hero.command(peasant, "pickUpItem", silverKey)
+hero.command(peasant, "pickUpItem", bronzeKey)
+hero.command(peasant, "dropItem", {"x": 40, "y": 34})
+hero.command(peasant, "dropItem", {"x": 31, "y": 34})
+hero.command(peasant, "dropItem", {"x": 21, "y": 34})
+hero.command(peasant, "move", {"x": 73, "y": 36})
+hero.moveXY(14, 34)
+hero.jumpTo(Vector(14, 50))
+hero.moveXY(11, 58)
+hero.moveXY(14, 44)
+while not(hero.isReady('jump')):
+    hero.wait()
+hero.jumpTo(Vector(14, 34))
+hero.moveXY(14, 34)
+while not(hero.isReady('jump')):
+    hero.wait()
+hero.jumpTo(Vector(14, 22))
+hero.moveXY(10, 11)`
             },
             {
                 id: 15,
-                name: "迷一般的kithmaze",
-                code: `while True:
-    hero.moveRight()
-    hero.moveDown()
-    hero.moveRight(2)
-    hero.moveUp()`
+                name: "堆栈分类",
+                code: `yetiPos = {"x": 60, "y": 36}
+yakPos = {"x": 40, "y": 52}
+skeletonPos = {"x": 58, "y": 56}
+peasant = hero.findFriends()[0]
+items = peasant.findItems()
+for item in items:
+    # Command the peasant "pickUpItem" an item:
+    hero.command(peasant, "pickUpItem", item)
+    pass
+while True:
+    topItem = peasant.peekItem()
+    if not topItem:
+        break
+    if topItem.type is "potion":
+        hero.command(peasant, "dropItem", yakPos)
+    if topItem.type is "mushroom":
+        hero.command(peasant, "dropItem", yetiPos)
+    if topItem.type is "lightstone":
+        hero.command(peasant, "dropItem", skeletonPos)`
             },
             {
                 id: 16,
-                name: "明智的攻击",
-                code: `hero.moveUp(2);
-hero.attack("Door A")
-hero.moveUp(2)
-sb = hero.findNearestEnemy()
-if sb:
-    hero.attack(sb)
-    hero.attack(sb)
-hero.moveDown(3)
-hero.moveRight(2)
-hero.moveUp()
-hero.moveRight(4)
-hero.moveUp()
-sb = hero.findNearestEnemy()
-if sb:
-    hero.attack(sb)
-        
-sb1 = hero.findNearestEnemy()
-if sb1:
-    hero.attack(sb1)  
-hero.moveUp(2)
-hero.moveRight()
-hero.moveDown(4)
-hero.moveLeft(3)
-hero.moveDown()
-hero.moveLeft(2)`
+                name: "炼金堆",
+                code: `yeti = hero.findNearestEnemy()
+peasant = hero.findFriends()[0]
+items = peasant.findItems()
+for item in items:
+    if item.type!="gold-key":
+        hero.command(peasant, "pickUpItem", item)
+key = peasant.findNearestByType("gold-key")
+hero.command(peasant, "pickUpItem", key)
+hero.command(peasant, "dropItem", Vector(40, 36))
+while True:
+    item = peasant.peekItem()
+    if not(item):
+        break
+    if item.type == "potion":
+        hero.command(peasant, "dropItem", hero.pos)
+    elif item.type == "mushroom":
+        hero.command(peasant, "dropItem", yeti.pos)
+while True:
+    hero.attack(yeti)`
             },
             {
                 id: 17,
-                name: "kithmaze二度历险",
-                code: `while True:
-    hero.moveRight()
-    hero.moveUp()
-    hero.moveRight()
-    hero.moveDown()`
+                name: "分形化",
+                code: `def degreesToRadians(degrees):
+    return Math.PI / 180 * degrees
+def koch(start, end):
+    full = Vector.subtract(end, start)
+    distance = full.magnitude()
+    if distance < 3:
+        hero.toggleFlowers(False)
+        hero.moveXY(start.x, start.y)
+        hero.toggleFlowers(True)
+        hero.moveXY(end.x, end.y)
+        return
+    third = Vector.multiply(full, 1 / 3)
+    A = Vector.add(start, third)
+    B = Vector.add(A, Vector.rotate(third, degreesToRadians(60)))
+    C = Vector.add(A, third)
+    koch(start, A);
+    koch(A, B);
+    koch(B, C);
+    koch(C, end);
+whiteXs = [Vector(6, 6), Vector(74, 6), Vector(74, 61), Vector(6, 61)]
+hero.setFlowerColor("white");
+koch(whiteXs[0], whiteXs[1]);
+koch(whiteXs[1], whiteXs[2]);
+koch(whiteXs[2], whiteXs[3]);
+koch(whiteXs[3], whiteXs[0]);`
             },
             {
                 id: 18,
-                name: "再下一步",
+                name: "磨刀",
                 code: `while True:
-    hero.moveRight(2)
-    hero.moveDown(1)`
+    flag = hero.findFlag()
+    if flag:
+        hero.throwPos(flag.pos)
+        hero.removeFlag(flag)`
             },
             {
                 id: 19,
-                name: "闹鬼的迷宫",
-                code: `while True:
-    hero.moveRight(2)
-    hero.moveUp(2)`
+                name: "精准逆转",
+                code: `center = Vector(40, 35)
+punch_array = []
+enemies = hero.findEnemies()
+friend = hero.findFriends()[0]
+ball = self.findNearest(self.findByType('ball'))
+ballPoss = Vector(ball.pos.x, ball.pos.y)
+for enemy in enemies:
+    s2b = Vector.multiply(Vector.normalize(Vector.subtract(ballPoss, enemy.pos)), 7)
+    b2p = ball.pos.add(s2b)
+    punch_array.append(b2p)
+distance = 100
+while len(punch_array) > 0:
+    min_dist, min_index = 999, -1
+    for index, punch in enumerate(punch_array):
+        if min_dist > Vector.subtract(punch, friend.pos).magnitude():
+            min_dist = Vector.subtract(punch, friend.pos).magnitude()
+            min_index = index
+    vector = punch_array.pop(min_index)
+    hero.command(friend, 'move', vector)
+    hero.wait(1)
+    hero.command(friend, 'move', center)
+    hero.wait(1)
+    hero.command(friend, 'move', vector)`
             },
             {
                 id: 20,
-                name: "逃脱",
-                code: `hero.moveRight()
-hero.attack("Weak Door")
-hero.moveRight()
-hero.attack("Door")`
+                name: "kelvintaph柱子",
+                code: `stump1 = hero.findByType("stump")[0]  # This is where the peasants start.
+stump2 = hero.findByType("stump")[1]
+stump3 = hero.findByType("stump")[2]
+def move(frm, to):
+    hero.say(frm + '=>' + to)
+    if frm == 2:
+        hero.pickUpItem(stump1)
+    elif frm == 1:
+        hero.pickUpItem(stump2)
+    else:
+        hero.pickUpItem(stump3)
+    if to == 2:
+        hero.dropItem(stump1)
+    elif to == 1:
+        hero.dropItem(stump2)
+    else:
+        hero.dropItem(stump3)
+def hanoi(n, frm, to, via):
+    if (n == 1):
+        move(frm, to)
+        pass
+    else:
+        pass
+        hanoi(n - 1, frm, via, to);
+        move(frm, to)
+        hanoi(n - 1, via, to, frm);
+hanoi(5, 2, 3, 1)`
             },
             {
                 id: 21,
-                name: "橱柜里的骷髅",
-                code: `hero.moveUp()
-hero.moveRight(2)
-hero.moveDown(2)
-while True:
-    hero.attack("Cupboard")`
+                name: "素数之路",
+                code: `def primeCheck(number):
+    for i in range(2,(number**0.5)):
+        if number % i == 0:
+            return False
+    return True
+friends = hero.findFriends()
+mines = hero.findHazards()
+firstMines = []
+for mine in mines:
+    if mine.pos.y > 30 and mine.pos.x < 80:
+        if primeCheck(mine.value):
+            firstMines.append(mine)
+for mine in firstMines:
+    if mine.pos.x > (hero.pos.x - 25):
+        hero.moveXY(mine.pos.x + 10, mine.pos.y)
+        hero.moveXY(mine.pos.x, mine.pos.y)
+        hero.moveXY(hero.pos.x - 10, hero.pos.y)
+        for friend in friends:
+            hero.command(friend, "move", {"x": mine.pos.x + 10, "y": mine.pos.y})
+            hero.wait(1.6)
+            hero.command(friend, "move", {"x": mine.pos.x, "y": mine.pos.y})
+            hero.command(friend, "move", {"x": mine.pos.x - 10, "y": mine.pos.y})
+hero.moveXY(2, 15)
+for friend in friends:
+    hero.command(friend, "move", {"x": 2, "y": 15})
+secondMines = []
+for mine in mines:
+    if mine.pos.y < 30 and mine.pos.x < 80:
+        if primeCheck(mine.value):
+            secondMines.append(mine)
+while hero.pos.x < 75:
+    for mine in secondMines:
+        if mine.pos.x < (hero.pos.x + 25) and mine.pos.x > hero.pos.x:
+            hero.moveXY(mine.pos.x - 10, mine.pos.y)
+            hero.moveXY(mine.pos.x, mine.pos.y)
+            hero.moveXY(hero.pos.x + 10, hero.pos.y)
+            for friend in friends:
+                hero.command(friend, "move", {"x": mine.pos.x - 5, "y": mine.pos.y})
+                hero.wait(1.6)
+                hero.command(friend, "move", {"x": mine.pos.x, "y": mine.pos.y})
+                hero.command(friend, "move", {"x": mine.pos.x + 12, "y": mine.pos.y})`
             },
             {
                 id: 22,
-                name: "攻破突袭",
-                code: `hero.moveRight()
-hero.attack("Chest")
-hero.moveDown()
-while True:
-    hero.moveRight(3)
-    hero.moveDown(3`
+                name: "编码订单",
+                code: `summonTypes = {"a": "archer", "s": "soldier", "p": "peasant", "g": "griffin-rider", "P": "paladin", "A": "artillery"}
+def summonTroops(num, coorX, coorY):
+    type = summonTypes[num]
+    if type != 'artillery' and hero.gold > hero.costOf(type):
+        hero.summon(type)
+    friends = hero.findByType(summonTypes[num], hero.findFriends())
+    hero.command(friends[len(friends) - 1], 'move', {'x': int(coorX), 'y': int(coorY)})
+sign = hero.findByType("sign")[0]
+message = sign.message
+for index in range(0, len(message), 5):
+    type = message.substr(index, 1)
+    x = message.substr(index + 1, 2)
+    y = message.substr(index + 3, 2)
+    summonTroops(type, x, y)`
             },
             {
                 id: 23,
-                name: "恐惧之门",
-                code: `while True:
-    hero.attack("Door")`
+                name: "Binary Deployment",
+                code: `units = ['soldier', 'archer', 'griffin-rider']
+for i in range(len(hero.findFriends())):
+    result = ""
+    unit = hero.findFriends()[i]
+    if unit.type == "paladin":
+        divide = 2
+    else:
+        divide = 3
+    number = unit.deployment
+    while number >= divide:
+        a = number % divide
+        number = (number - a) / divide
+        result = a + result
+    result = number + result
+    while len(result) < 8:
+        result = '0' + result
+    for k in range(len(result)):
+        m = result[k]
+        hero.summon(units[m])
+        hero.command(hero.built[len(hero.built) - 1], "move", {'x': 14 + k * 6, 'y': unit.pos.y})`
             },
             {
                 id: 24,
-                name: "轰轰",
-                code: `while True:
-    hero.attack("ball")
-    hero.attack('ball2')
-    hero.moveRight(3)
-    hero.attack("ball")
-    hero.attack('ball2')
-    hero.moveLeft(3)`
+                name: "无线电",
+                code: `def findBackupRobots():
+    robots = hero.findByType("robot-walker")
+    reserveRobots = []
+    for robot in robots:
+        if robot.health > 5000:
+            reserveRobots.push(robot)
+    return reserveRobots
+def replaceMissingLink(linkedList, broken, replacement):
+    current = linkedList
+    prev = None
+    while current:
+        if current == broken:
+            if prev:
+                prev.setNext(replacement)
+            replacement.setNext(current.next)
+            break
+        prev = current
+        current = current.next
+def diagnoseList(linkedList):
+    current = linkedList
+    while current:
+        if current.health <= 0:
+            #hero.say(current.health)
+            return current
+        current = current.next
+    return None
+robotList = hero.findNearest(hero.findFriends())
+while True:
+    backUpRobots = findBackupRobots()
+    brokenRobot = diagnoseList(robotList)
+    if brokenRobot and len(backUpRobots):
+        replaceMissingLink(robotList, brokenRobot, backUpRobots[0])`
             },
             {
                 id: 25,
-                name: "辐射光环",
-                code: `while True:
-    hero.moveUp()
-    hero.moveDown()
-    hero.moveRight(2)`
+                name: "宝石生宝石",
+                code: `baseGem = hero.findByType("root-gem")[0]
+freeGems = hero.findByType("gem")
+freeGems[0].next = baseGem
+freeGems[1].next = freeGems[0]
+baseGem.next = freeGems[2]
+freeGems[2].next = freeGems[3]
+freeGems[3].next = freeGems[4]
+while True:
+    if hero.isPathClear(hero.pos, {"x": 76, "y": 34}):
+        hero.moveXY(76, 34)`
             },
             {
                 id: 26,
-                name: "比剑更强大",
-                code: `password = 'Secret Message'
-hero.moveUp()
-hero.moveRight()
-hero.say(password)
-password = 'So Many Doors'
-hero.moveRight()
-hero.say(password)
-hero.moveRight()
-password = 'Let Me Out Of Here'
-hero.say(password)`
+                name: "计数链接",
+                code: `def elementByIndex(linkedList, index):
+    current = linkedList
+    for i in range(index):
+        current = current.next
+        if not(current):
+            break
+    return current
+cannonList = hero.findNearest(hero.findFriends())
+while True:
+    enemies = hero.findEnemies()
+    if len(enemies) > 0:
+        hero.say(elementByIndex(cannonList, len(enemies) - 1))`
             },
             {
                 id: 27,
-                name: "老对手",
-                code: `enemy1 = "Kratt"
-enemy2 = "Gert"
-enemy3 = "Ursa"
-while True:
-    hero.attack(enemy1)
-    hero.attack(enemy2)
-    hero.attack(enemy3)`
+                name: "散列的牦牛",
+                code: `farmer = hero.findFriends()[0]
+yakNameList = farmer.yakList
+def hashName(name):
+    return (ord(name[0]) - 65) % 12
+for name in yakNameList:
+    cell = hashName(name)
+    hero.say(cell)`
             },
             {
                 id: 28,
-                name: "kithgard橱柜A",
-                code: `hero.moveDown()
-hero.moveLeft(2)
-hero.moveUp(2)
-while True:
-    hero.attack("Cupboard")`
-            },
-            {
-                id: 29,
-                name: "矮人骚乱",
-                code: `while True:
-    sb = hero.findNearestEnemy()
-    hero.attack(sb)`
-            },
-            {
-                id: 30,
-                name: "真名实姓",
-                code: `hero.moveRight()
-hero.attack("Brak")
-hero.attack("Brak")
-hero.moveRight()
-hero.attack("Treg")
-hero.attack("Treg")`
-            },
-            {
-                id: 31,
-                name: "焰中舞动",
-                code: `while True:
-    hero.moveRight()
-    hero.moveLeft()`
-            },
-            {
-                id: 32,
-                name: "kithgard橱柜B",
-                code: `hero.moveRight()
-hero.moveDown()
-hero.moveRight()
-hero.moveDown(2)
-while True:
-    hero.attack("Cupboard")`
-            },
-            {
-                id: 33,
-                name: "囚犯",
-                code: `hero.moveRight()
-hero.attack("Weak Door")
-hero.moveRight(3)
-hero.moveDown(2)
-hero.attack("Two")
-hero.attack("Two")
-hero.moveDown()`
-            },
-            {
-                id: 34,
-                name: "kithgard图书管理员",
-                code: `hero.moveRight()
-hero.say("Hush")
-hero.moveRight()`
-            },
-            {
-                id: 35,
-                name: "注释中的密语",
-                code: `hero.say("密码是什么？")
-hero.say("Achoo")
-hero.moveUp(2)`
-            },
-            {
-                id: 36,
-                name: "高举之剑",
-                code: `hero.attack("Rig")
-hero.attack("Rig")
-hero.attack("Gurt")
-hero.attack("Gurt")
-hero.attack("Ack")
-hero.attack("Ack")`
-            },
-            {
-                id: 37,
-                name: "严酷考验A",
-                code: `while True:
-    hero.moveLeft()
-    sb = hero.findNearestEnemy()
-    hero.attack(sb)
-    hero.attack(sb)`
-            },
-            {
-                id: 38,
-                name: "严酷考验B",
-                code: `while True:
-    hero.moveUp()
-    sb = hero.findNearestEnemy()
-    hero.attack(sb)
-    hero.attack(sb)`
-            },
-            {
-                id: 39,
-                name: "kithgard斗殴",
-                code: `while True:
-    item=hero.findNearestItem()
-    enemy=hero.findNearestEnemy()
-    if enemy:
-        if hero.isReady("bash"):
-            hero.bash(enemy)
-        elif hero.isReady("cleave"):
-            hero.cleave(enemy)
-        else:
-            hero.attack(enemy)
-    if item:
-        hero.moveXY(item.pos.x, item.pos.y)`
-            },
-            {
-                id: 40,
-                name: "骷髅怪",
-                code: `while True:
-    enemy = hero.findNearestEnemy()
-    hero.attack(enemy)`
-            },
-            {
-                id: 41,
-                name: "严酷考验",
-                code: `while True:
-    hero.moveRight()
-    sb = hero.findNearestEnemy()
-    hero.attack(sb)`
-            },
-            {
-                id: 42,
-                name: "毁灭天使",
-                code: `hero.moveDown()
-hero.moveRight()
-hero.moveDown()
-hero.moveUp()
-hero.moveLeft()
-hero.moveDown(2)
-hero.moveRight(3)
-hero.moveUp(3)
-while True:
-    enemy = hero.findNearestEnemy()
-    if enemy:
-        hero.attack(enemy)`
-            },
-            {
-                id: 43,
-                name: "机器人毁灭世界大战",
-                code: `while True:
-    hero.moveUp()
-    hero.moveUp()
-    hero.moveDown()
-    hero.moveDown()
-    hero.moveLeft()
-    hero.moveRight()
-    hero.moveDown()
-    hero.moveRight()
-    hero.moveRight()
-    break`
-            },
-            {
-                id: 44,
-                name: "战术打击",
-                code: `hero.moveDown()
-hero.moveRight()
-sb = hero.findNearestEnemy()
-hero.attack(sb)
-sb2 = hero.findNearestEnemy()
-hero.attack(sb2)
-hero.moveDown()`
-            },
-            {
-                id: 45,
-                name: "kithmaze最终历险",
-                code: `while True:
-    hero.moveRight()
-    hero.moveUp()
-    hero.moveRight()
-    enemy = hero.findNearestEnemy()
-    hero.attack(enemy)
-    hero.moveDown(2)
-    hero.moveUp()`
-            },
-            {
-                id: 46,
-                name: "kithgard之门",
-                code: `hero.moveDown()
-hero.buildXY("fence", 36, 34)
-hero.buildXY("fence", 36, 30)
-hero.buildXY("fence", 36, 27)
-hero.moveRight(3)`
-            },
-            {
-                id: 47,
-                name: "拉近距离",
-                code: `hero.moveRight()
-enemy = hero.findNearestEnemy()
-hero.attack(enemy)
-hero.moveRight(2)
-enemy2 = hero.findNearestEnemy()
-hero.attack(enemy2)
-hero.moveRight()`
-            },
-            {
-                id: 48,
-                name: "卑贱的魔徒",
-                code: `enemy = hero.findNearestEnemy()
-hero.attack(enemy)
-hero.attack(enemy)
-enemy2 = hero.findNearestEnemy()
-hero.attack(enemy2)
-hero.attack(enemy2)
-hero.moveRight()
-hero.moveDown()
-hero.moveRight()`
-            },
-            {
-                id: 49,
-                name: "名称大师",
-                code: `while True:
-    enemy1 = hero.findNearestEnemy()
-    hero.attack(enemy1)
-    enemy2 = hero.findNearestEnemy()
-    hero.attack(enemy2)
-    enemy3 = hero.findNearestEnemy()
-    hero.attack(enemy3)`
-            },
-            {
-                id: 50,
-                name: "成分鉴定",
-                code: `someVariableName = "a string"
-lolol = 42
-item = "a"
-item2 = "b"`
-            },
-            {
-                id: 51,
-                name: "换个名字",
-                code: `gemDude1 = hero.findNearestEnemy()
-hero.attack(gemDude1)
-hero.attack(gemDude1)
-gemDude2 = hero.findNearestEnemy()
-hero.attack(gemDude2)
-hero.attack(gemDude2)
-hero.moveUp()
-hero.moveRight()
-hero.moveRight()`
-            },
-            {
-                id: 52,
-                name: "洞穴求生",
-                code: `def Attack(target):
-    if target:
-        if hero.distanceTo(target) < 15:
-            if hero.isReady("bash"):
-                hero.bash(target)
-            elif hero.isReady("cleave"):
-                hero.cleave(target)
-            else:
-                hero.attack(target)
-def getItem(item):
-    if item:
-        if item.type=="potion":
-            hero.moveXY(item.pos.x,item.pos.y)
-def getFlag(flag):
-    if flag:
-        hero.pickUpFlag(flag)
-while True:
-    enemy=hero.findNearestEnemy()
-    item=hero.findNearestItem()
-    flag=hero.findFlag()
-    getFlag(flag)
-    getItem(item)
-    Attack(enemy)`
-            },
-            {
-                id: 53,
-                name: "蜿蜒峡谷",
-                code: `这一关每个人地图不一样，自己做`
+                name: "多边形现象",
+                code: `def degreesToRadians(degrees):
+    return Math.PI / 180 * degrees
+def polygon(start_, end_, side):
+    start = start_
+    end = end_
+    full = Vector.subtract(end, start)
+    distance = full.magnitude()
+    hero.toggleFlowers(False)
+    hero.moveXY(start.x, start.y)
+    hero.toggleFlowers(True)
+    for i in range(side):
+        hero.moveXY(end.x, end.y)
+        full = Vector.rotate(full, degreesToRadians(360 / side))
+        if distance > 10:
+            polygon(end, Vector.add(end, Vector.divide(full, 5)), side)
+        end = Vector.add(end, full)
+startOffset = Vector(-15, -15)
+endOffset = Vector(15, -15)
+startOffset = Vector(-15, -15)
+endOffset = Vector(15, -15)
+enemies = self.findEnemies()
+for enemy in enemies:
+    start = Vector.add(enemy.pos, startOffset)
+    end = Vector.add(enemy.pos, endOffset)
+    sides = enemy.sides
+    polygon(start, end, sides)`
             }
         ];
-        
+        // 为第8关添加图片
+		setTimeout(() => {
+            const level8Section = document.getElementById('level-8');
+            if (level8Section) {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'equipment-image';
+                imgContainer.innerHTML = `
+                    <img src="眼镜.png" alt="装备参考" style="max-width: 500px; width: 100%; height: auto;">
+                    <div class="image-caption">必须带的眼镜</div>
+                `;
+                level8Section.appendChild(imgContainer);
+            }
+        }, 100);
+        // 为第9关添加图片
+		setTimeout(() => {
+            const level9Section = document.getElementById('level-9');
+            if (level9Section) {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'equipment-image';
+                imgContainer.innerHTML = `
+                    <img src="宠物.png" alt="装备参考" style="max-width: 500px; width: 100%; height: auto;">
+                    <div class="image-caption">最好要带的宠物</div>
+                `;
+                level9Section.appendChild(imgContainer);
+            }
+        }, 150);
+        // 为第7关添加哔哩哔哩视频跳转按钮
+        setTimeout(() => {
+            const level7Section = document.getElementById('level-7');
+            if (level7Section) {
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'video-container';
+                buttonContainer.innerHTML = `
+                    <h4><i class="fas fa-video"></i> 通关视频参考</h4>
+                    <div class="bilibili-btn-container">
+                        <a href="https://www.bilibili.com/video/BV1B4BKBkEj3/?spm_id_from=333.1387.homepage.video_card.click&vd_source=4826033e5c6242fb339394c4ea66c111" 
+                           class="bilibili-btn">
+                            <i class="fab fa-bilibili"></i> 
+                            <span>前往哔哩哔哩观看通关视频</span>
+                        </a>
+                    </div>
+                    <p class="video-caption">点击上方按钮跳转到哔哩哔哩观看完整通关流程</p>
+                `;
+                level7Section.appendChild(buttonContainer);
+            }
+        }, 200);
+        // 为第18关添加哔哩哔哩视频跳转按钮
+        setTimeout(() => {
+            const level18Section = document.getElementById('level-18');
+            if (level18Section) {
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'video-container';
+                buttonContainer.innerHTML = `
+                    <h4><i class="fas fa-video"></i> 通关视频参考</h4>
+                    <div class="bilibili-btn-container">
+                        <a href="https://www.bilibili.com/video/BV16nBKB2EQo/?spm_id_from=333.1387.homepage.video_card.click&vd_source=4826033e5c6242fb339394c4ea66c111">
+                            <i class="fab fa-bilibili"></i> 
+                            <span>前往哔哩哔哩观看通关视频</span>
+                        </a>
+                    </div>
+                    <p class="video-caption">点击上方按钮跳转到哔哩哔哩观看完整通关流程</p>
+                `;
+                level18Section.appendChild(buttonContainer);
+            }
+        }, 200);
         // 生成关卡内容
         const levelContent = document.getElementById('levelContent');
         
