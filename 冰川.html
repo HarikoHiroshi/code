@@ -1631,7 +1631,8 @@ for enemy in enemies:
                 buttonContainer.innerHTML = `
                     <h4><i class="fas fa-video"></i> 通关视频参考</h4>
                     <div class="bilibili-btn-container">
-                        <a href="https://www.bilibili.com/video/BV16nBKB2EQo/?spm_id_from=333.1387.homepage.video_card.click&vd_source=4826033e5c6242fb339394c4ea66c111">
+                        <a href="https://www.bilibili.com/video/BV16nBKB2EQo/?spm_id_from=333.1387.homepage.video_card.click&vd_source=4826033e5c6242fb339394c4ea66c111" 
+                           class="bilibili-btn">
                             <i class="fab fa-bilibili"></i> 
                             <span>前往哔哩哔哩观看通关视频</span>
                         </a>
@@ -1758,7 +1759,7 @@ for enemy in enemies:
             if (levels.length === 0) {
                 searchResults.innerHTML = '<div class="no-results">未找到匹配的关卡</div>';
                 searchResults.classList.remove('hidden');
-                searchStats.textContent = '共54个关卡，未找到匹配项';
+                searchStats.textContent = '共45个关卡，未找到匹配项';
                 return;
             }
             
@@ -1801,7 +1802,7 @@ for enemy in enemies:
             });
             
             searchResults.classList.remove('hidden');
-            searchStats.textContent = `共54个关卡，找到${levels.length}个匹配项`;
+            searchStats.textContent = `共45个关卡，找到${levels.length}个匹配项`;
         }
         
         // 添加复制功能
@@ -1895,6 +1896,5 @@ for enemy in enemies:
         updateSearchResults(levelCodes);
     </script>
 </body>
-
 
 </html>
