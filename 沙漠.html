@@ -2762,17 +2762,29 @@ while True:
                 `;
                 level93Section.appendChild(buttonContainer);
             }
-        }, 200);
+        }, 250);
+        setTimeout(() => {
+            const level96Section = document.getElementById('level-96');
+            if (level96Section) {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'equipment-image';
+                imgContainer.innerHTML = `
+                    <img src="挂坠.png" alt="必须的挂坠" style="max-width: 500px; width: 100%; height: auto;">
+                    <div class="image-caption">必须要装的挂坠</div>
+                `;
+                level96Section.appendChild(imgContainer);
+            }
+        }, 300);
 		setTimeout(() => {
-            const level85Section = document.getElementById('level-91');
-            if (level85Section) {
+            const level91Section = document.getElementById('level-91');
+            if (level91Section) {
                 const imgContainer = document.createElement('div');
                 imgContainer.className = 'equipment-image';
                 imgContainer.innerHTML = `
                     <img src="眼镜.png" alt="必须的眼镜" style="max-width: 500px; width: 100%; height: auto;">
                     <div class="image-caption">必须要装的眼镜</div>
                 `;
-                level85Section.appendChild(imgContainer);
+                level91Section.appendChild(imgContainer);
             }
         }, 400);
         // 导航条收起功能
