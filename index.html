@@ -5,178 +5,234 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>关卡代码目录</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', sans-serif;
         }
         
         body {
-            background-color: #f5f5f5;
-            color: #333;
+            background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #e0e0e0;
             line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpath d="M0 0 L50 100 L100 0 Z" fill="rgba(255,255,255,0.05)" /%3E%3C/svg%3E') repeat;
+            opacity: 0.1;
+            z-index: -1;
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 60px 20px;
         }
         
         header {
             text-align: center;
-            padding: 40px 0;
-            background: linear-gradient(135deg, #f8c471 0%, #2132E6 100%);
-            color: white;
-            border-radius: 10px;
-            margin-bottom: 40px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 100px 0;
+            background: transparent;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
         }
         
         header h1 {
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(33, 50, 230, 0.8), 0 0 40px rgba(248, 196, 113, 0.6);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #2132E6, 0 0 20px #f8c471; }
+            to { text-shadow: 0 0 20px #2132E6, 0 0 40px #f8c471; }
         }
         
         header p {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             opacity: 0.9;
             max-width: 800px;
             margin: 0 auto;
         }
         
         .sand-icon {
-            font-size: 3rem;
+            font-size: 5rem;
+            margin-bottom: 30px;
+            color: #f8c471;
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .instructions h2 {
+            color: #f8c471;
             margin-bottom: 20px;
-            color: #fff;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 0 10px rgba(248, 196, 113, 0.5);
+        }
+        
+        .instructions p, .instructions li {
+            color: #d0d0d0;
+            font-size: 1.1rem;
+        }
+        
+        .instructions ul {
+            padding-left: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 12px;
+            list-style-type: none;
+            position: relative;
+        }
+        
+        .instructions li::before {
+            content: '▹';
+            color: #2132E6;
+            position: absolute;
+            left: -20px;
         }
         
         .directory-container {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            margin-bottom: 60px;
         }
         
         .directory-container h2 {
-            color: #2c3e50;
-            margin-bottom: 25px;
-            font-size: 1.8rem;
+            color: #f8c471;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
             text-align: center;
-            border-bottom: 2px solid #2132E6;
-            padding-bottom: 15px;
+            text-shadow: 0 0 10px rgba(248, 196, 113, 0.5);
         }
         
         .levels-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
         }
         
         .level-item {
             display: flex;
             align-items: center;
-            padding: 18px 20px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            transition: all 0.4s ease;
             text-decoration: none;
-            color: #333;
-            border-left: 4px solid #2132E6;
+            color: #e0e0e0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .level-item:hover {
-            background-color: #f0f0f0;
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(33, 50, 230, 0.5);
+            background: rgba(33, 50, 230, 0.2);
         }
         
         .level-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #2132E6, #f8c471);
+            color: white;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 36px;
-            height: 36px;
-            background-color: #2132E6;
-            color: white;
-            border-radius: 50%;
             font-weight: bold;
-            margin-right: 15px;
-            flex-shrink: 0;
+            font-size: 1.4rem;
+            margin-right: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .level-item:hover .level-number {
+            transform: rotate(360deg);
         }
         
         .level-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
         }
         
-        .level-item:hover .level-name {
+        .code-link {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .code-link p {
+            margin-bottom: 15px;
+        }
+        
+        .code-link a {
+            color: #f8c471;
+            text-decoration: none;
+            font-weight: 700;
+            padding: 15px 30px;
+            border: 2px solid #f8c471;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 10px;
+            box-shadow: 0 0 10px rgba(248, 196, 113, 0.5);
+        }
+        
+        .code-link a:hover {
+            background-color: #f8c471;
             color: #2132E6;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(248, 196, 113, 0.8);
         }
         
         .footer {
             text-align: center;
-            padding: 25px;
-            margin-top: 40px;
-            border-top: 1px solid #ddd;
-            color: #7f8c8d;
-            font-size: 0.95rem;
+            padding: 40px;
+            color: #a0a0a0;
+            font-size: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .instructions {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-        }
-        
-        .instructions h2 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .instructions p {
-            margin-bottom: 10px;
-            color: #666;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-            color: #666;
-        }
-        
-        .code-link {
-            display: block;
-            margin-top: 30px;
-            text-align: center;
-            font-size: 1.1rem;
-        }
-        
-        .code-link a {
-            color: #2132E6;
-            text-decoration: none;
-            font-weight: 600;
-            border-bottom: 2px dotted #2132E6;
-            padding-bottom: 2px;
-        }
-        
-        .code-link a:hover {
-    color: #E67E22;
-    border-bottom-style: solid;
+        .footer p:last-child {
+            color: #ff5252;
+            font-weight: 700;
         }
         
         /* 响应式设计 */
@@ -185,53 +241,69 @@
                 grid-template-columns: 1fr;
             }
             
+            header {
+                padding: 80px 0;
+            }
+            
             header h1 {
-                font-size: 2.2rem;
-            }
-            
-            header p {
-                font-size: 1rem;
-            }
-            
-            .directory-container {
-                padding: 20px;
+                font-size: 3rem;
             }
         }
     </style>
 </head>
 <body>
-<div class="container">
+    <div class="container">
         <header>
             <div class="sand-icon">
                 <i class="fas fa-mountain-sun"></i>
             </div>
             <h1>关卡代码目录</h1>
-            <p>点击关卡名称查看完整代码</p>
         </header>
         
         <section class="instructions">
-          <h2><i class="fas fa-info-circle"></i> 使用说明</h2>
-            <p>点击下方任意关卡名称，将跳转到代码详情页查看该关卡的完整代码。</p>
+            <h2><i class="fas fa-info-circle"></i> 使用指南</h2>
+            <p>选择下方关卡，点击跳转</p>
             <p>在代码详情页中：</p>
-          <ul>
+            <ul>
                 <li>鼠标经过代码区域会显示复制按钮</li>
                 <li>点击复制按钮即可复制代码到剪贴板</li>
-          </ul>
-      </section>
+            </ul>
+        </section>
+        
+        <div class="directory-container">
+            <h2>关卡传送门</h2>
+            <div class="levels-list">
+                <a href="地牢.html" target="_blank" class="level-item">
+                    <div class="level-number">1</div>
+                    <span class="level-name">kithgard地牢</span>
+                </a>
+                <a href="森林.html" target="_blank" class="level-item">
+                    <div class="level-number">2</div>
+                    <span class="level-name">边地森林</span>
+                </a>
+                <a href="沙漠.html" target="_blank" class="level-item">
+                    <div class="level-number">3</div>
+                    <span class="level-name">sarven沙漠</span>
+                </a>
+                <a href="山峰.html" target="_blank" class="level-item">
+                    <div class="level-number">4</div>
+                    <span class="level-name">安息之云山峰</span>
+                </a>
+                <a href="冰川.html" target="_blank" class="level-item">
+                    <div class="level-number">5</div>
+                    <span class="level-name">kelvintaph冰川</span>
+                </a>
+            </div>
+        </div>
+        
         <div class="code-link">
-		  <p><a href="http://v.webzone.cc/" target="_blank">学校游戏网站入口</a></p>
-          <p>查看所有关卡代码的完整页面：</p>
-		  <p><a href="地牢.html" target="_blank">kithgard地牢关卡代码详情页</a></p>
-          <p><a href="森林.html" target="_blank">边地森林关卡代码详细页</a></p>
-          <p><a href="沙漠.html" target="_blank">sarven沙漠关卡代码详情页</a></p>
-		  <p><a href="山峰.html" target="_blank">安息之云山峰代码详细页</a></p>
-          <p><a href="冰川.html" target="_blank">kelvintaph冰川代码详细页</a></p>
-  </div>
-</div>
+            <p><a href="http://v.webzone.cc/" target="_blank">学校游戏网站入口</a></p>
+        </div>
+    </div>
     
     <footer class="footer">
-      <p>关卡代码目录</p>
-      <p style="color: #FF0000">注意：代码仅供参考，不建议直接抄！</p>
+        <p>关卡代码目录</p>
+        <p>注意：代码仅供参考，不建议直接抄！</p>
     </footer>
 </body>
 </html>
