@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>地牢关卡代码详情</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,12 +15,13 @@
         }
         
         body {
-            background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background: linear-gradient(180deg, #0c0c0c 0%, #1a1a1a 50%, #0a0a0a 100%);
             color: #e0e0e0;
             line-height: 1.6;
             overflow-x: hidden;
             position: relative;
-            padding-top: 60px; /* 为导航条预留空间 */
+            min-height: 100vh;
+            padding-top: 100px;
         }
         
         body::before {
@@ -30,254 +31,103 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpath d="M0 0 L50 100 L100 0 Z" fill="rgba(255,255,255,0.05)" /%3E%3C/svg%3E') repeat;
-            opacity: 0.1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(75, 0, 130, 0.06) 0%, transparent 50%),
+                url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpath d="M0 0 L50 100 L100 0 Z" fill="rgba(139, 0, 0, 0.03)" /%3E%3C/svg%3E') repeat;
+            opacity: 0.4;
             z-index: -1;
+        }
+        
+        /* 地牢火炬光效 */
+        @keyframes torchFlicker {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        .torch-effect {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255, 69, 0, 0.3), transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            animation: torchFlicker 2s ease-in-out infinite;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 60px 20px;
+            padding: 20px;
         }
         
         header {
             text-align: center;
-            padding: 100px 0;
+            padding: 60px 20px;
             background: transparent;
             color: #fff;
             position: relative;
             overflow: hidden;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(139, 0, 0, 0.2);
         }
         
         header h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 4rem;
+            font-family: 'MedievalSharp', cursive;
+            font-size: 3.5rem;
             margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(33, 50, 230, 0.8), 0 0 40px rgba(248, 196, 113, 0.6);
-            animation: glow 2s ease-in-out infinite alternate;
+            text-shadow: 0 0 20px rgba(139, 0, 0, 0.8), 0 0 40px rgba(178, 34, 34, 0.6);
+            animation: dungeonGlow 2s ease-in-out infinite alternate;
+            background: linear-gradient(to right, #8B0000, #4B0082);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
-        @keyframes glow {
-            from { text-shadow: 0 0 10px #2132E6, 0 0 20px #f8c471; }
-            to { text-shadow: 0 0 20px #2132E6, 0 0 40px #f8c471; }
+        @keyframes dungeonGlow {
+            from { text-shadow: 0 0 10px rgba(139, 0, 0, 0.6), 0 0 20px rgba(178, 34, 34, 0.4); }
+            to { text-shadow: 0 0 20px rgba(139, 0, 0, 0.8), 0 0 40px rgba(178, 34, 34, 0.6); }
         }
         
         header p {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             opacity: 0.9;
             max-width: 800px;
             margin: 0 auto;
-        }
-        
-        .sand-icon {
-            font-size: 5rem;
-            margin-bottom: 30px;
-            color: #f8c471;
-            animation: rotate 20s linear infinite;
-        }
-        
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .instructions {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 60px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-        
-        .instructions h2 {
-            color: #f8c471;
-            margin-bottom: 20px;
-            font-size: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-shadow: 0 0 10px rgba(248, 196, 113, 0.5);
-        }
-        
-        .instructions p, .instructions li {
-            color: #d0d0d0;
-            font-size: 1.1rem;
-        }
-        
-        .instructions ul {
-            padding-left: 25px;
-            margin-bottom: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 12px;
-            list-style-type: none;
-            position: relative;
-        }
-        
-        .instructions li::before {
-            content: '▹';
-            color: #2132E6;
-            position: absolute;
-            left: -20px;
-        }
-        
-        .directory-container {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            margin-bottom: 60px;
-        }
-        
-        .directory-container h2 {
-            color: #f8c471;
-            margin-bottom: 30px;
-            font-size: 2.2rem;
-            text-align: center;
-            text-shadow: 0 0 10px rgba(248, 196, 113, 0.5);
-        }
-        
-        .levels-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-        }
-        
-        .level-item {
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            transition: all 0.4s ease;
-            text-decoration: none;
-            color: #e0e0e0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-        }
-        
-        .level-item:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(33, 50, 230, 0.5);
-            background: rgba(33, 50, 230, 0.2);
-        }
-        
-        .level-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .level-number {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #2132E6, #f8c471);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.4rem;
-            margin-right: 20px;
-            transition: transform 0.3s ease;
-        }
-        
-        .level-item:hover .level-number {
-            transform: rotate(360deg);
-        }
-        
-        .level-name {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-        }
-        
-        .code-container {
-            position: relative;
-        }
-        
-        pre {
-            background-color: rgba(0, 0, 0, 0.5);
-            color: #dfe6e9;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin: 0;
-            tab-size: 4;
-            white-space: pre-wrap;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(33, 50, 230, 0.8);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.3s, background-color 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 10;
-        }
-        
-        .copy-btn:hover {
-            background-color: #2132E6;
-        }
-        
-        .copy-btn.show {
-            opacity: 1;
-        }
-        
-        .level-item:hover .copy-btn {
-            opacity: 1;
+            color: #ffb3b3;
         }
         
         .back-btn {
             display: inline-block;
-            margin-top: 15px;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 10px 20px;
+            margin-top: 25px;
+            background: rgba(139, 0, 0, 0.2);
+            color: #ff4d4d;
+            padding: 12px 28px;
             border-radius: 5px;
             text-decoration: none;
             font-weight: 600;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2);
             position: relative;
             z-index: 10;
         }
         
         .back-btn:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            background: rgba(139, 0, 0, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(139, 0, 0, 0.3);
         }
         
+        /* 地牢导航栏样式 */
         .level-nav {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(30, 30, 30, 0.7);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 0, 0, 0.2);
             position: fixed;
             top: 20px;
             left: 50%;
@@ -285,44 +135,45 @@
             width: calc(100% - 40px);
             max-width: 1200px;
             z-index: 1000;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             max-height: 2000px;
             overflow: hidden;
         }
         
         .level-nav.collapsed {
-            max-height: 70px;
+            max-height: 80px;
             cursor: pointer;
-            padding: 15px 20px;
+            padding: 20px 25px;
             width: auto;
-            min-width: 300px;
+            min-width: 320px;
         }
         
         .level-nav.collapsed:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background: rgba(40, 40, 40, 0.8);
+            border-color: rgba(139, 0, 0, 0.3);
         }
         
         .nav-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             cursor: pointer;
         }
         
         .nav-header h2 {
-            color: #f8c471;
-            font-size: 1.5rem;
+            color: #ff4d4d;
+            font-size: 1.6rem;
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 10px;
-            text-shadow: 0 0 10px rgba(248, 196, 113, 0.5);
+            gap: 12px;
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
         }
         
         .nav-header h2 i {
-            color: #2132E6;
-            font-size: 1.3rem;
+            color: #8B0000;
+            font-size: 1.4rem;
             transition: transform 0.3s;
         }
         
@@ -331,28 +182,29 @@
         }
         
         .collapse-toggle {
-            background: none;
-            border: none;
-            color: #d0d0d0;
+            background: rgba(139, 0, 0, 0.1);
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            color: #ff4d4d;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 10px 20px;
             border-radius: 5px;
-            font-size: 0.9rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             transition: all 0.3s;
         }
         
         .collapse-toggle:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #f8c471;
+            background: rgba(139, 0, 0, 0.2);
+            transform: translateY(-2px);
         }
         
         .level-nav.collapsed .collapse-toggle .toggle-text {
             display: none;
         }
         
+        /* 搜索区域样式 */
         .nav-content {
             transition: opacity 0.3s, transform 0.3s;
             opacity: 1;
@@ -367,43 +219,45 @@
         
         .search-container {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         #searchInput {
             width: 100%;
-            padding: 12px 20px;
-            padding-left: 45px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 20px;
+            padding-left: 50px;
+            background: rgba(20, 20, 20, 0.7);
+            border: 2px solid rgba(139, 0, 0, 0.3);
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             transition: all 0.3s;
-            background-color: rgba(255, 255, 255, 0.05);
             color: #e0e0e0;
+            backdrop-filter: blur(5px);
         }
         
         #searchInput:focus {
             outline: none;
-            border-color: #f8c471;
-            background-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 0 3px rgba(248, 196, 113, 0.1);
+            border-color: #8B0000;
+            background: rgba(30, 30, 30, 0.9);
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
         }
         
         .search-icon {
             position: absolute;
-            left: 15px;
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
-            color: #d0d0d0;
-            font-size: 1.2rem;
+            color: #ff4d4d;
+            font-size: 1.3rem;
         }
         
         .search-results {
             max-height: 400px;
             overflow-y: auto;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(139, 0, 0, 0.2);
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(5px);
         }
         
         .search-results.hidden {
@@ -412,16 +266,17 @@
         
         .level-result {
             display: block;
-            padding: 12px 20px;
+            padding: 16px 25px;
             text-decoration: none;
-            color: #e0e0e0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.2s;
+            color: #ffb3b3;
+            border-bottom: 1px solid rgba(139, 0, 0, 0.1);
+            transition: all 0.3s;
         }
         
         .level-result:hover {
-            background-color: rgba(33, 50, 230, 0.2);
-            color: #f8c471;
+            background: rgba(139, 0, 0, 0.15);
+            color: #ff4d4d;
+            transform: translateX(5px);
         }
         
         .level-result:last-child {
@@ -430,82 +285,181 @@
         
         .level-result .level-id {
             display: inline-block;
-            width: 30px;
-            color: #d0d0d0;
-            font-weight: 600;
+            width: 35px;
+            color: #8B0000;
+            font-weight: 700;
+            font-size: 1.1rem;
         }
         
         .level-result .level-name {
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
         
         .no-results {
-            padding: 20px;
+            padding: 30px;
             text-align: center;
-            color: #d0d0d0;
+            color: #ff4d4d;
             font-style: italic;
         }
         
         .search-stats {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #d0d0d0;
-            text-align: center;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 40px;
-            color: #a0a0a0;
+            margin-top: 15px;
             font-size: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ff4d4d;
+            text-align: center;
         }
         
-        .footer p:last-child {
-            color: #ff5252;
-            font-weight: 700;
+        /* 关卡内容区域 */
+        .level-content {
+            margin-bottom: 60px;
         }
         
-        .copy-notification {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background-color: rgba(33, 50, 230, 0.8);
+        .level-section {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 0;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .level-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(139, 0, 0, 0.3);
+        }
+        
+        .level-header {
+            background: linear-gradient(90deg, #4B0082 0%, #8B0000 100%);
             color: white;
-            padding: 15px 25px;
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+        }
+        
+        .level-header h3 {
+            font-size: 1.6rem;
+            margin: 0;
+            font-family: 'MedievalSharp', cursive;
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+        }
+        
+        .code-container {
+            position: relative;
+            padding: 30px;
+        }
+        
+        pre {
+            background: #1a1a1a;
+            color: #ffb3b3;
+            padding: 25px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0;
+            tab-size: 4;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid rgba(139, 0, 0, 0.2);
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #8B0000, #4B0082);
+            color: white;
+            border: none;
+            padding: 12px 20px;
             border-radius: 5px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            font-weight: 600;
             opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s, transform 0.3s;
-            z-index: 1000;
-            max-width: 300px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.3);
+            border: 1px solid rgba(139, 0, 0, 0.3);
         }
         
-        .copy-notification.show {
+        .code-container:hover .copy-btn {
             opacity: 1;
-            transform: translateY(0);
         }
         
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #a50000, #5a0082);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 0, 0, 0.4);
+        }
+        
+        .copy-btn.show {
+            opacity: 1;
+        }
+        
+        /* B站按钮样式 */
+        .bilibili-btn-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 0 30px;
+        }
+        
+        .bilibili-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #fb7299, #ff3852);
+            color: white;
+            padding: 18px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(251, 114, 153, 0.4);
+            border: none;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .bilibili-btn:hover {
+            background: linear-gradient(135deg, #ff8ab0, #ff5262);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(251, 114, 153, 0.5);
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* 浮动返回顶部按钮 */
         .floating-top-btn {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: #f8c471;
-            color: #2132E6;
+            bottom: 40px;
+            right: 40px;
+            background: linear-gradient(135deg, #8B0000, #4B0082);
+            color: white;
             border: none;
-            padding: 12px 18px;
-            border-radius: 50px;
+            padding: 15px 25px;
+            border-radius: 5px;
             cursor: pointer;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
             z-index: 999;
             opacity: 0;
             transform: translateY(20px);
+            border: 1px solid rgba(139, 0, 0, 0.3);
         }
         
         .floating-top-btn.show {
@@ -514,90 +468,177 @@
         }
         
         .floating-top-btn:hover {
-            background-color: #2132E6;
-            color: #f8c471;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+            background: linear-gradient(135deg, #a50000, #5a0082);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
         }
         
-        /* 响应式设计 */
+        /* 复制成功提示 */
+        .copy-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, #8B0000, #4B0082);
+            color: white;
+            padding: 18px 28px;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(139, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+            max-width: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .copy-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(139, 0, 0, 0.2);
+            color: #ff4d4d;
+            font-size: 1rem;
+            background: rgba(20, 20, 20, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .footer p:last-child {
+            color: #ff6b6b;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        /* 移动端适配 */
         @media (max-width: 768px) {
-            .levels-list {
-                grid-template-columns: 1fr;
-            }
-            
-            header {
-                padding: 80px 0;
-            }
-            
-            header h1 {
-                font-size: 3rem;
+            body {
+                padding-top: 80px;
             }
             
             .level-nav {
                 top: 10px;
                 width: calc(100% - 20px);
+                padding: 20px;
+            }
+            
+            .level-nav.collapsed {
+                max-height: 70px;
+                padding: 15px 20px;
+                min-width: 280px;
+            }
+            
+            header h1 {
+                font-size: 2.5rem;
+            }
+            
+            header p {
+                font-size: 1.1rem;
+            }
+            
+            .back-btn {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+            
+            .nav-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .collapse-toggle {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            #searchInput {
+                padding: 14px 20px;
+                padding-left: 45px;
+                font-size: 1rem;
+            }
+            
+            .search-icon {
+                left: 15px;
+                font-size: 1.2rem;
+            }
+            
+            .level-header {
+                padding: 20px 25px;
+            }
+            
+            .level-header h3 {
+                font-size: 1.4rem;
+            }
+            
+            .code-container {
+                padding: 20px;
+            }
+            
+            pre {
+                padding: 20px;
+                font-size: 0.95rem;
+                max-height: 400px;
+            }
+            
+            .copy-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 15px;
+                width: 100%;
+                justify-content: center;
+                opacity: 1;
+            }
+            
+            .bilibili-btn {
+                padding: 15px 25px;
+                font-size: 1.1rem;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .floating-top-btn {
+                right: 20px;
+                bottom: 20px;
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .copy-notification {
+                left: 50%;
+                transform: translateX(-50%) translateY(10px);
+                width: 90%;
+                max-width: 300px;
+                text-align: center;
+                bottom: 80px;
+            }
+            
+            .copy-notification.show {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding-top: 70px;
+            }
+            
+            .level-nav {
+                top: 5px;
+                width: calc(100% - 10px);
                 padding: 15px;
             }
             
             .level-nav.collapsed {
                 max-height: 60px;
-                padding: 10px 15px;
+                padding: 12px 15px;
                 min-width: 250px;
             }
             
-            .copy-notification {
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) translateY(10px);
-                width: 90%;
-                max-width: 280px;
-                text-align: center;
-                padding: 15px 20px;
-                bottom: auto;
-            }
-            
-            .copy-notification.show {
-                transform: translate(-50%, -50%) translateY(0);
-            }
-            
-            .floating-top-btn {
-                right: 15px;
-                bottom: 15px;
-                padding: 10px 15px;
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .level-nav {
-                top: 5px;
-                width: calc(100% - 10px);
-                padding: 12px;
-            }
-            
-            .level-nav.collapsed {
-                max-height: 55px;
-                padding: 8px 12px;
-                min-width: 200px;
-            }
-            
-            .nav-header h2 {
-                font-size: 1.2rem;
-            }
-            
-            .copy-notification {
-                width: 85%;
-                max-width: 250px;
-                padding: 12px 15px;
-                font-size: 0.85rem;
-            }
-            
-            .floating-top-btn {
-                right: 10px;
-                bottom: 10px;
-                padding: 8px 12px;
-                font-size: 0.8rem;
+            header {
+                padding: 40px 15px;
             }
             
             header h1 {
@@ -607,33 +648,39 @@
             header p {
                 font-size: 1rem;
             }
+            
+            .nav-header h2 {
+                font-size: 1.2rem;
+            }
+            
+            .level-header h3 {
+                font-size: 1.2rem;
+            }
+            
+            .floating-top-btn {
+                right: 15px;
+                bottom: 15px;
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 火炬光效 -->
+    <div id="torchEffects"></div>
+    
     <div class="container">
         <header id="page-top">
-            <div class="sand-icon">
-                <i class="fas fa-mountain-sun"></i>
-            </div>
-            <h1>kithgard地牢</h1>
+            <h1><i class="fas fa-dungeon"></i> Kithgard地牢</h1>
             <p>地牢关卡代码，可点击复制<br>
-                <span style="color: #001AE7">有些关卡有需要特定的装备，请自行看代码选择装备</span></p>
+                <span style="color: #ff4d4d">有些关卡需要特定的装备，请自行查看代码选择装备</span></p>
             <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> 返回目录页</a>
         </header>
         
-        <section class="instructions">
-            <h2><i class="fas fa-info-circle"></i> 使用指南</h2>
-            <p>在代码详情页中：</p>
-            <ul>
-                <li>鼠标经过代码区域会显示复制按钮</li>
-                <li>点击复制按钮即可复制代码到剪贴板</li>
-            </ul>
-        </section>
-        
         <section class="level-nav collapsed" id="levelNav">
             <div class="nav-header">
-                <h2><i class="fas fa-search"></i> 关卡搜索导航←点击搜索！</h2>
+                <h2><i class="fas fa-search"></i> 关卡搜索导航 ← 点击搜索！</h2>
                 <button class="collapse-toggle" id="collapseToggle">
                     <i class="fas fa-chevron-down" id="collapseIcon"></i>
                     <span class="toggle-text">收起搜索栏</span>
@@ -643,7 +690,7 @@
             <div class="nav-content">
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="searchInput" placeholder="输入关卡名称进行搜索">
+                    <input type="text" id="searchInput" placeholder="输入关卡名称或编号进行搜索">
                 </div>
                 <div class="search-results hidden" id="searchResults">
                     <!-- 搜索结果将在这里显示 -->
@@ -654,27 +701,59 @@
             </div>
         </section>
         
-        <div class="directory-container" id="levelContent">
-            <h2>地牢关卡列表</h2>
-            <div class="levels-list">
-                <!-- 关卡代码将通过JavaScript动态生成 -->
-            </div>
+        <div class="level-content" id="levelContent">
+            <!-- 关卡代码将通过JavaScript动态生成 -->
         </div>
     </div>
     
     <!-- 浮动返回顶部按钮 -->
     <button class="floating-top-btn" id="floatingTopBtn">
-        <i class="fas fa-arrow-up"></i> 返回页首
+        <i class="fas fa-arrow-up"></i> 返回顶部
     </button>
     
     <footer class="footer">
         <p>地牢关卡代码详情</p>
-        <p style="color: #FF0000">注意：代码仅供参考，不建议直接抄！</p>
+        <p>注意：代码仅供参考，不建议直接抄！</p>
     </footer>
     
-    <div class="copy-notification" id="copyNotification">代码已复制到剪贴板！</div>
+    <div class="copy-notification" id="copyNotification">
+        <i class="fas fa-check-circle"></i> 代码已复制到剪贴板！
+    </div>
 
     <script>
+        // 创建火炬光效
+        function createTorchEffects() {
+            const torchContainer = document.getElementById('torchEffects');
+            const torchCount = 5;
+            
+            for (let i = 0; i < torchCount; i++) {
+                const torch = document.createElement('div');
+                torch.classList.add('torch-effect');
+                
+                // 随机位置
+                torch.style.left = `${Math.random() * 100}vw`;
+                torch.style.top = `${Math.random() * 100}vh`;
+                
+                // 随机大小
+                const size = Math.random() * 80 + 40;
+                torch.style.width = `${size}px`;
+                torch.style.height = `${size}px`;
+                
+                // 随机动画延迟
+                const delay = Math.random() * 2;
+                torch.style.animationDelay = `${delay}s`;
+                
+                // 随机透明度
+                torch.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                torchContainer.appendChild(torch);
+            }
+        }
+        
+        // 页面加载后创建火炬效果
+        window.addEventListener('load', createTorchEffects);
+        
+        // 关卡代码数据（为保持代码简洁，删除了部分长代码）
         const levelCodes = [
             {
                 id: 1,
@@ -1226,32 +1305,29 @@ while True:
         ];
         
         // 生成关卡内容
-        const levelContent = document.querySelector('.levels-list');
+        const levelContent = document.getElementById('levelContent');
         
         levelCodes.forEach(level => {
-            const item = document.createElement('div');
-            item.className = 'level-item';
-            item.id = `level-${level.id}`;
+            const section = document.createElement('section');
+            section.className = 'level-section';
+            section.id = `level-${level.id}`;
             
-            const header = document.createElement('div');
-            header.className = 'level-header';
-            header.innerHTML = `
-                <div class="level-number">${level.id}</div>
-                <span class="level-name">${level.name}</span>
-            `;
-            
-            const codeContainer = document.createElement('div');
-            codeContainer.className = 'code-container';
-            codeContainer.innerHTML = `
-                <pre><code id="code-${level.id}">${level.code}</code></pre>
+            const codeHtml = `<div class="level-header">
+                <h3><i class="fas fa-skull-crossbones"></i> ${level.id}. ${level.name}</h3>
+            </div>
+            <div class="code-container">
+                <pre><code id="code-${level.id}"></code></pre>
                 <button class="copy-btn" data-code-id="${level.id}">
                     <i class="far fa-copy"></i> 复制代码
                 </button>
-            `;
+            </div>`;
             
-            item.appendChild(header);
-            item.appendChild(codeContainer);
-            levelContent.appendChild(item);
+            section.innerHTML = codeHtml;
+            
+            const codeElement = section.querySelector(`#code-${level.id}`);
+            codeElement.textContent = level.code;
+            
+            levelContent.appendChild(section);
         });
         
         // 导航条收起功能
@@ -1260,11 +1336,9 @@ while True:
         const collapseIcon = document.getElementById('collapseIcon');
         const navHeader = document.querySelector('.nav-header');
         
-        // 切换收起状态
         function toggleNavCollapse() {
             levelNav.classList.toggle('collapsed');
             
-            // 更新图标和文本
             if (levelNav.classList.contains('collapsed')) {
                 collapseIcon.className = 'fas fa-chevron-down';
                 collapseToggle.querySelector('.toggle-text').textContent = '展开搜索栏';
@@ -1272,22 +1346,18 @@ while True:
                 collapseIcon.className = 'fas fa-chevron-up';
                 collapseToggle.querySelector('.toggle-text').textContent = '收起搜索栏';
                 
-                // 展开时自动聚焦搜索框
                 setTimeout(() => {
                     document.getElementById('searchInput').focus();
-                }, 500);
+                }, 300);
             }
         }
         
-        // 点击切换按钮收起/展开
         collapseToggle.addEventListener('click', function(e) {
-            e.stopPropagation(); // 防止事件冒泡
+            e.stopPropagation();
             toggleNavCollapse();
         });
         
-        // 点击导航标题也可以收起/展开
         navHeader.addEventListener('click', function(e) {
-            // 如果点击的不是切换按钮本身
             if (!e.target.closest('.collapse-toggle')) {
                 toggleNavCollapse();
             }
@@ -1298,48 +1368,13 @@ while True:
         const searchResults = document.getElementById('searchResults');
         const searchStats = document.getElementById('searchStats');
         
-        // 初始显示所有关卡
-        updateSearchResults(levelCodes);
-        
-        // 搜索输入事件
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            
-            if (searchTerm === '') {
-                // 显示所有关卡
-                updateSearchResults(levelCodes);
-            } else {
-                // 过滤关卡
-                const filteredLevels = levelCodes.filter(level => {
-                    return level.name.toLowerCase().includes(searchTerm) || 
-                           level.id.toString().includes(searchTerm) ||
-                           level.code.toLowerCase().includes(searchTerm);
-                });
-                
-                updateSearchResults(filteredLevels);
-            }
-            
-            // 如果有搜索结果，确保导航条是展开状态
-            if (!levelNav.classList.contains('collapsed')) {
-                levelNav.classList.remove('collapsed');
-            }
-        });
-        
-        // 搜索框获得焦点时展开导航条
-        searchInput.addEventListener('focus', function() {
-            if (levelNav.classList.contains('collapsed')) {
-                toggleNavCollapse();
-            }
-        });
-        
-        // 更新搜索结果
         function updateSearchResults(levels) {
             searchResults.innerHTML = '';
             
             if (levels.length === 0) {
                 searchResults.innerHTML = '<div class="no-results">未找到匹配的关卡</div>';
                 searchResults.classList.remove('hidden');
-                searchStats.textContent = '共54个关卡，未找到匹配项';
+                searchStats.textContent = `共${levelCodes.length}个关卡，未找到匹配项`;
                 return;
             }
             
@@ -1352,7 +1387,6 @@ while True:
                     <span class="level-name">${level.name}</span>
                 `;
                 
-                // 添加点击事件，平滑滚动到对应关卡
                 result.addEventListener('click', function(e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('href');
@@ -1364,17 +1398,20 @@ while True:
                             block: 'start'
                         });
                         
-                        // 高亮显示当前关卡
-                        document.querySelectorAll('.level-item').forEach(section => {
-                            section.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+                        document.querySelectorAll('.level-section').forEach(section => {
+                            section.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
                         });
                         
-                        targetElement.style.boxShadow = '0 0 0 3px rgba(248, 196, 113, 0.3)';
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(139, 0, 0, 0.3), 0 12px 40px rgba(0, 0, 0, 0.4)';
                         
-                        // 3秒后移除高亮
                         setTimeout(() => {
-                            targetElement.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+                            targetElement.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
                         }, 3000);
+                        
+                        // 收起搜索栏
+                        if (!levelNav.classList.contains('collapsed')) {
+                            toggleNavCollapse();
+                        }
                     }
                 });
                 
@@ -1382,10 +1419,39 @@ while True:
             });
             
             searchResults.classList.remove('hidden');
-            searchStats.textContent = `共54个关卡，找到${levels.length}个匹配项`;
+            searchStats.textContent = `共${levelCodes.length}个关卡，找到${levels.length}个匹配项`;
         }
         
-        // 添加复制功能
+        // 初始显示所有关卡
+        updateSearchResults(levelCodes);
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                updateSearchResults(levelCodes);
+            } else {
+                const filteredLevels = levelCodes.filter(level => {
+                    return level.name.toLowerCase().includes(searchTerm) || 
+                           level.id.toString().includes(searchTerm) ||
+                           level.code.toLowerCase().includes(searchTerm);
+                });
+                
+                updateSearchResults(filteredLevels);
+            }
+            
+            if (!levelNav.classList.contains('collapsed')) {
+                levelNav.classList.remove('collapsed');
+            }
+        });
+        
+        searchInput.addEventListener('focus', function() {
+            if (levelNav.classList.contains('collapsed')) {
+                toggleNavCollapse();
+            }
+        });
+        
+        // 复制功能
         document.querySelectorAll('.copy-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const codeId = this.getAttribute('data-code-id');
@@ -1396,7 +1462,6 @@ while True:
             });
         });
         
-        // 辅助函数：复制到剪贴板
         function copyToClipboard(text) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
@@ -1405,11 +1470,9 @@ while True:
             document.execCommand('copy');
             document.body.removeChild(textarea);
             
-            // 显示复制成功提示
             showCopyNotification();
         }
         
-        // 显示复制成功提示
         const copyNotification = document.getElementById('copyNotification');
         
         function showCopyNotification() {
@@ -1419,27 +1482,9 @@ while True:
             }, 3000);
         }
         
-        // 检查URL中的锚点，滚动到对应位置
-        window.addEventListener('load', function() {
-            if (window.location.hash) {
-                const targetElement = document.querySelector(window.location.hash);
-                if (targetElement) {
-                    setTimeout(() => {
-                        targetElement.scrollIntoView({ behavior: 'smooth' });
-                        
-                        // 高亮显示当前关卡
-                        targetElement.style.boxShadow = '0 0 0 3px rgba(248, 196, 113, 0.3)';
-                        
-                        // 3秒后移除高亮
-                        setTimeout(() => {
-                            targetElement.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
-                        }, 3000);
-                    }, 100);
-                }
-            }
-        });
+        // 浮动返回顶部按钮
+        const floatingTopBtn = document.getElementById('floatingTopBtn');
         
-        // 监听滚动事件，显示/隐藏浮动按钮
         window.addEventListener('scroll', function() {
             if (window.scrollY > 300) {
                 floatingTopBtn.classList.add('show');
@@ -1448,7 +1493,6 @@ while True:
             }
         });
         
-        // 点击浮动按钮返回顶部
         floatingTopBtn.addEventListener('click', function() {
             window.scrollTo({
                 top: 0,
@@ -1456,8 +1500,35 @@ while True:
             });
         });
         
-        // 初始加载时显示所有关卡
-        updateSearchResults(levelCodes);
+        // URL锚点处理
+        window.addEventListener('load', function() {
+            if (window.location.hash) {
+                const targetElement = document.querySelector(window.location.hash);
+                if (targetElement) {
+                    setTimeout(() => {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(139, 0, 0, 0.3), 0 12px 40px rgba(0, 0, 0, 0.4)';
+                        
+                        setTimeout(() => {
+                            targetElement.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
+                        }, 3000);
+                    }, 100);
+                }
+            }
+        });
+        
+        // 显示/隐藏复制按钮
+        document.querySelectorAll('.code-container').forEach(container => {
+            const copyBtn = container.querySelector('.copy-btn');
+            
+            container.addEventListener('mouseenter', function() {
+                copyBtn.classList.add('show');
+            });
+            
+            container.addEventListener('mouseleave', function() {
+                copyBtn.classList.remove('show');
+            });
+        });
     </script>
 </body>
 </html>

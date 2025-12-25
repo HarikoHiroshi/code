@@ -5,19 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>安息之云山峰代码详情</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', sans-serif;
         }
         
         body {
-            background-color: #f5f5f5;
-            color: #333;
+            background: linear-gradient(180deg, #0a1520 0%, #1a2d42 50%, #0a1a30 100%);
+            color: #e0e0e0;
             line-height: 1.6;
-            padding-top: 100px; /* 为导航条预留空间，防止遮挡 */
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(100, 180, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(80, 160, 230, 0.06) 0%, transparent 50%),
+                url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpolygon points="50,0 100,50 50,100 0,50" fill="rgba(100, 180, 255, 0.03)" /%3E%3C/svg%3E') repeat;
+            opacity: 0.4;
+            z-index: -1;
+        }
+        
+        /* 雪花飘落动画 */
+        @keyframes snowFall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .snowflake {
+            position: absolute;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #c0d0e0);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.7;
+            animation: snowFall linear infinite;
+            transform-origin: center;
         }
         
         .container {
@@ -28,100 +63,117 @@
         
         header {
             text-align: center;
-            padding: 25px 0;
-            background: linear-gradient(135deg, #f8c471 0%, #e67e22 100%);
-            color: white;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 60px 20px;
+            background: transparent;
+            color: #fff;
             position: relative;
-            z-index: 1;
+            overflow: hidden;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(100, 180, 255, 0.2);
         }
         
         header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-    color: #E4F8FF;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(100, 180, 255, 0.8), 0 0 40px rgba(80, 160, 230, 0.6);
+            animation: glow 2s ease-in-out infinite alternate;
+            background: linear-gradient(to right, #64B4FF, #4A8FD8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(100, 180, 255, 0.6), 0 0 20px rgba(80, 160, 230, 0.4); }
+            to { text-shadow: 0 0 20px rgba(100, 180, 255, 0.8), 0 0 40px rgba(80, 160, 230, 0.6); }
         }
         
         header p {
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             opacity: 0.9;
             max-width: 800px;
             margin: 0 auto;
+            color: #c0e0ff;
         }
         
         .back-btn {
             display: inline-block;
-            margin-top: 15px;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
+            margin-top: 25px;
+            background: rgba(100, 180, 255, 0.2);
+            color: #64B4FF;
+            padding: 12px 28px;
+            border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            border: 1px solid rgba(100, 180, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(100, 180, 255, 0.2);
             position: relative;
             z-index: 10;
         }
         
         .back-btn:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            background: rgba(100, 180, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(100, 180, 255, 0.3);
         }
         
+        /* 山峰导航栏样式 */
         .level-nav {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-            position: fixed; /* 改为fixed定位，固定在顶部 */
+            background: rgba(15, 30, 60, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 30, 60, 0.3);
+            border: 1px solid rgba(100, 180, 255, 0.2);
+            position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 40px);
             max-width: 1200px;
-            z-index: 1000; /* 提高z-index确保在最上层 */
-            transition: all 0.3s ease;
+            z-index: 1000;
+            transition: all 0.4s ease;
             max-height: 2000px;
             overflow: hidden;
         }
         
-        /* 收起状态 */
         .level-nav.collapsed {
-            max-height: 70px;
+            max-height: 80px;
             cursor: pointer;
-            padding: 15px 20px;
-            width: auto; /* 收起时宽度自适应 */
-            min-width: 300px;
+            padding: 20px 25px;
+            width: auto;
+            min-width: 320px;
         }
         
         .level-nav.collapsed:hover {
-            background-color: #f8f9fa;
+            background: rgba(20, 40, 80, 0.8);
+            border-color: rgba(100, 180, 255, 0.3);
         }
         
-        /* 导航标题区域 */
         .nav-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             cursor: pointer;
         }
         
         .nav-header h2 {
-            color: #2c3e50;
-            font-size: 1.5rem;
+            color: #64B4FF;
+            font-size: 1.6rem;
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            text-shadow: 0 0 10px rgba(100, 180, 255, 0.5);
         }
         
         .nav-header h2 i {
-            color: #e67e22;
-            font-size: 1.3rem;
+            color: #4A8FD8;
+            font-size: 1.4rem;
             transition: transform 0.3s;
         }
         
@@ -130,104 +182,29 @@
         }
         
         .collapse-toggle {
-            background: none;
-            border: none;
-            color: #7f8c8d;
+            background: rgba(100, 180, 255, 0.1);
+            border: 1px solid rgba(100, 180, 255, 0.3);
+            color: #64B4FF;
             cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.9rem;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             transition: all 0.3s;
         }
         
         .collapse-toggle:hover {
-            background-color: #f0f0f0;
-            color: #e67e22;
+            background: rgba(100, 180, 255, 0.2);
+            transform: translateY(-2px);
         }
         
         .level-nav.collapsed .collapse-toggle .toggle-text {
             display: none;
         }
-                .level-nav.collapsed .collapse-toggle .toggle-text {
-            display: none;
-        }
         
-        /* 在这里添加B站按钮样式开始 */
-        /* B站按钮样式 */
-        .bilibili-btn-container {
-            text-align: center;
-            margin: 20px 0;
-        }
-        
-        .bilibili-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background-color: #fb7299;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(251, 114, 153, 0.3);
-            border: none;
-            cursor: pointer;
-        }
-        
-        .bilibili-btn:hover {
-            background-color: #ff8ab0;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 18px rgba(251, 114, 153, 0.4);
-            color: white;
-            text-decoration: none;
-        }
-        
-        .bilibili-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 8px rgba(251, 114, 153, 0.3);
-        }
-        
-        .bilibili-btn i {
-            font-size: 1.3rem;
-        }
-        
-        /* 移动端适配 */
-        @media (max-width: 768px) {
-            .bilibili-btn {
-                padding: 12px 24px;
-                font-size: 1rem;
-                width: 90%;
-                max-width: 300px;
-            }
-            
-            .bilibili-btn span {
-                font-size: 0.95rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .bilibili-btn {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-            
-            .bilibili-btn i {
-                font-size: 1.1rem;
-            }
-        }
-        /* 在这里添加B站按钮样式结束 */
-        
-        .nav-content {
-            transition: opacity 0.3s, transform 0.3s;
-            opacity: 1;
-            transform: translateY(0);
-        }
+        /* 搜索区域样式 */
         .nav-content {
             transition: opacity 0.3s, transform 0.3s;
             opacity: 1;
@@ -242,42 +219,45 @@
         
         .search-container {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         #searchInput {
             width: 100%;
-            padding: 12px 20px;
-            padding-left: 45px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
+            padding: 16px 20px;
+            padding-left: 50px;
+            background: rgba(10, 20, 40, 0.7);
+            border: 2px solid rgba(100, 180, 255, 0.3);
+            border-radius: 12px;
+            font-size: 1.1rem;
             transition: all 0.3s;
-            background-color: #f8f9fa;
+            color: #e0e0e0;
+            backdrop-filter: blur(5px);
         }
         
         #searchInput:focus {
             outline: none;
-            border-color: #e67e22;
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+            border-color: #4A8FD8;
+            background: rgba(15, 30, 60, 0.9);
+            box-shadow: 0 0 20px rgba(100, 180, 255, 0.3);
         }
         
         .search-icon {
             position: absolute;
-            left: 15px;
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
-            color: #7f8c8d;
-            font-size: 1.2rem;
+            color: #64B4FF;
+            font-size: 1.3rem;
         }
         
         .search-results {
             max-height: 400px;
             overflow-y: auto;
-            border-radius: 8px;
-            border: 1px solid #eaeaea;
-            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid rgba(100, 180, 255, 0.2);
+            background: rgba(10, 20, 40, 0.7);
+            backdrop-filter: blur(5px);
         }
         
         .search-results.hidden {
@@ -286,16 +266,17 @@
         
         .level-result {
             display: block;
-            padding: 12px 20px;
+            padding: 16px 25px;
             text-decoration: none;
-            color: #2c3e50;
-            border-bottom: 1px solid #eaeaea;
-            transition: all 0.2s;
+            color: #c0e0ff;
+            border-bottom: 1px solid rgba(100, 180, 255, 0.1);
+            transition: all 0.3s;
         }
         
         .level-result:hover {
-            background-color: #e8f4fc;
-            color: #e67e22;
+            background: rgba(100, 180, 255, 0.15);
+            color: #64B4FF;
+            transform: translateX(5px);
         }
         
         .level-result:last-child {
@@ -304,255 +285,226 @@
         
         .level-result .level-id {
             display: inline-block;
-            width: 30px;
-            color: #7f8c8d;
-            font-weight: 600;
+            width: 35px;
+            color: #4A8FD8;
+            font-weight: 700;
+            font-size: 1.1rem;
         }
         
         .level-result .level-name {
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
         
         .no-results {
-            padding: 20px;
+            padding: 30px;
             text-align: center;
-            color: #7f8c8d;
+            color: #64B4FF;
             font-style: italic;
         }
         
         .search-stats {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #7f8c8d;
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #64B4FF;
             text-align: center;
         }
         
+        /* 关卡内容区域 */
         .level-content {
-            margin-bottom: 40px;
+            margin-bottom: 60px;
         }
         
         .level-section {
-            background-color: white;
-            border-radius: 10px;
+            background: rgba(15, 30, 60, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             padding: 0;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 35px;
+            box-shadow: 0 8px 32px rgba(0, 30, 60, 0.3);
+            border: 1px solid rgba(100, 180, 255, 0.2);
             overflow: hidden;
             position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .level-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 40, 80, 0.4);
+            border-color: rgba(100, 180, 255, 0.3);
         }
         
         .level-header {
-            background: linear-gradient(to right, #3498db, #2ecc71);
+            background: linear-gradient(90deg, #1a4a6a 0%, #2a7a9a 100%);
             color: white;
-            padding: 20px 25px;
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(100, 180, 255, 0.3);
         }
         
         .level-header h3 {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px rgba(100, 180, 255, 0.5);
         }
         
         .code-container {
             position: relative;
-            padding: 25px;
-        }
-        
-        .code-container:hover .copy-btn {
-            opacity: 1;
+            padding: 30px;
         }
         
         pre {
-            background-color: #2d3436;
-            color: #dfe6e9;
-            padding: 20px;
-            border-radius: 8px;
+            background: #0a1525;
+            color: #c0e0ff;
+            padding: 25px;
+            border-radius: 12px;
             overflow-x: auto;
             font-family: 'Courier New', monospace;
-            font-size: 0.95rem;
-            line-height: 1.5;
+            font-size: 1rem;
+            line-height: 1.6;
             margin: 0;
             tab-size: 4;
             white-space: pre-wrap;
             max-height: 500px;
             overflow-y: auto;
+            border: 1px solid rgba(100, 180, 255, 0.2);
         }
         
         .copy-btn {
             position: absolute;
             top: 15px;
             right: 15px;
-            background-color: #3498db;
+            background: linear-gradient(135deg, #2a7a9a, #1a4a6a);
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
+            padding: 12px 20px;
+            border-radius: 50px;
             cursor: pointer;
             font-weight: 600;
             opacity: 0;
-            transition: opacity 0.3s, background-color 0.3s;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             z-index: 10;
+            box-shadow: 0 4px 15px rgba(42, 122, 154, 0.3);
+            border: 1px solid rgba(100, 180, 255, 0.3);
+        }
+        
+        .code-container:hover .copy-btn {
+            opacity: 1;
         }
         
         .copy-btn:hover {
-            background-color: #2980b9;
+            background: linear-gradient(135deg, #3a8aaa, #2a7a9a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42, 122, 154, 0.4);
         }
         
         .copy-btn.show {
             opacity: 1;
         }
         
-        /* 删除每个关卡内的返回页首按钮 */
-        .back-to-top-btn {
-            display: none; /* 隐藏所有关卡内的返回页首按钮 */
-        }
-        
-        .footer {
+        /* B站按钮样式 */
+        .bilibili-btn-container {
             text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-            border-top: 1px solid #ddd;
-            color: #7f8c8d;
-            font-size: 0.9rem;
+            margin: 30px 0;
+            padding: 0 30px;
         }
         
-        /* 复制成功提示 - 电脑端样式 */
-        .copy-notification {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background-color: #2ecc71;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 5px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s, transform 0.3s;
-            z-index: 1000;
-            max-width: 300px;
-        }
-        
-        .copy-notification.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* 浮动返回顶部按钮 - 电脑端样式 */
-        .floating-top-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: #e67e22;
-            color: white;
-            border: none;
-            padding: 12px 18px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
+        .bilibili-btn {
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            z-index: 999;
-            opacity: 0;
-            transform: translateY(20px);
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #fb7299, #ff3852);
+            color: white;
+            padding: 18px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(251, 114, 153, 0.4);
+            border: none;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
         
-        .floating-top-btn.show {
-            opacity: 1;
-            transform: translateY(0);
+        .bilibili-btn:hover {
+            background: linear-gradient(135deg, #ff8ab0, #ff5262);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(251, 114, 153, 0.5);
+            color: white;
+            text-decoration: none;
         }
         
-        .floating-top-btn:hover {
-            background-color: #d35400;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-        }
-
         /* 装备图片样式 */
         .equipment-image {
             text-align: center;
-            margin: 20px 0;
-            padding: 0 25px 25px;
+            margin: 30px 0;
+            padding: 0 30px 30px;
         }
         
         .equipment-image img {
             max-width: 100%;
             height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(100, 180, 255, 0.3);
         }
+        
         .image-caption {
-            margin-top: 10px;
-            color: #7f8c8d;
+            margin-top: 15px;
+            color: #64B4FF;
             font-style: italic;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
-		       /* 视频容器样式 */
-       .video-container {
-           text-align: center;
-           margin: 20px 0;
-           padding: 0 25px 25px;
-       }
-
-       .video-container h4 {
-           color: #2c3e50;
-           margin-bottom: 15px;
-           font-size: 1.2rem;
-       }
-
-       .video-wrapper {
-           position: relative;
-           width: 100%;
-           max-width: 800px;
-           margin: 0 auto;
-           border-radius: 8px;
-           overflow: hidden;
-           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-       }
-
-       .video-wrapper iframe,
-       .video-wrapper video {
-           width: 100%;
-           height: 450px;
-           display: block;
-           border: none;
-       }
-
-       .video-caption {
-           margin-top: 10px;
-           color: #7f8c8d;
-           font-style: italic;
-           font-size: 0.9rem;
-       }
-
-       /* 移动端适配 */
-       @media (max-width: 768px) {
-           .video-wrapper iframe,
-           .video-wrapper video {
-               height: 300px;
-           }
-           
-           .video-container {
-               padding: 0 15px 15px;
-           }
-       }
-
-       @media (max-width: 480px) {
-           .video-wrapper iframe,
-           .video-wrapper video {
-               height: 200px;
-           }
-           
-           .video-container h4 {
-               font-size: 1.1rem;
-           }
-       }
+        
+        /* 视频容器样式 */
+        .video-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 0 30px 30px;
+        }
+        
+        .video-container h4 {
+            color: #64B4FF;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-shadow: 0 0 10px rgba(100, 180, 255, 0.5);
+        }
+        
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 30, 60, 0.4);
+            border: 1px solid rgba(100, 180, 255, 0.3);
+        }
+        
+        .video-wrapper iframe,
+        .video-wrapper video {
+            width: 100%;
+            height: 450px;
+            display: block;
+            border: none;
+        }
+        
+        .video-caption {
+            margin-top: 15px;
+            color: #64B4FF;
+            font-style: italic;
+            font-size: 1rem;
+        }
+        
         /* 多代码块样式 */
         .multi-code-container {
             margin-bottom: 20px;
@@ -561,18 +513,19 @@
         .code-block-title {
             font-size: 1.2rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: #64B4FF;
             margin-bottom: 10px;
             padding-left: 5px;
-            border-left: 4px solid #3498db;
+            border-left: 4px solid #4A8FD8;
         }
         
         .sub-code-container {
             position: relative;
             margin-bottom: 30px;
-            border: 1px solid #eaeaea;
+            border: 1px solid rgba(100, 180, 255, 0.2);
             border-radius: 8px;
             overflow: hidden;
+            background: rgba(10, 20, 40, 0.5);
         }
         
         .sub-code-container:last-child {
@@ -583,25 +536,81 @@
             opacity: 1;
         }
         
-        /* 电脑端特定样式 */
-        @media (min-width: 769px) {
-            .copy-notification {
-                bottom: 20px;
-                left: 20px;
-                max-width: 300px;
-            }
-            
-            .floating-top-btn {
-                bottom: 30px;
-                right: 30px;
-            }
-            
-            .back-btn {
-                z-index: 10;
-            }
+        /* 浮动返回顶部按钮 */
+        .floating-top-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: linear-gradient(135deg, #2a7a9a, #1a4a6a);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(0, 30, 60, 0.4);
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(20px);
+            border: 1px solid rgba(100, 180, 255, 0.3);
         }
         
-        /* 移动端响应式设计 */
+        .floating-top-btn.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .floating-top-btn:hover {
+            background: linear-gradient(135deg, #3a8aaa, #2a7a9a);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 40, 80, 0.5);
+        }
+        
+        /* 复制成功提示 */
+        .copy-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, #4A8FD8, #2A6FA8);
+            color: white;
+            padding: 18px 28px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(74, 143, 216, 0.3);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+            max-width: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .copy-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(100, 180, 255, 0.2);
+            color: #64B4FF;
+            font-size: 1rem;
+            background: rgba(10, 20, 40, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .footer p:last-child {
+            color: #ff6b6b;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        /* 移动端适配 */
         @media (max-width: 768px) {
             body {
                 padding-top: 80px;
@@ -610,90 +619,111 @@
             .level-nav {
                 top: 10px;
                 width: calc(100% - 20px);
-                padding: 15px;
+                padding: 20px;
             }
             
             .level-nav.collapsed {
-                max-height: 60px;
-                padding: 10px 15px;
-                min-width: 250px;
+                max-height: 70px;
+                padding: 15px 20px;
+                min-width: 280px;
+            }
+            
+            header h1 {
+                font-size: 2.5rem;
+            }
+            
+            header p {
+                font-size: 1.1rem;
+            }
+            
+            .back-btn {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+            
+            .nav-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .collapse-toggle {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            #searchInput {
+                padding: 14px 20px;
+                padding-left: 45px;
+                font-size: 1rem;
+            }
+            
+            .search-icon {
+                left: 15px;
+                font-size: 1.2rem;
             }
             
             .level-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
+                padding: 20px 25px;
             }
             
-            .search-results {
-                max-height: 300px;
+            .level-header h3 {
+                font-size: 1.4rem;
+            }
+            
+            .code-container {
+                padding: 20px;
+            }
+            
+            pre {
+                padding: 20px;
+                font-size: 0.95rem;
+                max-height: 400px;
             }
             
             .copy-btn {
-                opacity: 1;
                 position: relative;
                 top: auto;
                 right: auto;
                 margin-top: 15px;
                 width: 100%;
                 justify-content: center;
+                opacity: 1;
             }
             
-            .nav-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
+            .bilibili-btn {
+                padding: 15px 25px;
+                font-size: 1.1rem;
+                width: 100%;
+                max-width: 300px;
             }
             
-            .collapse-toggle {
-                align-self: flex-end;
+            .video-wrapper iframe,
+            .video-wrapper video {
+                height: 300px;
             }
             
-            .level-nav.collapsed .nav-header h2 {
-                font-size: 1.3rem;
+            .video-container,
+            .equipment-image {
+                padding: 0 20px 20px;
             }
             
-            /* 移动端复制弹窗样式 */
-            .copy-notification {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) translateY(10px);
-                width: 90%;
-                max-width: 280px;
-                text-align: center;
-                padding: 15px 20px;
-                bottom: auto;
-                right: auto;
+            .floating-top-btn {
+                right: 20px;
+                bottom: 20px;
+                padding: 12px 20px;
                 font-size: 0.9rem;
-                z-index: 1001;
+            }
+            
+            .copy-notification {
+                left: 50%;
+                transform: translateX(-50%) translateY(10px);
+                width: 90%;
+                max-width: 300px;
+                text-align: center;
+                bottom: 80px;
             }
             
             .copy-notification.show {
-                transform: translate(-50%, -50%) translateY(0);
-            }
-            
-            /* 移动端返回顶部按钮 */
-            .floating-top-btn {
-                right: 15px;
-                bottom: 15px;
-                padding: 10px 15px;
-                font-size: 0.9rem;
-                z-index: 1000;
-            }
-            
-            /* 移动端header确保按钮可点击 */
-            header {
-                padding: 20px 15px;
-                position: relative;
-            }
-            
-            .back-btn {
-                padding: 8px 16px;
-                font-size: 0.9rem;
-                position: relative;
-                z-index: 10;
-                margin-top: 10px;
+                transform: translateX(-50%) translateY(0);
             }
         }
         
@@ -705,31 +735,17 @@
             .level-nav {
                 top: 5px;
                 width: calc(100% - 10px);
-                padding: 12px;
+                padding: 15px;
             }
             
             .level-nav.collapsed {
-                max-height: 55px;
-                padding: 8px 12px;
-                min-width: 200px;
-            }
-            
-            .nav-header h2 {
-                font-size: 1.2rem;
-            }
-            
-            .copy-notification {
-                width: 85%;
-                max-width: 250px;
+                max-height: 60px;
                 padding: 12px 15px;
-                font-size: 0.85rem;
+                min-width: 250px;
             }
             
-            .floating-top-btn {
-                right: 10px;
-                bottom: 10px;
-                padding: 8px 12px;
-                font-size: 0.8rem;
+            header {
+                padding: 40px 15px;
             }
             
             header h1 {
@@ -739,15 +755,38 @@
             header p {
                 font-size: 1rem;
             }
+            
+            .nav-header h2 {
+                font-size: 1.2rem;
+            }
+            
+            .level-header h3 {
+                font-size: 1.2rem;
+            }
+            
+            .video-wrapper iframe,
+            .video-wrapper video {
+                height: 200px;
+            }
+            
+            .floating-top-btn {
+                right: 15px;
+                bottom: 15px;
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 雪花效果 -->
+    <div id="snowflakes"></div>
+    
     <div class="container">
         <header id="page-top">
-            <h1>安息之云山峰</h1>
-            <p>安息之云山峰代码，可点击复制<br>
-				<span style="color: #001AE7">有些关卡有需要特定的装备，请自行看代码选择装备</span></p>
+            <h1><i class="fas fa-mountain"></i> 安息之云山峰</h1>
+            <p>山峰关卡代码，可点击复制<br>
+                <span style="color: #64B4FF">有些关卡需要特定的装备，请自行查看代码选择装备</span></p>
             <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> 返回目录页</a>
         </header>
         
@@ -763,14 +802,14 @@
             <div class="nav-content">
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="searchInput" placeholder="输入关卡名称进行搜索">
+                    <input type="text" id="searchInput" placeholder="输入关卡名称或编号进行搜索">
                 </div>
                 <div class="search-results hidden" id="searchResults">
                     <!-- 搜索结果将在这里显示 -->
                 </div>
                 <div class="search-stats" id="searchStats">
                     共109个关卡，输入关键词搜索
-              </div>
+                </div>
             </div>
         </section>
         
@@ -781,17 +820,55 @@
     
     <!-- 浮动返回顶部按钮 -->
     <button class="floating-top-btn" id="floatingTopBtn">
-        <i class="fas fa-arrow-up"></i> 返回页首
+        <i class="fas fa-arrow-up"></i> 返回顶部
     </button>
     
     <footer class="footer">
         <p>安息之云山峰关卡代码详情</p>
-        <p style="color: #FF0000">注意：代码仅供参考，不建议直接抄！</p>
+        <p>注意：代码仅供参考，不建议直接抄！</p>
     </footer>
     
-    <div class="copy-notification" id="copyNotification">代码已复制到<a href="#">剪贴板！</a></div>
+    <div class="copy-notification" id="copyNotification">
+        <i class="fas fa-check-circle"></i> 代码已复制到剪贴板！
+    </div>
 
     <script>
+        // 创建雪花飘落效果
+        function createSnowflakes() {
+            const snowContainer = document.getElementById('snowflakes');
+            const snowCount = 20;
+            
+            for (let i = 0; i < snowCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                
+                // 随机大小
+                const size = Math.random() * 8 + 4;
+                snowflake.style.width = `${size}px`;
+                snowflake.style.height = `${size}px`;
+                
+                // 随机位置
+                snowflake.style.left = `${Math.random() * 100}vw`;
+                
+                // 随机动画时长
+                const duration = Math.random() * 15 + 15;
+                snowflake.style.animationDuration = `${duration}s`;
+                
+                // 随机延迟
+                const delay = Math.random() * 5;
+                snowflake.style.animationDelay = `${delay}s`;
+                
+                // 随机透明度
+                snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+                
+                snowContainer.appendChild(snowflake);
+            }
+        }
+        
+        // 页面加载后创建雪花
+        window.addEventListener('load', createSnowflakes);
+        
+        // 关卡代码数据（简化版，只保留部分关键关卡）
         const levelCodes = [
             {
                 id: 1,
@@ -3348,61 +3425,7 @@ while True:
         hero.attack(enemy)`
 			}
         ];
-        // 为第18关添加哔哩哔哩视频跳转按钮
-        setTimeout(() => {
-            const level18Section = document.getElementById('level-18');
-            if (level18Section) {
-                const buttonContainer = document.createElement('div');
-                buttonContainer.className = 'video-container';
-                buttonContainer.innerHTML = `
-                    <h4><i class="fas fa-video"></i> 通关视频参考</h4>
-                    <div class="bilibili-btn-container">
-                        <a href="https://www.bilibili.com/video/BV1cRqDBuEVj/?spm_id_from=333.1387.homepage.video_card.click&vd_source=4826033e5c6242fb339394c4ea66c111" 
-                           target="_blank" 
-                           class="bilibili-btn">
-                            <i class="fab fa-bilibili"></i> 
-                            <span>前往哔哩哔哩观看通关视频</span>
-                        </a>
-                    </div>
-                    <p class="video-caption">点击上方按钮跳转到哔哩哔哩观看完整通关流程</p>
-                `;
-                level18Section.appendChild(buttonContainer);
-            }
-        }, 100);
-		// 为第77关添加图片
-		setTimeout(() => {
-            const level77Section = document.getElementById('level-77');
-            if (level77Section) {
-                const imgContainer = document.createElement('div');
-                imgContainer.className = 'equipment-image';
-                imgContainer.innerHTML = `
-                    <img src="宠物.png" alt="装备参考" style="max-width: 500px; width: 100%; height: auto;">
-                    <div class="image-caption">必须带的宠物</div>
-                `;
-                level77Section.appendChild(imgContainer);
-            }
-        }, 150);
-		// 为第108关添加哔哩哔哩视频跳转按钮
-        setTimeout(() => {
-            const level108Section = document.getElementById('level-108');
-            if (level108Section) {
-                const buttonContainer = document.createElement('div');
-                buttonContainer.className = 'video-container';
-                buttonContainer.innerHTML = `
-                    <h4><i class="fas fa-video"></i> 通关视频参考</h4>
-                    <div class="bilibili-btn-container">
-                        <a href="https://www.bilibili.com/video/BV1CNBFBYEN6/?spm_id_from=333.1387.homepage.video_card.click&vd_source=4826033e5c6242fb339394c4ea66c111" 
-                           target="_blank" 
-                           class="bilibili-btn">
-                            <i class="fab fa-bilibili"></i> 
-                            <span>前往哔哩哔哩观看通关视频</span>
-                        </a>
-                    </div>
-                    <p class="video-caption">点击上方按钮跳转到哔哩哔哩观看完整通关流程</p>
-                `;
-                level108Section.appendChild(buttonContainer);
-            }
-        }, 200);
+        
         // 生成关卡内容
         const levelContent = document.getElementById('levelContent');
         
@@ -3412,7 +3435,7 @@ while True:
             section.id = `level-${level.id}`;
             
             let codeHtml = `<div class="level-header">
-                <h3>${level.id}. ${level.name}</h3>
+                <h3><i class="fas fa-mountain"></i> ${level.id}. ${level.name}</h3>
             </div>`;
             
             // 检查是否为多代码块关卡
@@ -3423,7 +3446,7 @@ while True:
                 level.codes.forEach((codeBlock, index) => {
                     const codeBlockId = `${level.id}-${index + 1}`;
                     codeHtml += `
-                        <div class="code-block-title">${codeBlock.title || ` ${index + 1}`}</div>
+                        <div class="code-block-title">${codeBlock.title || `代码块 ${index + 1}`}</div>
                         <div class="sub-code-container">
                             <pre><code id="code-${codeBlockId}"></code></pre>
                             <button class="copy-btn" data-code-id="${codeBlockId}">
@@ -3471,17 +3494,73 @@ while True:
             levelContent.appendChild(section);
         });
         
+        // 为第18关添加哔哩哔哩视频跳转按钮
+        setTimeout(() => {
+            const level18Section = document.getElementById('level-18');
+            if (level18Section) {
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'video-container';
+                buttonContainer.innerHTML = `
+                    <h4><i class="fas fa-video"></i> 通关视频参考</h4>
+                    <div class="bilibili-btn-container">
+                        <a href="https://www.bilibili.com/video/BV1cRqDBuEVj/" 
+                           target="_blank" 
+                           class="bilibili-btn">
+                            <i class="fab fa-bilibili"></i> 
+                            <span>前往哔哩哔哩观看通关视频</span>
+                        </a>
+                    </div>
+                    <p class="video-caption">点击上方按钮跳转到哔哩哔哩观看完整通关流程</p>
+                `;
+                level18Section.appendChild(buttonContainer);
+            }
+        }, 100);
+        
+        // 为第77关添加装备图片
+        setTimeout(() => {
+            const level77Section = document.getElementById('level-77');
+            if (level77Section) {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'equipment-image';
+                imgContainer.innerHTML = `
+                    <img src="宠物.png" alt="宠物参考">
+                    <div class="image-caption">必须带的宠物</div>
+                `;
+                level77Section.appendChild(imgContainer);
+            }
+        }, 150);
+        
+        // 为第108关添加哔哩哔哩视频跳转按钮
+        setTimeout(() => {
+            const level108Section = document.getElementById('level-108');
+            if (level108Section) {
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'video-container';
+                buttonContainer.innerHTML = `
+                    <h4><i class="fas fa-video"></i> 通关视频参考</h4>
+                    <div class="bilibili-btn-container">
+                        <a href="https://www.bilibili.com/video/BV1CNBFBYEN6/" 
+                           target="_blank" 
+                           class="bilibili-btn">
+                            <i class="fab fa-bilibili"></i> 
+                            <span>前往哔哩哔哩观看通关视频</span>
+                        </a>
+                    </div>
+                    <p class="video-caption">点击上方按钮跳转到哔哩哔哩观看完整通关流程</p>
+                `;
+                level108Section.appendChild(buttonContainer);
+            }
+        }, 200);
+        
         // 导航条收起功能
         const levelNav = document.getElementById('levelNav');
         const collapseToggle = document.getElementById('collapseToggle');
         const collapseIcon = document.getElementById('collapseIcon');
         const navHeader = document.querySelector('.nav-header');
         
-        // 切换收起状态
         function toggleNavCollapse() {
             levelNav.classList.toggle('collapsed');
             
-            // 更新图标和文本
             if (levelNav.classList.contains('collapsed')) {
                 collapseIcon.className = 'fas fa-chevron-down';
                 collapseToggle.querySelector('.toggle-text').textContent = '展开搜索栏';
@@ -3489,22 +3568,18 @@ while True:
                 collapseIcon.className = 'fas fa-chevron-up';
                 collapseToggle.querySelector('.toggle-text').textContent = '收起搜索栏';
                 
-                // 展开时自动聚焦搜索框
                 setTimeout(() => {
                     document.getElementById('searchInput').focus();
                 }, 300);
             }
         }
         
-        // 点击切换按钮收起/展开
         collapseToggle.addEventListener('click', function(e) {
-            e.stopPropagation(); // 防止事件冒泡
+            e.stopPropagation();
             toggleNavCollapse();
         });
         
-        // 点击导航标题也可以收起/展开
         navHeader.addEventListener('click', function(e) {
-            // 如果点击的不是切换按钮本身
             if (!e.target.closest('.collapse-toggle')) {
                 toggleNavCollapse();
             }
@@ -3515,63 +3590,13 @@ while True:
         const searchResults = document.getElementById('searchResults');
         const searchStats = document.getElementById('searchStats');
         
-        // 初始显示所有关卡
-        updateSearchResults(levelCodes);
-        
-        // 搜索输入事件
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            
-            if (searchTerm === '') {
-                // 显示所有关卡
-                updateSearchResults(levelCodes);
-            } else {
-                // 过滤关卡
-                const filteredLevels = levelCodes.filter(level => {
-                    // 检查关卡名称
-                    if (level.name.toLowerCase().includes(searchTerm)) return true;
-                    
-                    // 检查关卡ID
-                    if (level.id.toString().includes(searchTerm)) return true;
-                    
-                    // 检查单代码块内容
-                    if (level.code && level.code.toLowerCase().includes(searchTerm)) return true;
-                    
-                    // 检查多代码块内容
-                    if (level.multiCode && level.codes) {
-                        for (let codeBlock of level.codes) {
-                            if (codeBlock.code && codeBlock.code.toLowerCase().includes(searchTerm)) return true;
-                            if (codeBlock.title && codeBlock.title.toLowerCase().includes(searchTerm)) return true;
-                        }
-                    }
-                    
-                    return false;
-                });
-                
-                updateSearchResults(filteredLevels);
-            }
-            
-            // 如果有搜索结果，确保导航条是展开状态
-            if (!levelNav.classList.contains('collapsed')) {
-                levelNav.classList.remove('collapsed');
-            }
-        });
-        
-        // 搜索框获得焦点时展开导航条
-        searchInput.addEventListener('focus', function() {
-            if (levelNav.classList.contains('collapsed')) {
-                toggleNavCollapse();
-            }
-        });
-        
-        // 更新搜索结果
         function updateSearchResults(levels) {
             searchResults.innerHTML = '';
             
             if (levels.length === 0) {
                 searchResults.innerHTML = '<div class="no-results">未找到匹配的关卡</div>';
                 searchResults.classList.remove('hidden');
-                searchStats.textContent = '共109个关卡，未找到匹配项';
+                searchStats.textContent = `共${levelCodes.length}个关卡，未找到匹配项`;
                 return;
             }
             
@@ -3584,7 +3609,6 @@ while True:
                     <span class="level-name">${level.name}</span>
                 `;
                 
-                // 添加点击事件，平滑滚动到对应关卡
                 result.addEventListener('click', function(e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('href');
@@ -3596,17 +3620,20 @@ while True:
                             block: 'start'
                         });
                         
-                        // 高亮显示当前关卡
                         document.querySelectorAll('.level-section').forEach(section => {
-                            section.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.08)';
+                            section.style.boxShadow = '0 8px 32px rgba(0, 30, 60, 0.3)';
                         });
                         
-                        targetElement.style.boxShadow = '0 0 0 3px rgba(230, 126, 34, 0.3)';
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(100, 180, 255, 0.3), 0 12px 40px rgba(0, 40, 80, 0.4)';
                         
-                        // 3秒后移除高亮
                         setTimeout(() => {
-                            targetElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.08)';
+                            targetElement.style.boxShadow = '0 8px 32px rgba(0, 30, 60, 0.3)';
                         }, 3000);
+                        
+                        // 收起搜索栏
+                        if (!levelNav.classList.contains('collapsed')) {
+                            toggleNavCollapse();
+                        }
                     }
                 });
                 
@@ -3614,10 +3641,43 @@ while True:
             });
             
             searchResults.classList.remove('hidden');
-            searchStats.textContent = `共109个关卡，找到${levels.length}个匹配项`;
+            searchStats.textContent = `共${levelCodes.length}个关卡，找到${levels.length}个匹配项`;
         }
         
-        // 添加复制功能（事件委托）
+        // 初始显示所有关卡
+        updateSearchResults(levelCodes);
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                updateSearchResults(levelCodes);
+            } else {
+                const filteredLevels = levelCodes.filter(level => {
+                    return level.name.toLowerCase().includes(searchTerm) || 
+                           level.id.toString().includes(searchTerm) ||
+                           (level.code && level.code.toLowerCase().includes(searchTerm)) ||
+                           (level.multiCode && level.codes && level.codes.some(codeBlock => 
+                               codeBlock.code.toLowerCase().includes(searchTerm) ||
+                               codeBlock.title.toLowerCase().includes(searchTerm)
+                           ));
+                });
+                
+                updateSearchResults(filteredLevels);
+            }
+            
+            if (!levelNav.classList.contains('collapsed')) {
+                levelNav.classList.remove('collapsed');
+            }
+        });
+        
+        searchInput.addEventListener('focus', function() {
+            if (levelNav.classList.contains('collapsed')) {
+                toggleNavCollapse();
+            }
+        });
+        
+        // 复制功能
         document.addEventListener('click', function(e) {
             const copyBtn = e.target.closest('.copy-btn');
             if (copyBtn) {
@@ -3629,7 +3689,6 @@ while True:
             }
         });
         
-        // 辅助函数：复制到剪贴板
         function copyToClipboard(text) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
@@ -3638,11 +3697,9 @@ while True:
             document.execCommand('copy');
             document.body.removeChild(textarea);
             
-            // 显示复制成功提示
             showCopyNotification();
         }
         
-        // 显示复制成功提示
         const copyNotification = document.getElementById('copyNotification');
         
         function showCopyNotification() {
@@ -3652,27 +3709,42 @@ while True:
             }, 3000);
         }
         
-        // 检查URL中的锚点，滚动到对应位置
+        // 浮动返回顶部按钮
+        const floatingTopBtn = document.getElementById('floatingTopBtn');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                floatingTopBtn.classList.add('show');
+            } else {
+                floatingTopBtn.classList.remove('show');
+            }
+        });
+        
+        floatingTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // URL锚点处理
         window.addEventListener('load', function() {
             if (window.location.hash) {
                 const targetElement = document.querySelector(window.location.hash);
                 if (targetElement) {
                     setTimeout(() => {
                         targetElement.scrollIntoView({ behavior: 'smooth' });
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(100, 180, 255, 0.3), 0 12px 40px rgba(0, 40, 80, 0.4)';
                         
-                        // 高亮显示当前关卡
-                        targetElement.style.boxShadow = '0 0 0 3px rgba(230, 126, 34, 0.3)';
-                        
-                        // 3秒后移除高亮
                         setTimeout(() => {
-                            targetElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.08)';
+                            targetElement.style.boxShadow = '0 8px 32px rgba(0, 30, 60, 0.3)';
                         }, 3000);
                     }, 100);
                 }
             }
         });
         
-        // 为代码容器添加鼠标进入/离开事件，显示/隐藏复制按钮
+        // 显示/隐藏复制按钮
         document.querySelectorAll('.code-container, .sub-code-container').forEach(container => {
             const copyBtn = container.querySelector('.copy-btn');
             if (copyBtn) {
@@ -3685,29 +3757,6 @@ while True:
                 });
             }
         });
-        
-        // 浮动返回顶部按钮功能
-        const floatingTopBtn = document.getElementById('floatingTopBtn');
-        
-        // 监听滚动事件，显示/隐藏浮动按钮
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 300) {
-                floatingTopBtn.classList.add('show');
-            } else {
-                floatingTopBtn.classList.remove('show');
-            }
-        });
-        
-        // 点击浮动按钮返回顶部
-        floatingTopBtn.addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-        
-        // 初始加载时显示所有关卡
-        updateSearchResults(levelCodes);
     </script>
 </body>
 </html>
