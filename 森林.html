@@ -1,0 +1,2979 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>森林关卡代码详情</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(180deg, #0a1a0a 0%, #1a3a1a 50%, #0a2a0a 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(100, 255, 100, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(50, 200, 50, 0.06) 0%, transparent 50%),
+                url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpath d="M0 0 L50 100 L100 0 Z" fill="rgba(100, 255, 100, 0.03)" /%3E%3C/svg%3E') repeat;
+            opacity: 0.4;
+            z-index: -1;
+        }
+        
+        /* 树叶飘落动画 */
+        @keyframes leafFall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .leaf {
+            position: absolute;
+            background: radial-gradient(circle at 30% 30%, #4CAF50, #2E7D32);
+            border-radius: 50% 0 50% 50%;
+            pointer-events: none;
+            opacity: 0.6;
+            animation: leafFall linear infinite;
+            transform-origin: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: transparent;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(100, 255, 100, 0.2);
+        }
+        
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(100, 255, 100, 0.8), 0 0 40px rgba(121, 233, 108, 0.6);
+            animation: glow 2s ease-in-out infinite alternate;
+            background: linear-gradient(to right, #79E96C, #4CAF50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(121, 233, 108, 0.6), 0 0 20px rgba(100, 255, 100, 0.4); }
+            to { text-shadow: 0 0 20px rgba(121, 233, 108, 0.8), 0 0 40px rgba(100, 255, 100, 0.6); }
+        }
+        
+        header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #c0ffc0;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 25px;
+            background: rgba(121, 233, 108, 0.2);
+            color: #79E96C;
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(121, 233, 108, 0.3);
+            box-shadow: 0 4px 15px rgba(121, 233, 108, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .back-btn:hover {
+            background: rgba(121, 233, 108, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(121, 233, 108, 0.3);
+        }
+        
+        /* 森林导航栏样式 */
+        .level-nav {
+            background: rgba(15, 60, 30, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 60, 30, 0.3);
+            border: 1px solid rgba(121, 233, 108, 0.2);
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 1200px;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            max-height: 2000px;
+            overflow: hidden;
+        }
+        
+        .level-nav.collapsed {
+            max-height: 80px;
+            cursor: pointer;
+            padding: 20px 25px;
+            width: auto;
+            min-width: 320px;
+        }
+        
+        .level-nav.collapsed:hover {
+            background: rgba(20, 80, 40, 0.8);
+            border-color: rgba(121, 233, 108, 0.3);
+        }
+        
+        .nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .nav-header h2 {
+            color: #79E96C;
+            font-size: 1.6rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 0 10px rgba(121, 233, 108, 0.5);
+        }
+        
+        .nav-header h2 i {
+            color: #4CAF50;
+            font-size: 1.4rem;
+            transition: transform 0.3s;
+        }
+        
+        .level-nav.collapsed .nav-header h2 i {
+            transform: rotate(-90deg);
+        }
+        
+        .collapse-toggle {
+            background: rgba(121, 233, 108, 0.1);
+            border: 1px solid rgba(121, 233, 108, 0.3);
+            color: #79E96C;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .collapse-toggle:hover {
+            background: rgba(121, 233, 108, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .level-nav.collapsed .collapse-toggle .toggle-text {
+            display: none;
+        }
+        
+        /* 搜索区域样式 */
+        .nav-content {
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .level-nav.collapsed .nav-content {
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        #searchInput {
+            width: 100%;
+            padding: 16px 20px;
+            padding-left: 50px;
+            background: rgba(10, 40, 20, 0.7);
+            border: 2px solid rgba(121, 233, 108, 0.3);
+            border-radius: 12px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            color: #e0e0e0;
+            backdrop-filter: blur(5px);
+        }
+        
+        #searchInput:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: rgba(15, 60, 30, 0.9);
+            box-shadow: 0 0 20px rgba(121, 233, 108, 0.3);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #79E96C;
+            font-size: 1.3rem;
+        }
+        
+        .search-results {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(121, 233, 108, 0.2);
+            background: rgba(10, 40, 20, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        
+        .search-results.hidden {
+            display: none;
+        }
+        
+        .level-result {
+            display: block;
+            padding: 16px 25px;
+            text-decoration: none;
+            color: #c0ffc0;
+            border-bottom: 1px solid rgba(121, 233, 108, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .level-result:hover {
+            background: rgba(121, 233, 108, 0.15);
+            color: #79E96C;
+            transform: translateX(5px);
+        }
+        
+        .level-result:last-child {
+            border-bottom: none;
+        }
+        
+        .level-result .level-id {
+            display: inline-block;
+            width: 35px;
+            color: #4CAF50;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .level-result .level-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .no-results {
+            padding: 30px;
+            text-align: center;
+            color: #79E96C;
+            font-style: italic;
+        }
+        
+        .search-stats {
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #79E96C;
+            text-align: center;
+        }
+        
+        /* 关卡内容区域 */
+        .level-content {
+            margin-bottom: 60px;
+        }
+        
+        .level-section {
+            background: rgba(15, 60, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 0;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 32px rgba(0, 60, 30, 0.3);
+            border: 1px solid rgba(121, 233, 108, 0.2);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .level-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 80, 40, 0.4);
+            border-color: rgba(121, 233, 108, 0.3);
+        }
+        
+        .level-header {
+            background: linear-gradient(90deg, #1a6a2a 0%, #2a9a3a 100%);
+            color: white;
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(121, 233, 108, 0.3);
+        }
+        
+        .level-header h3 {
+            font-size: 1.6rem;
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px rgba(121, 233, 108, 0.5);
+        }
+        
+        .code-container {
+            position: relative;
+            padding: 30px;
+        }
+        
+        pre {
+            background: #0a250a;
+            color: #c0ffc0;
+            padding: 25px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0;
+            tab-size: 4;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid rgba(121, 233, 108, 0.2);
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #2a9a3a, #1a6a2a);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(42, 154, 58, 0.3);
+            border: 1px solid rgba(121, 233, 108, 0.3);
+        }
+        
+        .code-container:hover .copy-btn {
+            opacity: 1;
+        }
+        
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #3aaa4a, #2a9a3a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42, 154, 58, 0.4);
+        }
+        
+        .copy-btn.show {
+            opacity: 1;
+        }
+        
+        /* B站按钮样式 */
+        .bilibili-btn-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 0 30px;
+        }
+        
+        .bilibili-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #fb7299, #ff3852);
+            color: white;
+            padding: 18px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(251, 114, 153, 0.4);
+            border: none;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .bilibili-btn:hover {
+            background: linear-gradient(135deg, #ff8ab0, #ff5262);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(251, 114, 153, 0.5);
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* 装备图片样式 */
+        .equipment-image {
+            text-align: center;
+            margin: 30px 0;
+            padding: 0 30px 30px;
+        }
+        
+        .equipment-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(121, 233, 108, 0.3);
+        }
+        
+        .image-caption {
+            margin-top: 15px;
+            color: #79E96C;
+            font-style: italic;
+            font-size: 1rem;
+        }
+        
+        /* 视频容器样式 */
+        .video-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 0 30px 30px;
+        }
+        
+        .video-container h4 {
+            color: #79E96C;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-shadow: 0 0 10px rgba(121, 233, 108, 0.5);
+        }
+        
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 60, 30, 0.4);
+            border: 1px solid rgba(121, 233, 108, 0.3);
+        }
+        
+        .video-wrapper iframe,
+        .video-wrapper video {
+            width: 100%;
+            height: 450px;
+            display: block;
+            border: none;
+        }
+        
+        .video-caption {
+            margin-top: 15px;
+            color: #79E96C;
+            font-style: italic;
+            font-size: 1rem;
+        }
+        
+        /* 浮动返回顶部按钮 */
+        .floating-top-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: linear-gradient(135deg, #2a9a3a, #1a6a2a);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(0, 60, 30, 0.4);
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(20px);
+            border: 1px solid rgba(121, 233, 108, 0.3);
+        }
+        
+        .floating-top-btn.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .floating-top-btn:hover {
+            background: linear-gradient(135deg, #3aaa4a, #2a9a3a);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 80, 40, 0.5);
+        }
+        
+        /* 复制成功提示 */
+        .copy-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 18px 28px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+            max-width: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .copy-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(121, 233, 108, 0.2);
+            color: #79E96C;
+            font-size: 1rem;
+            background: rgba(10, 40, 20, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .footer p:last-child {
+            color: #ff6b6b;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 80px;
+            }
+            
+            .level-nav {
+                top: 10px;
+                width: calc(100% - 20px);
+                padding: 20px;
+            }
+            
+            .level-nav.collapsed {
+                max-height: 70px;
+                padding: 15px 20px;
+                min-width: 280px;
+            }
+            
+            header h1 {
+                font-size: 2.5rem;
+            }
+            
+            header p {
+                font-size: 1.1rem;
+            }
+            
+            .back-btn {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+            
+            .nav-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .collapse-toggle {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            #searchInput {
+                padding: 14px 20px;
+                padding-left: 45px;
+                font-size: 1rem;
+            }
+            
+            .search-icon {
+                left: 15px;
+                font-size: 1.2rem;
+            }
+            
+            .level-header {
+                padding: 20px 25px;
+            }
+            
+            .level-header h3 {
+                font-size: 1.4rem;
+            }
+            
+            .code-container {
+                padding: 20px;
+            }
+            
+            pre {
+                padding: 20px;
+                font-size: 0.95rem;
+                max-height: 400px;
+            }
+            
+            .copy-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 15px;
+                width: 100%;
+                justify-content: center;
+                opacity: 1;
+            }
+            
+            .bilibili-btn {
+                padding: 15px 25px;
+                font-size: 1.1rem;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .video-wrapper iframe,
+            .video-wrapper video {
+                height: 300px;
+            }
+            
+            .video-container,
+            .equipment-image {
+                padding: 0 20px 20px;
+            }
+            
+            .floating-top-btn {
+                right: 20px;
+                bottom: 20px;
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .copy-notification {
+                left: 50%;
+                transform: translateX(-50%) translateY(10px);
+                width: 90%;
+                max-width: 300px;
+                text-align: center;
+                bottom: 80px;
+            }
+            
+            .copy-notification.show {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding-top: 70px;
+            }
+            
+            .level-nav {
+                top: 5px;
+                width: calc(100% - 10px);
+                padding: 15px;
+            }
+            
+            .level-nav.collapsed {
+                max-height: 60px;
+                padding: 12px 15px;
+                min-width: 250px;
+            }
+            
+            header {
+                padding: 40px 15px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+            
+            .nav-header h2 {
+                font-size: 1.2rem;
+            }
+            
+            .level-header h3 {
+                font-size: 1.2rem;
+            }
+            
+            .video-wrapper iframe,
+            .video-wrapper video {
+                height: 200px;
+            }
+            
+            .floating-top-btn {
+                right: 15px;
+                bottom: 15px;
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 树叶效果 -->
+    <div id="leaves"></div>
+    
+    <div class="container">
+        <header id="page-top">
+            <h1><i class="fas fa-tree"></i> 边地森林</h1>
+            <p>森林关卡代码，可点击复制<br>
+                <span style="color: #79E96C">有些关卡需要特定的装备，请自行查看代码选择装备</span></p>
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> 返回目录页</a>
+        </header>
+        
+        <section class="level-nav collapsed" id="levelNav">
+            <div class="nav-header">
+                <h2><i class="fas fa-search"></i> 关卡搜索导航 ← 点击搜索！</h2>
+                <button class="collapse-toggle" id="collapseToggle">
+                    <i class="fas fa-chevron-down" id="collapseIcon"></i>
+                    <span class="toggle-text">收起搜索栏</span>
+                </button>
+            </div>
+            
+            <div class="nav-content">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="输入关卡名称或编号进行搜索">
+                </div>
+                <div class="search-results hidden" id="searchResults">
+                    <!-- 搜索结果将在这里显示 -->
+                </div>
+                <div class="search-stats" id="searchStats">
+                    共135个关卡，输入关键词搜索
+                </div>
+            </div>
+        </section>
+        
+        <div class="level-content" id="levelContent">
+            <!-- 关卡代码将通过JavaScript动态生成 -->
+        </div>
+    </div>
+    
+    <!-- 浮动返回顶部按钮 -->
+    <button class="floating-top-btn" id="floatingTopBtn">
+        <i class="fas fa-arrow-up"></i> 返回顶部
+    </button>
+    
+    <footer class="footer">
+        <p>森林关卡代码详情</p>
+        <p>注意：代码仅供参考，不建议直接抄！</p>
+    </footer>
+    
+    <div class="copy-notification" id="copyNotification">
+        <i class="fas fa-check-circle"></i> 代码已复制到剪贴板！
+    </div>
+
+    <script>
+        // 创建树叶飘落效果
+        function createLeaves() {
+            const leavesContainer = document.getElementById('leaves');
+            const leafCount = 25;
+            
+            for (let i = 0; i < leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.classList.add('leaf');
+                
+                // 随机大小
+                const size = Math.random() * 10 + 5;
+                leaf.style.width = `${size}px`;
+                leaf.style.height = `${size}px`;
+                
+                // 随机位置
+                leaf.style.left = `${Math.random() * 100}vw`;
+                
+                // 随机动画时长
+                const duration = Math.random() * 10 + 10;
+                leaf.style.animationDuration = `${duration}s`;
+                
+                // 随机延迟
+                const delay = Math.random() * 5;
+                leaf.style.animationDelay = `${delay}s`;
+                
+                // 随机透明度
+                leaf.style.opacity = Math.random() * 0.6 + 0.2;
+                
+                leavesContainer.appendChild(leaf);
+            }
+        }
+        
+        // 页面加载后创建树叶
+        window.addEventListener('load', createLeaves);
+        
+        // 关卡代码数据（为保持代码简洁，只保留少量示例）
+        const levelCodes = [
+            {
+                id: 1,
+                name: "碎天裂地！",
+                code: `hero.buildXY("fire-trap", 36, 35)
+hero.buildXY("fire-trap", 35, 29)
+hero.moveLeft()
+hero.moveRight(2)`
+            },
+            {
+                id: 2,
+                name: "森林花园",
+                code: `colors = ["pink", "red", "blue", "purple", "yellow", "white", "random"]
+index = len(colors)
+def drawCircle(x, y, size):
+    angle = 0
+    hero.toggleFlowers(False)
+    while angle <= Math.PI * 2:
+        newX = x + (size * Math.cos(angle))
+        newY = y + (size * Math.sin(angle))
+        hero.moveXY(newX, newY)
+        hero.toggleFlowers(True)
+        angle += 0.2
+for i in range(30, 120, 10):
+    for j in range(30, 120, 10):
+        color = colors[index % len(colors)]
+        hero.setFlowerColor(color)
+        index += 1
+        drawCircle(i, j, 5)`
+            },
+            {
+                id: 3,
+                name: "平原森林保卫战",
+                code: `hero.buildXY("fence", 40, 52)
+hero.buildXY("fence", 40, 21)`
+            },
+            {
+                id: 4,
+                name: "一步走错",
+                code: `hero.moveXY(11, 36)
+hero.moveXY(35, 25)
+hero.moveXY(40, 56)
+hero.moveXY(77, 58)`
+            },
+            {
+                id: 5,
+                name: "羊肠小道",
+                code: `hero.moveXY(36, 59)
+hero.moveXY(37, 13)
+hero.buildXY("fence", 72, 25)`
+            },
+            {
+                id: 6,
+                name: "森林逃避",
+                code: `while True:
+    hero.moveXY(40,56)
+    hero.moveXY(24,45)
+    hero.moveXY(24,24)
+    hero.moveXY(40,13)
+    hero.moveXY(56,24)
+    hero.moveXY(56,44)`
+            },
+	    	{
+				id: 7,
+				name: "九颗宝石",
+				code:`hero.moveXY(32, 48)
+hero.moveXY(70, 48)
+hero.moveXY(31,10 )
+hero.moveXY(32, 36)`
+	    	},
+            {
+                id: 8,
+                name: "巡逻兵克星A",
+				code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)
+        pass`
+            },
+            {
+                id: 9,
+                name: "边地伏击战",
+                code: `hero.moveXY(24, 42)
+enemy = hero.findNearestEnemy()
+if enemy:
+    hero.attack(enemy)
+    hero.attack(enemy)
+hero.moveXY(27, 60)
+enemy = hero.findNearestEnemy()
+if enemy:
+    hero.attack(enemy)
+    pass
+hero.moveXY(42, 50)
+enemy = hero.findNearestEnemy()
+if enemy:
+    hero.attack(enemy)
+hero.moveXY(39, 24)
+enemy = hero.findNearestEnemy()
+if enemy:
+    hero.attack(enemy)`
+            },
+            {
+                id: 10,
+                name: "巡逻兵克星",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)
+        pass`
+            },
+            {
+                id: 11,
+                name: "林地小屋",
+                code: `hero.moveXY(19, 33)
+enemy = hero.findNearestEnemy()
+if enemy:
+    hero.attack(enemy)
+    hero.attack(enemy)
+hero.moveXY(49, 51)
+enemy = hero.findNearestEnemy()
+if enemy:
+    hero.attack(enemy)
+    hero.attack(enemy)
+    pass
+hero.moveXY(58, 14)
+enemy = hero.findNearestEnemy()
+if enemy:
+    hero.attack(enemy)
+    hero.attack(enemy)`
+            },
+            {
+                id: 12,
+                name: "野餐毁灭者",
+                code: `while True:
+    sb = hero.findNearestEnemy()
+    if sb:
+        hero.attack(sb)`
+            },
+            {
+                id: 13,
+                name: "鹰眼",
+                code: `while True:
+    sb= hero.findNearestEnemy()
+    if sb:
+        hero.attack(sb)`
+            },
+            {
+                id: 14,
+                name: "矮人蜂拥而至",
+                code: `while True:
+    nearestEnemy = hero.findNearestEnemy()
+    distance = hero.distanceTo(nearestEnemy)
+    if distance<10:
+        hero.cleave(nearestEnemy)
+    else:
+        hero.attack("Chest")
+    pass`
+            },
+            {
+                id: 15,
+                name: "修骨者",
+                code: `while True:
+    if hero.canCast("regen"):
+        bernardDistance = hero.distanceTo("Bernard")
+        if bernardDistance < 10:
+            # Бернарду нужна регенерация!
+            hero.cast("regen", "Bernard")
+        chandraDistance = hero.distanceTo("Chandra")
+        if chandraDistance < 10:
+            hero.cast("regen", "Chandra")
+    else:
+        enemy = hero.findNearestEnemy()
+        if enemy and hero.distanceTo(enemy) < hero.attackRange:
+            hero.attack(enemy)`
+            },
+            {
+                id: 16,
+                name: "死亡之触",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        distance = hero.distanceTo(enemy)
+        if distance < 15:
+            hero.cast("drain-life", enemy)
+        else:
+            hero.attack(enemy)`
+            },
+            {
+                id: 17,
+                name: "burl和布尔",
+                code: `hero.say(False)
+hero.say(True)
+hero.say(False)
+hero.say(True)
+hero.say(True)`
+            },
+            {
+                id: 18,
+                name: "宝石或者死亡",
+                code: `if 1 + 1 + 12== 3:
+    hero.moveXY(5, 15)
+if 2 + 3== 5:
+	hero.moveXY(15, 40)
+if 2 + 3 != 4:
+	hero.moveXY(25, 15)
+	
+if 1 + 1 < 3:
+    enemy = hero.findNearestEnemy()
+    hero.attack(enemy)
+if 5 < 4:
+	hero.moveXY(40, 55)
+if 1 + 1== 2:
+	hero.moveXY(55, 25)`
+            },
+            {
+                id: 19,
+                name: "失落的维京",
+                code: `SLIDE = 10
+SWITCH = 6
+SKIP = 9
+sideSteps = 1
+steps = 1
+X_PACE_LENGTH = 4
+Y_PACE_LENGTH = 6
+x= 1
+while steps <= 35:
+    
+    hero.moveXY(steps * X_PACE_LENGTH, sideSteps * Y_PACE_LENGTH)
+    
+    steps += 1
+    if (steps - 1) % SKIP == 0:
+        sideSteps += x * 2
+    else:
+        sideSteps += x
+    if steps % SWITCH == 0:
+        x = -x
+    if sideSteps < 1:
+        sideSteps += SLIDE
+    elif sideSteps > SLIDE:
+        sideSteps -= SLIDE`
+            },
+            {
+                id: 20,
+                name: "叫阵",
+                code: `if 2 + 2 == 4:
+    hero.say("fuck you")
+if 2 + 2 == 5:
+    hero.say("是的，你！")
+if 3 + 4 == 7:
+    hero.say("shit")
+if 10 + 10 == 20:
+    hero.say("you is a bitch")`
+            },
+            {
+                id: 21,
+                name: "if的盛宴",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)`
+            },
+            {
+                id: 22,
+                name: "决斗场",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)`
+            },
+            {
+                id: 23,
+                name: "村庄守护着",
+                code: `while True:
+    hero.moveXY(35, 34)
+    leftEnemy = hero.findNearestEnemy()
+    if leftEnemy:
+        hero.attack(leftEnemy)
+        hero.attack(leftEnemy)
+        hero.moveXY(60, 34)
+        rightenemy = hero.findNearestEnemy()
+        if rightenemy:
+            hero.attack(rightenemy)
+            hero.attack(rightenemy)`
+            },
+            {
+                id: 24,
+                name: "食人魔营地",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)
+    else:
+        hero.attack("Chest")`
+            },
+            {
+                id: 25,
+                name: "盾冲",
+                code: `while True:
+    sb = hero.findNearestEnemy()
+    if hero.isReady("cleave"):
+        hero.cleave(sb)
+    else:
+        hero.shield()`
+            },
+            {
+                id: 26,
+                name: "荆棘农场",
+                code: `while True:
+    hero.moveXY(43, 50)
+    top = hero.findNearestEnemy()
+    if top:
+        hero.buildXY("fire-trap", 43, 50)
+    hero.moveXY(25, 34)
+    left = hero.findNearestEnemy()
+    if left:
+        hero.buildXY("fire-trap", 25, 34)
+    hero.moveXY(43, 20)
+    down = hero.findNearestEnemy()
+    if down:
+        hero.buildXY("fire-trap", 43, 20)`
+            },
+            {
+                id: 27,
+                name: "背靠背",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)
+        pass
+    else:
+        hero.moveXY(40, 34)
+        pass`
+            },
+            {
+                id: 28,
+                name: "坐看爆破！",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.buildXY("fire-trap", 41, 24)
+        pass
+    hero.moveXY(19, 19)`
+            },
+            {
+                id: 29,
+                name: "强攻Areth塔",
+                code: `hero.moveXY(55, 14)
+hero.moveXY(94, 19)
+hero.buildXY("fire-trap", 94, 19)
+hero.moveXY(55, 14)
+hero.moveXY(90, 53)
+hero.buildXY("fire-trap", 90, 53)
+hero.buildXY("fire-trap", 60, 63)
+hero.say("retreat")
+hero.moveXY(-16, 39)`
+            },
+            {
+                id: 30,
+                name: "森林劈斩者",
+                code: `hero.moveXY(23, 23)
+while True:
+    enemy = hero.findNearestEnemy()
+    if hero.isReady("cleave"):
+        hero.cleave(enemy)
+        pass
+    else:
+        hero.attack(enemy)
+        pass`
+            },
+            {
+                id: 31,
+                name: "边地僵局",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if hero.isReady("cleave"):
+        hero.cleave(enemy)
+    else:
+        hero.attack(enemy)`
+            },
+            {
+                id: 32,
+                name: "奥术盟友",
+                code: `while True:
+    sb = hero.findNearestEnemy()
+    if hero.isReady("cleave"):
+        hero.cleave(sb)
+    else:
+        if sb:
+            hero.attack(sb)`
+            },
+            {
+                id: 33,
+                name: "测距仪",
+                code: `enemy1 = "Gort"
+distance1 = hero.distanceTo(enemy1)
+hero.say(distance1)
+enemy2 = "Smasher"
+distance2 = hero.distanceTo(enemy2)
+hero.say(distance2)
+friend3 = "Charles"
+enemy4 = "Gorgnub"
+distance4 = hero.distanceTo(enemy4)
+hero.say(distance4)`
+            },
+            {
+                id: 34,
+                name: "贴身保卫",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    distance = hero.distanceTo(enemy)
+    if distance < 10:
+        hero.attack(enemy)
+        pass
+    else:
+        hero.moveXY(40, 37`
+            },
+            {
+                id: 35,
+                name: "发狂的矮人",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    distance = hero.distanceTo(enemy)
+    if hero.isReady("cleave"):
+        hero.cleave(enemy)
+        pass
+    elif distance < 5:
+        hero.attack(enemy)
+        pass
+    else:
+        hero.attack("Chest")
+        pass`
+            },
+            {
+                id: 36,
+                name: "跃火林中",
+                code: `while True:
+    evilstone = hero.findNearestItem()
+    if evilstone:
+        pos = evilstone.pos
+        if pos.x == 34:
+            hero.moveXY(46, 22)
+            pass
+        else:
+            hero.moveXY(34, 23)
+    else:
+        hero.moveXY(40, 22)
+        pass`
+            },
+            {
+                id: 37,
+                name: "以静制动",
+                code: `while True:
+    sb = hero.findNearestEnemy()
+    if sb:
+        if hero.distanceTo(sb)<5:
+            hero.attack(sb)
+        else:
+            hero.shield()
+            
+        pass
+    else:
+        hero.moveXY(40, 34)`
+            },
+            {
+                id: 38,
+                name: "Agrippa保卫战",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.distanceTo(enemy)
+        if hero.distanceTo(enemy)<5:
+            if hero.cleave(enemy):
+                hero.cleave(enemy)
+            else:
+                hero.attack(enemy)`
+            },
+            {
+                id: 39,
+                name: "Agrippa保卫战A",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        juli=hero.distanceTo(enemy)
+        if juli<5:
+            if hero.isReady('cleave'):
+                hero.cleave(enemy)
+            else:
+                hero.attack(enemy)`
+            },
+            {
+                id: 40,
+                name: "Agrippa保卫战B",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        juli=hero.distanceTo(enemy)
+        if juli<5:
+            if hero.isReady('cleave'):
+                hero.cleave(enemy)
+            else:
+                hero.attack(enemy)`
+            },
+            {
+                id: 41,
+                name: "村庄守护神",
+                code: `def cleaveOrAttack():
+    ogre = hero.findNearestEnemy()
+    if ogre:
+        if hero.isReady("cleave"):
+            hero.cleave(ogre)
+        else:
+            hero.attack(ogre)
+while True:
+    hero.moveXY(35, 34)
+    cleaveOrAttack()
+    hero.moveXY(47, 27)
+    cleaveOrAttack()
+    hero.moveXY(60, 31)
+    cleaveOrAttack()`
+            },
+            {
+                id: 42,
+                name: "一个巫师",
+                code: `index = 0
+plan = ["lightning-bolt", 'attack', 'attack', 'attack', 'attack', 'attack', "lightning-bolt", "chain-lightning",
+        "regen", 'attack', "regen", "lightning-bolt", "chain-lightning", 'attack', 'attack', "lightning-bolt", 'attack',
+        "regen", "lightning-bolt", 'say', "away", 'armagedon']
+while True:
+    current_plan = plan[index % len(plan)]
+    if (current_plan == 'regen'):
+        if hero.isReady("regen"):
+            hero.cast("regen", hero)
+            index += 1
+        else:
+            hero.moveXY(8, 30)
+    elif (current_plan == 'away'):
+        hero.moveXY(18, 41)
+        index += 1
+    elif (current_plan == 'say'):
+        hero.say("booring")
+        index += 1
+    elif (current_plan == 'armagedon'):
+        hero.moveXY(7, 41)
+        index += 1
+    else:
+        enemy = hero.findNearestEnemy()
+        if (enemy):
+            if (enemy and enemy.health > 0):
+                dist = hero.distanceTo(enemy)
+                if (current_plan == 'attack'):
+                    hero.attack(enemy)
+                elif (current_plan == "chain-lightning" and hero.isReady("chain-lightning")):
+                    hero.cast("chain-lightning", enemy)
+                elif current_plan == "lightning-bolt" and hero.isReady("lightning-bolt"):
+                    hero.cast("lightning-bolt", enemy)
+            if (enemy.health <= 0):
+                index += 1
+        else:
+            hero.moveXY(8, 30)`
+            },
+            {
+                id: 43,
+                name: "乡村巡游者",
+                code: `def findAndAttackEnemy():
+    enemy = hero.findNearestEnemy()
+    if enemy and hero.distanceTo(enemy) < 20:
+        hero.attack(enemy)
+while True:
+    hero.moveXY(35, 34)
+    findAndAttackEnemy()
+    hero.moveXY(60, 31)
+    findAndAttackEnemy()`
+            },
+            {
+                id: 44,
+                name: "弹片",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        if hero.isReady("throw"):
+            distance = hero.distanceTo(enemy)
+            if distance>15:
+                hero.throw(enemy)
+            else:
+                hero.attack(enemy)
+        else:
+            hero.attack(enemy)`
+            },
+            {
+                id: 45,
+                name: "飞刀",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        distance = hero.distanceTo(enemy)
+        if distance < hero.throwRange:
+            hero.throw(enemy)
+        else:
+            hero.attack(enemy)`
+            },
+            {
+                id: 46,
+                name: "矮人收割",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        if hero.isReady("cleave"):
+            hero.cleave(enemy)
+        else:
+            hero.attack(enemy)`
+            },
+            {
+                id: 47,
+                name: "远程除法",
+                code: `enemy = hero.findNearestEnemy()
+distanceToEnemy = hero.distanceTo(enemy)
+hero.say(distanceToEnemy/3)
+hero.say("开火！")
+hero.say(distanceToEnemy/1.5)
+hero.say("开火！")
+hero.say("哇哦！")
+hero.say("我们来了！")
+hero.say("冲锋！！")
+while True:
+    enemy1 = hero.findNearestEnemy()
+    hero.attack(enemy1)`
+            },
+            {
+                id: 48,
+                name: "边地僵局A",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        if hero.isReady("cleave"):
+            hero.cleave(enemy)
+        else:
+            hero.attack(enemy)`
+            },
+            {
+                id: 49,
+                name: "边地僵局B",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        if hero.isReady("cleave"):
+            hero.cleave(enemy)
+        else:
+            hero.attack(enemy)`
+            },
+            {
+                id: 50,
+                name: "else之战",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        if hero.isReady("cleave"):
+            hero.cleave(enemy)
+        else:
+            hero.attack(enemy)`
+            },
+            {
+                id: 51,
+                name: "伪装者",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)
+    item = hero.findNearestItem()
+    if item:
+        hero.moveXY(item.pos.x,item.pos.y)`
+            },
+            {
+                id: 52,
+                name: "无箭狼",
+                code: `hero.moveXY(12,35)
+hero.say("sb")
+while True:
+    item = hero.findNearestItem()
+    if item:
+        hero.moveXY(item.pos.x, item.pos.y)`
+            },
+            {
+                id: 53,
+                name: "魔法考试",
+                code: `def action():
+    friend = hero.findNearestFriend()
+    if friend:
+        if friend.type == 'soldier':
+            hero.cast('heal', friend)
+        elif friend.type == 'goliath':
+            hero.cast('grow', friend)
+        else:
+            hero.cast('regen', friend)
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        if enemy.type == 'ogre':
+            hero.cast('force-bolt', enemy)
+        elif enemy.type == 'brawler':
+            hero.cast('shrink', enemy)
+        else:
+            hero.cast('poison-cloud', enemy)
+hero.moveXY(18, 24)
+action()
+hero.moveXY(18, 40)
+action()
+hero.moveXY(34, 24)
+action()
+hero.moveXY(34, 40)
+action()
+hero.moveXY(50, 40)
+action()
+hero.moveXY(50, 24)
+action()
+hero.moveXY(66, 40)
+item = hero.findNearestItem()
+hero.cast('grow', hero)
+hero.moveXY(item.pos.x, item.pos.y)
+hero.moveXY(66, 24)
+item = hero.findNearestItem()
+hero.moveXY(item.pos.x, item.pos.y)`
+            },
+            {
+                id: 54,
+                name: "森林影子",
+                code: `while True:
+    sb=hero.findNearestEnemy()
+    if sb.type=="thrower" or sb.type=="munchkin":
+        hero.attack(sb)
+    wp=hero.findNearestItem()
+    if wp.type=="gem" or wp.type=="coin":
+        hero.moveXY(wp.pos.x,wp.pos.y)
+    pass`
+            },
+            {
+                id: 55,
+                name: "流星雨",
+                code: `while True:
+    item = hero.findNearestItem()
+    distance = hero.distanceTo(item)
+    if item.type=="gem" or distance<20:
+        hero.moveXY(item.pos.x,item.pos.y)`
+            },
+            {
+                id: 56,
+                name: "传送套索（尽量选速度快的，主要看运气）",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        distance = hero.distanceTo(enemy)
+    if enemy and enemy.type == 'munchkin' and distance < 20:
+        # Then attack it.
+        hero.attack(enemy)`
+            },
+            {
+                id: 57,
+                name: "狩猎斗士",
+                code: `while True:
+    enemy=hero.findNearestEnemy()
+    if enemy.type=="brawler" and hero.distanceTo(enemy)<50:
+        hero.say("Fire!")
+    pass`
+            },
+            {
+                id: 58,
+                name: "边地打斗",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        if hero.isReady('cleave'):
+            hero.cleave(enemy)
+        elif hero.isReady("bash"):
+            hero.bash(enemy)
+        else:
+            hero.attack(enemy)`
+            },
+            {
+                id: 59,
+                name: "村庄守卫",
+                code: `def attttaaaaacccckkkk():
+    enemy =  hero.findNearestEnemy()
+    if enemy:
+        if enemy and hero.isReady('cleave'):
+            hero.cleave(enemy)
+        else:
+            hero.attack(enemy)
+while True:
+    hero.moveXY(35, 34)
+    attttaaaaacccckkkk()
+    hero.moveXY(47, 27)
+    attttaaaaacccckkkk()
+    hero.moveXY(60, 31)
+    attttaaaaacccckkkk()`
+            },
+            {
+                id: 60,
+                name: "造币厂",
+                code: `def pickUpCoin():
+    coin = hero.findNearestItem()
+    if coin:
+        hero.moveXY(coin.pos.x, coin.pos.y)
+def attackEnemy():
+    sb=hero.findNearestEnemy()
+    if sb:
+        hero.attack(sb)
+    
+while True:
+    attackEnemy() 
+    pickUpCoin()`
+            },
+            {
+                id: 61,
+                name: "白兔",
+                code: `while True:
+    item = hero.findNearestItem()
+    if item:
+        hero.moveXY(item.pos.x,item.pos.y)
+        pass`
+            },
+            {
+                id: 62,
+                name: "巫师天际层",
+                code: `hero.moveXY(16, 32)
+esz = hero.findNearestFriend().getSecret()
+tam = (esz * 3) - 2
+hero.moveXY(24, 28)
+hero.say(tam)
+Zsofi=(tam - 1)*4
+hero.moveXY(32,24)
+hero.say(Zsofi)
+Istvan=(tam+Zsofi)/2
+hero.moveXY(40,20)
+hero.say(Istvan)
+Csilla=(tam+Zsofi)*(Zsofi-Istvan)
+hero.moveXY(48,16)
+hero.say(Csilla)`
+            },
+            {
+                id: 63,
+                name: "巫师出没",
+                code: `hero.moveXY(18, 20)
+zso = hero.findNearestFriend().getSecret()
+mih = zso / 4
+hero.moveXY(30, 15)
+hero.say(mih)
+bea = mih / 5
+hero.moveXY(42, 20)
+hero.say(bea)
+san = mih - bea
+hero.moveXY(38, 38)
+hero.say(san)`
+            },
+            {
+                id: 64,
+                name: "罪与罚",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        enemyPos = enemy.pos.x + " " + enemy.pos.y
+        hero.say("敌人的位置在： " + enemyPos)
+    sb=hero.findNearestItem()
+    if sb:
+        sbPos = sb.pos.x + " " + sb.pos.y
+        hero.say("宝石的位置在： " + sbPos)`
+            },
+            {
+                id: 65,
+                name: "边地伏击A",
+                code: `def checkAndAttack(x, y):
+    hero.moveXY(x,y)
+    sb=hero.findNearestEnemy()
+    if sb:
+        hero.attack(sb)
+    pass
+checkAndAttack(24, 42)
+checkAndAttack(27, 60)
+checkAndAttack(42, 50)
+checkAndAttack(39, 24)
+checkAndAttack(55, 29)`
+            },
+            {
+                id: 66,
+                name: "边地之叉",
+                code: `def checkAndAttack(sb):
+    if sb:
+        hero.attack(sb)
+    hero.moveXY(43, 34)
+while True:
+    hero.moveXY(58, 52)
+    rj = hero.findNearestEnemy()
+    checkAndAttack(rj)
+    hero.moveXY(58,16)
+    sj=hero.findNearestEnemy()    
+    checkAndAttack(sj) `
+            },
+            {
+                id: 67,
+                name: "天启（旗子躲大炮）",
+                code: `while True:
+    flag = hero.findFlag()
+    if (flag):
+        if hero.distanceTo(flag) > 10 and hero.isReady('jump'):
+            hero.jumpTo(flag.pos)
+        else:
+            hero.pickUpFlag(flag)
+    else:
+        hero.shield()`
+            },
+            {
+                id: 68,
+                name: "短视的树精",
+                code: `def takeItem(item):
+    hero.moveXY(item.pos.x, item.pos.y)
+def checkTakeRun(item):
+    if item:
+        takeItem(item)
+        hero.moveXY(40,12)
+    else:
+        hero.moveXY(40,12)
+while True:
+    hero.moveXY(16, 56)
+    coin = hero.findNearestItem()
+    checkTakeRun(coin)
+    hero.moveXY(64, 56)
+    coin = hero.findNearestItem()
+    checkTakeRun(coin)`
+            },
+            {
+                id: 69,
+                name: "交给劈斩",
+                code: `def cleaveWhenClose(target):
+    if hero.distanceTo(target) < 5:
+        pass
+        if hero.isReady("cleave"):
+            hero.cleave(target)
+        else:
+            hero.attack(target)
+while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        cleaveWhenClose(enemy)`
+            },
+            {
+                id: 70,
+                name: "盗墓者",
+                code: `def checkToDefend(target):
+    if target:
+        hero.attack(target)
+    else:
+        hero.attack("Door")
+    pass
+while True:
+    enemy = hero.findNearestEnemy()
+    checkToDefend(enemy)`
+            },
+            {
+                id: 71,
+                name: "森林矿工",
+                code: `def checkEnemyOrSafe(target):
+    if target:
+        hero.attack(target)
+    else:
+        hero.say("傻逼")
+    pass
+while True:
+    hero.moveXY(64, 54)
+    enemy1 = hero.findNearestEnemy()
+    checkEnemyOrSafe(enemy1)
+    hero.moveXY(16,14)
+    enemy2 = hero.findNearestEnemy();
+    checkEnemyOrSafe(enemy2)`
+            },
+            {
+                id: 72,
+                name: "边地好伙伴",
+                code: `def speak(event):
+    pet.say("草拟吗")
+    pass
+pet.on("hear", speak)
+hero.say("你好小猫")`
+            },
+            {
+                id: 73,
+                name: "墓地阴魂",
+                code: `def hitOrHide(target):
+    if target:
+        hero.attack(target)
+        hero.moveXY(32,17)
+    pass
+while True:
+    enemy = hero.findNearestEnemy()
+    hitOrHide(enemy)`
+            },
+            {
+                id: 74,
+                name: "邮件截停",
+                code: `def ambushAttack(target):
+    if(target and target.pos.x>38):
+        hero.attack(target)
+    else:
+        hero.moveXY(52,36)
+    pass
+while True:
+    ogre = hero.findNearestEnemy()
+    ambushAttack(ogre)`
+            },
+            {
+                id: 75,
+                name: "捉迷藏",
+                code: `def checkTakeHide(item):
+    if item:
+        hero.moveXY(item.pos.x, item.pos.y)
+        hero.moveXY(40,34)
+while True:
+    hero.moveXY(68, 56)
+    lightstone = hero.findNearestItem()
+    checkTakeHide(lightstone)
+    hero.moveXY(12,56)`
+            },
+            {
+                id: 76,
+                name: "返回Agrippa",
+                code: `def enemyInRange(enemy):
+    if hero.distanceTo(enemy)<5:
+        return True
+def cleaveOrAttack(enemy):
+    if hero.isReady('cleave'):
+        hero.cleave(enemy)
+    else:
+        hero.attack(enemy)
+while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        if enemyInRange(enemy):
+            cleaveOrAttack(enemy)`
+            },
+            {
+                id: 77,
+                name: "Agrippa重构",
+                code: `def cleaveOrAttack(enemy):
+    if hero.isReady('cleave'):
+        hero.cleave(enemy)
+    else:
+        hero.attack
+    pass
+while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        distance = hero.distanceTo(enemy)
+        if distance < 5:
+            cleaveOrAttack(enemy)`
+            },
+            {
+                id: 78,
+                name: "去拿过来",
+                code: `def goFetch():
+    while True:
+        potion = hero.findNearestItem()
+        if potion:
+            pet.fetch(potion)
+            pass
+pet.on("spawn", goFetch)`
+            },
+            {
+                id: 79,
+                name: "友和敌",
+                code: `while True:
+    friend = hero.findNearestFriend()
+    if friend:
+        hero.say("去战斗, " + friend.id + "!")
+    sb=hero.findNearestEnemy()
+    if sb:
+        hero.say("傻逼"+sb+"!")`
+            },
+            {
+                id: 80,
+                name: "巫师之门",
+                code: `hero.moveXY(30, 13)
+las = hero.findNearestFriend().getSecret()
+erz = las + 7
+hero.moveXY(17, 26)
+hero.say(erz)
+sim = erz / 4
+hero.moveXY(30, 39)
+hero.say(sim)
+aga = sim * las 
+hero.moveXY(43, 26)
+hero.say(aga)`
+            },
+            {
+                id: 81,
+                name: "币屑",
+                code: `while True:
+    item = hero.findNearestItem()
+    if item:
+        itemPosition = item.pos
+        itemX = itemPosition.x
+        itemY = itemPosition.y
+        hero.moveXY(item.pos.x, item.pos.y)`
+            },
+            {
+                id: 82,
+                name: "濒危树瘤之战",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy.type == "burl":
+        hero.say("我不攻击树榴！")
+    if enemy.type == "munchkin":
+        hero.attack(enemy)
+    if enemy.type == "thrower":
+        hero.attack(enemy)
+    if enemy.type == "ogre":
+        hero.moveXY(21, 43)`
+            },
+            {
+                id: 83,
+                name: "盲距",
+                code: `def nearestEnemyDistance():
+    enemy = hero.findNearestEnemy()
+    result = 0
+    if enemy:
+        result = hero.distanceTo(enemy)
+    return result
+while True:
+    enemyDistance = nearestEnemyDistance()
+    if enemyDistance > 0:
+        hero.say(enemyDistance)`
+            },
+            {
+                id: 84,
+                name: "固定打击",
+                code: `def inAttackRange(enemy):
+    distance = hero.distanceTo(enemy)
+    if distance <= 3:
+        return True
+    else:
+        return False
+while True:
+    aaa = hero.findNearestEnemy()
+    canAttack = inAttackRange(aaa)
+    if canAttack:
+        hero.attack(aaa)`
+            },
+            {
+                id: 85,
+                name: "盐碱地",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy.type == "munchkin" or enemy.type == "thrower":
+        hero.attack(enemy)
+    item = hero.findNearestItem()
+    if item.type=="gem" or item.type=="coin":
+        hero.moveXY(item.pos.x,item.pos.y)`
+            },
+            {
+                id: 86,
+                name: "春雷",
+                code: `while True:
+    item = hero.findNearestItem()
+    if item.type == "coin" and item.value == 2:
+        hero.moveXY(item.pos.x, item.pos.y)
+    if item.type=="gem" and item.value==10:
+        hero.moveXY(item.pos.x, item.pos.y)`
+            },
+			{
+                id: 87,
+                name: "平常的一天",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy and enemy.type == "munchkin":
+        hero.attack(enemy)
+    item=hero.findNearestItem()
+    if item and item.type=="coin":
+        hero.moveXY(item.pos.x,item.pos.y)`
+            },
+			{
+                id: 88,
+                name: "穿越",
+                code: `while True:
+    item = hero.findNearestItem()
+    if item:
+        if item.type != "gem":
+            hero.moveXY(pet.pos.x, pet.pos.y)
+        else:
+            hero.moveXY(item.pos.x,item.pos.y)`
+            },
+			{
+                id: 89,
+                name: "奇境",
+                code: `while True:
+    item = hero.findNearestItem()
+    if item:
+        if item.type!="gem":
+            hero.moveXY(item.pos.x,item.pos.y)
+        pass`
+            },
+			{
+                id: 90,
+                name: "被诅咒的梦境",
+                code: `while True:
+    a=hero.findNearestItem()
+    if a and a.type!="gem":
+        hero.moveXY(a.pos.x,a.pos.y)
+    b=hero.findNearestEnemy()
+    if b and b.type!="burl":
+        hero.attack(b)
+    pass`
+            },
+			{
+                id: 91,
+                name: "金币猎手",
+                code: `def isCoinClose(coin):
+    jb=hero.distanceTo(coin)
+    if jb<20:
+        return True
+    else:
+        return False
+    pass
+while True:
+    item = hero.findNearestItem()
+    if item:
+        if isCoinClose(item):
+            hero.moveXY(item.pos.x, item.pos.y)`
+            },
+			{
+                id: 92,
+                name: "有用的对手",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        if enemy.type != "peon":
+            hero.attack(enemy)
+    item = hero.findNearestItem()
+    if item:
+        if item.type!="poison":
+            hero.moveXY(item.pos.x,item.pos.y)
+        pass`
+            },
+			{
+                id: 93,
+                name: "树精森林",
+                code: `def shouldAttack(target):
+    if not target:
+        return False
+    if target.type=="burl":
+        return False
+    else:
+        return True
+while True:
+    enemy = hero.findNearestEnemy()
+    heroShouldAttack = shouldAttack(enemy)
+    if heroShouldAttack:
+        hero.attack(enemy)`
+            },
+			{
+                id: 94,
+                name: "金属探测器",
+                code: `def coinDistance():
+    item = hero.findNearestItem()
+    if item:
+        return hero.distanceTo(item)
+    else:
+        return 0
+    pass
+while True:
+    distance = coinDistance()
+    if distance > 0:
+        hero.say(distance)
+        pass`
+            },
+			{
+                id: 95,
+                name: "嘲弄",
+                code: `def dealEnemy(enemy):
+    if enemy.type=="munchkin":
+        hero.attack(enemy)
+    if enemy.type=="brawler":
+        hero.say("sb")
+    pass
+while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        dealEnemy(enemy)
+    else:
+        hero.moveXY(30, 34)`
+            },
+			{
+                id: 96,
+                name: "似曾相识的味道",
+                code: `potionsOnTheWall = 10
+numToTakeDown = 1
+while True:
+    hero.say(potionsOnTheWall + " potions of health on the wall!")
+    hero.say(potionsOnTheWall + " potions of health!")
+    hero.say( 'Take '+numToTakeDown + " down,pass it around!")
+    potionsOnTheWall -= numToTakeDown
+    hero.say(potionsOnTheWall + " potions of health on the wall!")`
+            },
+			{
+                id: 97,
+                name: "逻辑之路",
+                code: `hero.moveXY(14, 24)
+secretA = hero.findNearestFriend().getSecretA()
+secretB = hero.findNearestFriend().getSecretB()
+secretC = secretA and secretB
+if secretC:
+    hero.moveXY(20, 33)
+else:
+    hero.moveXY(20, 15)
+hero.moveXY(26, 24)
+secretC = secretA or secretB
+if secretC:
+    hero.moveXY(32, 33)
+else:
+    hero.moveXY(32, 15)
+hero.moveXY(38, 24)
+secretC = not secretB
+if secretC:
+    hero.moveXY(44, 33)
+else:
+    hero.moveXY(44, 15)
+hero.moveXY(50, 24)`
+            },
+			{
+                id: 98,
+                name: "逻辑之圈",
+                code: `hero.moveXY(20, 24)
+A = hero.findNearestFriend().getSecretA()
+B = hero.findNearestFriend().getSecretB()
+C = hero.findNearestFriend().getSecretC()
+D = A and B and C
+if D:
+    hero.moveXY(30, 33)
+else:
+    hero.moveXY(30, 15)
+E=A or B or C
+if E:
+    hero.moveXY(20, 24)
+else:
+    hero.moveXY(40,24)
+G=A and B and C and D and E
+if G:
+    hero.moveXY(30, 33)
+else:
+    hero.moveXY(30, 15)`
+            },
+			{
+                id: 99,
+                name: "逻辑结论",
+                code: `hero.moveXY(24, 16)
+A = hero.findNearestFriend().getSecretA()
+B = hero.findNearestFriend().getSecretB()
+C = hero.findNearestFriend().getSecretC()
+t = (A and B) or C
+hero.moveXY(19, 26)
+hero.say(t)
+z = (A or B) and C
+hero.moveXY(26, 36)
+hero.say(z)
+i = (A or B) and (B or C)
+hero.moveXY(37, 34)
+hero.say(i)
+c = (A and B) or (B and (not C))
+hero.moveXY(40, 22)
+hero.say(c)`
+            },
+			{
+                id: 100,
+                name: "边地宝藏",
+                code: `middleX = 40
+middleY = 35
+while True:
+    enemy = hero.findNearestEnemy()
+    item = hero.findNearestItem()
+    if (enemy):
+        dist = hero.distanceTo(enemy);
+    if (enemy):
+        if (hero.isReady("cleave")):
+            hero.cleave(enemy)
+        elif (hero.isReady("bash")):
+            hero.bash(enemy)
+        elif (hero.isReady("power-up")):
+            hero.powerUp()
+        else:
+            hero.attack(enemy)
+    elif (item):
+        moveToX = item.pos.x
+        moveToY = item.pos.y
+        hero.moveXY(moveToX, moveToY)
+    elif (True):
+        hero.moveXY(middleX, middleY)`
+            },
+			{
+                id: 101,
+                name: "巨石森林",
+                code: `while True:
+    angle = Math.PI / 2 - Math.PI / 16
+    while angle >= -Math.PI / 2:
+        targetX = hero.pos.x + 5 * Math.cos(angle)
+        targetY = hero.pos.y + 5 * Math.sin(angle)
+        clear = hero.isPathClear(hero.pos,{'x':targetX,'y':targetY})
+        if clear:
+            hero.move({'x':targetX,'y':targetY})
+        else:
+            angle -= Math.PI / 16`
+            },
+			{
+                id: 102,
+                name: "森林加农炮之舞",
+                code: `def onSpawn():
+    while True:
+        pet.moveXY(48,8)
+        pet.moveXY(12,8)
+pet.on("spawn", onSpawn)
+while True:
+    hero.say("跑！！！")
+    hero.say("速度！")`
+            },
+			{
+                id: 103,
+                name: "森林慢跑",
+                code: `def onSpawn(event):
+    while True:
+        pet.moveXY(9, 24)
+        pet.moveXY(30, 43)
+        pet.moveXY(51, 24)
+        pet.moveXY(30, 5)
+pet.on('spawn',onSpawn)
+while True:
+    hero.say("狗狗真棒！")
+    hero.say("你能做到的！")
+    hero.say("跑跑跑！")
+    hero.say("快好了！")
+    hero.say("再来一圈！")`
+            },
+			{
+                id: 104,
+                name: "漫漫长路",
+                code: `def onSpawn(event):
+    pass
+    while True:
+        sb=hero.findNearestItem()
+        if sb:
+            pet.fetch(sb)
+pet.on('spawn',onSpawn)
+hero.moveXY(78, 35)`
+            },
+			{
+                id: 105,
+                name: "边地投弹",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        x = enemy.pos.x
+        y = enemy.pos.y
+        hero.say(x + "," + y)
+    else:
+        hero.say("停止" + " " + "开火！")`
+            },
+			{
+                id: 106,
+                name: "看门狗",
+                code: `def onSpawn(event):
+    while True:
+        enemy = pet.findNearestEnemy()
+        if enemy:
+            pet.say("sb")
+pet.on("spawn", onSpawn);`
+            },
+			{
+                id: 107,
+                name: "宠物小测试",
+                code: `def onHear(event):
+    pet.say("傻逼")
+    pass
+pet.on("hear", onHear)
+hero.say("能听懂我的话吗？")
+hero.say("你是美洲狮吗？")
+hero.say("你多大啦？")
+hero.say("你多大啦？")
+hero.say("你多大啦？")`
+            },
+			{
+                id: 108,
+                name: "好伙伴的名字",
+                code: `def onHear(event):
+    # 不要更改这个函数
+    pet.say("喵 汪 喵")
+    pet.say("汪 汪")
+    pet.say("喵")
+    pet.say("喵")
+    pet.say("喵 汪 喵 喵")
+pet.on("hear",onHear)
+hero.say("伙计，你叫什么名字？")
+hero.say("能重复一次吗？")`
+            },
+			{
+                id: 109,
+                name: "博士猫咪",
+                code: `def sayTwo(event):
+    pet.say("2")
+    pass
+pet.on("hear",sayTwo)
+hero.say("一加一等于…？")
+hero.say("x^3 - 6x^2 + 12x - 8 = 0。那x等于多少？")
+hero.say("火星有多少卫星？")`
+            },
+			{
+                id: 110,
+                name: "好伙伴的名字A",
+                code: `def sayName(event):
+    pet.say("我名叫狂兽。")
+    pet.say("不过我的朋友们叫我毛球。")
+pet.on('hear',sayName)`
+            },
+			{
+                id: 111,
+                name: "好伙伴的名字B",
+                code: `def sayHello(event):
+    pet.say("致敬")
+pet.on('hear',sayHello)
+hero.say("你好，朋友！")`
+            },
+			{
+                id: 112,
+                name: "返回荆棘农场",
+                code: `def maybeBuildTrap(x, y):
+    hero.moveXY(x, y)
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        pass 
+        hero.buildXY("fire-trap",x,y)
+while True:
+    maybeBuildTrap(43, 50)
+    maybeBuildTrap(25, 34)
+    maybeBuildTrap(43, 20)`
+            },
+			{
+                id: 113,
+                name: "封闭的十字路口",
+                code: `def maybeBuildSomething(typeToBuild, x, y):
+    hero.moveXY(x, y)
+    sb=hero.findNearestEnemy()
+    if sb:
+        hero.buildXY(typeToBuild,x,y)
+    pass
+while True:
+    maybeBuildSomething("fire-trap", 40, 20)
+    maybeBuildSomething("fence", 26, 34)
+    maybeBuildSomething("fire-trap", 40, 50)
+    maybeBuildSomething("fence", 54, 34)`
+            },
+			{
+                id: 114,
+                name: "贪婪陷阱",
+                code: `def maybeBuildTrap(x, y):
+    hero.moveXY(x, y)
+    item=hero.findNearestItem()
+    if item:
+        hero.buildXY("fire-trap",x,y)
+    pass
+while True:
+    maybeBuildTrap(12, 56)
+    maybeBuildTrap(68, 56)
+    maybeBuildTrap(68, 12)
+    maybeBuildTrap(12, 12)`
+            },
+			{
+                id: 115,
+                name: "返回荆棘农场A",
+                code: `def maybeBuildTrap(x, y):
+    hero.moveXY(x, y)
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.buildXY("fire-trap",x,y)
+        pass
+while True:
+    maybeBuildTrap(20, 34)
+    maybeBuildTrap(38, 20)
+    maybeBuildTrap(56, 34)`
+            },
+			{
+                id: 116,
+                name: "返回荆棘农场B",
+                code: `def maybeBuildTrap(x, y):
+    hero.moveXY(x, y)
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.buildXY("fire-trap",x,y)
+        pass
+while True:
+    maybeBuildTrap(38, 20)
+    maybeBuildTrap(56, 34)
+    maybeBuildTrap(38, 48)`
+            },
+			{
+                id: 117,
+                name: "致命追逐",
+                code: `while True:
+    flag = hero.findFlag()
+    item = hero.findNearestItem()
+    sb=hero.findNearestEnemy()
+    if flag:
+        hero.buildXY("fire-trap", flag.pos.x, flag.pos.y)
+        hero.pickUpFlag(flag)
+    if item:
+        hero.moveXY(item.pos.x,item.pos.y)`
+            },
+			{
+                id: 118,
+                name: "空投",
+                code: `def onSpawn (event):
+    while True:
+        item = hero.findNearestItem()
+        if item:
+            pet.fetch(item)
+pet.on('spawn',onSpawn)
+while True:
+    sb=hero.findNearestEnemy()
+    if sb:
+        if hero.isReady('cleave'):
+            hero.cleave(sb)
+        else:
+            hero.attack(sb)
+    pass`
+            },
+			{
+                id: 119,
+                name: "野马",
+                code: `while True:
+    horse = hero.findNearest(hero.findFriends())
+    if horse:
+        x1 = horse.pos.x - 7
+        x2 = horse.pos.x + 7
+        y = horse.pos.y
+        if x1 >= 1:
+            hero.moveXY(x1, y)
+        elif x2 <= 79:
+            hero.moveXY(x2, y)
+        horse = hero.findNearest(hero.findFriends())
+        distance = hero.distanceTo(horse)
+        if distance <= 10:
+            hero.say("Whoa")
+            hero.moveXY(27, 54)`
+            },
+			{
+                id: 120,
+                name: "超级矮人来袭",
+                code: `path = [{'x':19,'y':33}, {'x':19,'y':14}, {'x':42,'y':14}, {'x':53,'y':37},{'x':52,'y':52}]
+index = len(path)
+max = len(path)
+while True:
+    friend = hero.findNearest(hero.findFriends())
+    enemy = hero.findNearestEnemy()
+    if friend and enemy:
+        if(friend.distanceTo(enemy)>16):
+            hero.command(friend, "attack", enemy)
+        else:
+            hero.command(friend, "move", path[index%len(path)])
+    if(friend.pos.x == path[index % max].x):
+        index = index + 1`
+            },
+			{
+                id: 121,
+                name: "为援兵坚持住",
+                code: `while True:
+    flag = hero.findFlag()
+    enemy = hero.findNearestEnemy()
+    if flag:
+        hero.pickUpFlag(flag)
+        pass
+    if enemy:
+        if hero.isReady("cleave"):
+            hero.cleave(enemy)
+        else:
+            hero.attack(enemy)`
+            },
+			{
+                id: 122,
+                name: "强攻农舍",
+                code: `while True:
+    flag = hero.findFlag()
+    enemy = hero.findNearestEnemy()
+    if flag:
+        hero.pickUpFlag(flag)
+    if enemy:
+        if hero.isReady("cleave"):
+            hero.cleave(enemy)
+        else:
+            hero.attack(enemy)`
+            },
+			{
+                id: 123,
+                name: "战术时机",
+                code: `while True:
+    qz=hero.findFlag()
+    enemy=hero.findNearestEnemy()
+    if enemy:
+        if hero.isReady("cleave"):
+            hero.cleave(enemy)
+        else:
+            hero.attack(enemy)
+    if qz:
+        hero.pickUpFlag(qz)`
+            },
+			{
+                id: 124,
+                name: "厄运林地",
+                code: `while True:
+    sb=hero.findNearestEnemy()
+    qz=hero.findFlag()
+    if qz:
+        hero.pickUpFlag(qz)
+    if sb and hero.distanceTo(sb)<10:
+        if hero.isReady("cleave"):
+            hero.cleave(sb)
+        elif hero.isReady("bash"):
+            hero.bash(sb)
+        else:
+            hero.attack(sb)
+    else:
+        hero.shield()`
+            },
+			{
+                id: 125,
+                name: "保卫要塞",
+                code: `while True:
+    sb=hero.findNearestEnemy()
+    qz=hero.findFlag()
+    if qz:
+        hero.pickUpFlag(qz)
+    if sb and hero.distanceTo(sb)<10:
+        if hero.isReady("cleave"):
+            hero.cleave(sb)
+        elif hero.isReady("bash"):
+            hero.bash(sb)
+        else:
+            hero.attack(sb)
+    else:
+        hero.shield()`
+            },
+			{
+                id: 126,
+                name: "不公支援",
+                code: `while True:
+    flag = hero.findFlag()
+    enemy = hero.findNearestEnemy()
+    if flag:
+        hero.pickUpFlag(flag)
+    if enemy:
+        hero.attack(enemy)
+        pass`
+            },
+			{
+                id: 127,
+                name: "金币之角",
+                code: `while True:
+    flag = hero.findFlag()
+    if flag:
+        hero.pickUpFlag(flag)
+    else:
+        hero.say("放置一枚旗标，为我指引方向。")`
+            },
+			{
+                id: 128,
+                name: "金钱草场",
+                code: `while True:
+    flag = hero.findFlag()
+    item = hero.findNearestItem()
+    if flag:
+        hero.pickUpFlag(flag)
+        pass
+        if item:
+            position = item.pos
+            x = position.x
+            y = position.y
+            hero.moveXY(x, y)`
+            },
+			{
+                id: 129,
+                name: "插旗",
+                code: `while True:
+    flag = hero.findFlag();
+    if (flag):
+        hero.buildXY("fire-trap", flag.pos.x, flag.pos.y)
+        hero.pickUpFlag(flag)
+    else:
+        item = hero.findNearestItem()
+        if (item):
+            itemPos = item.pos
+            itemX = itemPos.x
+            itemY = itemPos.y
+            hero.moveXY(itemX, itemY)`
+            },
+			{
+                id: 130,
+                name: "坚守森林通道",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    flag = hero.findFlag()
+    if flag:
+        hero.pickUpFlag(flag)
+        pass
+    if enemy and hero.distanceTo(enemy)<10:
+        hero.attack(enemy)
+        pass`
+            },
+			{
+                id: 131,
+                name: "多人宝藏森林",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    item = hero.findNearestItem()
+    dist_item = 9999999
+    dist_enemy = 99999999
+    if item:
+        dist_item = hero.distanceTo(item)
+    if enemy:
+        dist_enemy = hero.distanceTo(enemy)
+    if ((dist_enemy < 10) or (dist_item > dist_enemy)):
+        if (hero.isReady("cleave")):
+            hero.cleave(enemy)
+        elif (hero.isReady("bash")):
+            hero.bash(enemy)
+        elif (hero.isReady("power-up")):
+            hero.powerUp()
+        else:
+            hero.shield()
+            hero.attack(enemy)
+    elif (item):
+        hero.moveXY(item.pos.x, item.pos.y)
+    else:
+        hero.moveXY(42, 30)`
+            },
+			{
+                id: 132,
+                name: "小心陷阱",
+                code: `while True:
+    flag = hero.findFlag()
+    enemy = hero.findNearestEnemy()
+    if flag:
+        hero.pickUpFlag(flag)
+        hero.say("我应该把旗标捡起来。")
+    if enemy and hero.distanceTo(enemy)<10:
+        hero.attack(enemy)`
+            },
+			{
+                id: 133,
+                name: "信号旗标",
+                code: `# 你可以使用旗标来选择不同的策略。
+# 在这关，绿色旗标代表你要移动到旗标处。
+# 遇到黑旗就意味着你要在旗标处劈斩。
+# 医生会在红色X处医治你
+while True:
+    green = hero.findFlag("green")
+    black = hero.findFlag("black")
+    nearest = hero.findNearestEnemy()
+    if green:
+        hero.pickUpFlag(green)
+    elif black and hero.isReady("cleave"):
+        hero.pickUpFlag(black)
+        hero.cleave(nearest)
+    elif nearest and hero.distanceTo(nearest) < 10:
+        hero.attack(nearest)
+        pass`
+            },
+			{
+                id: 134,
+                name: "富有的征收员",
+                code: `while True:
+    flag = hero.findFlag()
+    enemy = hero.findNearestEnemy()
+    item = hero.findNearestItem()
+    if flag:
+        hero.pickUpFlag(flag)
+    if enemy:
+        hero.attack(enemy)
+    if item:
+        hero.moveXY(item.pos.x,item.pos.y)`
+            },
+			{
+                id: 135,
+                name: "围攻stonehold",
+                code: `while True:
+    qz=hero.findFlag()
+    if qz:
+        hero.pickUpFlag(qz)
+    enemy=hero.findNearestEnemy()
+    if enemy and hero.distanceTo(enemy)<10:
+        if hero.isReady("cleave"):
+            hero.cleave(enemy)
+        elif hero.isReady("bash"):
+            hero.bash(enemy)
+        else:
+            hero.attack(enemy)`
+            }
+        ];
+        
+        // 生成关卡内容
+        const levelContent = document.getElementById('levelContent');
+        
+        levelCodes.forEach(level => {
+            const section = document.createElement('section');
+            section.className = 'level-section';
+            section.id = `level-${level.id}`;
+            
+            const codeHtml = `<div class="level-header">
+                <h3><i class="fas fa-leaf"></i> ${level.id}. ${level.name}</h3>
+            </div>
+            <div class="code-container">
+                <pre><code id="code-${level.id}"></code></pre>
+                <button class="copy-btn" data-code-id="${level.id}">
+                    <i class="far fa-copy"></i> 复制代码
+                </button>
+            </div>`;
+            
+            section.innerHTML = codeHtml;
+            
+            const codeElement = section.querySelector(`#code-${level.id}`);
+            codeElement.textContent = level.code;
+            
+            levelContent.appendChild(section);
+        });
+        
+        // 为第131关添加装备图片
+        setTimeout(() => {
+            const level131Section = document.getElementById('level-131');
+            if (level131Section) {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'equipment-image';
+                imgContainer.innerHTML = `
+                    <img src="宠物.png" alt="宠物参考">
+                    <div class="image-caption">最好可以带的宠物</div>
+                `;
+                level131Section.appendChild(imgContainer);
+            }
+        }, 100);
+        
+        // 导航条收起功能
+        const levelNav = document.getElementById('levelNav');
+        const collapseToggle = document.getElementById('collapseToggle');
+        const collapseIcon = document.getElementById('collapseIcon');
+        const navHeader = document.querySelector('.nav-header');
+        
+        function toggleNavCollapse() {
+            levelNav.classList.toggle('collapsed');
+            
+            if (levelNav.classList.contains('collapsed')) {
+                collapseIcon.className = 'fas fa-chevron-down';
+                collapseToggle.querySelector('.toggle-text').textContent = '展开搜索栏';
+            } else {
+                collapseIcon.className = 'fas fa-chevron-up';
+                collapseToggle.querySelector('.toggle-text').textContent = '收起搜索栏';
+                
+                setTimeout(() => {
+                    document.getElementById('searchInput').focus();
+                }, 300);
+            }
+        }
+        
+        collapseToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleNavCollapse();
+        });
+        
+        navHeader.addEventListener('click', function(e) {
+            if (!e.target.closest('.collapse-toggle')) {
+                toggleNavCollapse();
+            }
+        });
+        
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchStats = document.getElementById('searchStats');
+        
+        function updateSearchResults(levels) {
+            searchResults.innerHTML = '';
+            
+            if (levels.length === 0) {
+                searchResults.innerHTML = '<div class="no-results">未找到匹配的关卡</div>';
+                searchResults.classList.remove('hidden');
+                searchStats.textContent = `共${levelCodes.length}个关卡，未找到匹配项`;
+                return;
+            }
+            
+            levels.forEach(level => {
+                const result = document.createElement('a');
+                result.href = `#level-${level.id}`;
+                result.className = 'level-result';
+                result.innerHTML = `
+                    <span class="level-id">${level.id}</span>
+                    <span class="level-name">${level.name}</span>
+                `;
+                
+                result.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        document.querySelectorAll('.level-section').forEach(section => {
+                            section.style.boxShadow = '0 8px 32px rgba(0, 60, 30, 0.3)';
+                        });
+                        
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(121, 233, 108, 0.3), 0 12px 40px rgba(0, 80, 40, 0.4)';
+                        
+                        setTimeout(() => {
+                            targetElement.style.boxShadow = '0 8px 32px rgba(0, 60, 30, 0.3)';
+                        }, 3000);
+                        
+                        // 收起搜索栏
+                        if (!levelNav.classList.contains('collapsed')) {
+                            toggleNavCollapse();
+                        }
+                    }
+                });
+                
+                searchResults.appendChild(result);
+            });
+            
+            searchResults.classList.remove('hidden');
+            searchStats.textContent = `共${levelCodes.length}个关卡，找到${levels.length}个匹配项`;
+        }
+        
+        // 初始显示所有关卡
+        updateSearchResults(levelCodes);
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                updateSearchResults(levelCodes);
+            } else {
+                const filteredLevels = levelCodes.filter(level => {
+                    return level.name.toLowerCase().includes(searchTerm) || 
+                           level.id.toString().includes(searchTerm) ||
+                           level.code.toLowerCase().includes(searchTerm);
+                });
+                
+                updateSearchResults(filteredLevels);
+            }
+            
+            if (!levelNav.classList.contains('collapsed')) {
+                levelNav.classList.remove('collapsed');
+            }
+        });
+        
+        searchInput.addEventListener('focus', function() {
+            if (levelNav.classList.contains('collapsed')) {
+                toggleNavCollapse();
+            }
+        });
+        
+        // 复制功能
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const codeId = this.getAttribute('data-code-id');
+                const codeElement = document.getElementById(`code-${codeId}`);
+                if (codeElement) {
+                    copyToClipboard(codeElement.textContent);
+                }
+            });
+        });
+        
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            showCopyNotification();
+        }
+        
+        const copyNotification = document.getElementById('copyNotification');
+        
+        function showCopyNotification() {
+            copyNotification.classList.add('show');
+            setTimeout(() => {
+                copyNotification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 浮动返回顶部按钮
+        const floatingTopBtn = document.getElementById('floatingTopBtn');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                floatingTopBtn.classList.add('show');
+            } else {
+                floatingTopBtn.classList.remove('show');
+            }
+        });
+        
+        floatingTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // URL锚点处理
+        window.addEventListener('load', function() {
+            if (window.location.hash) {
+                const targetElement = document.querySelector(window.location.hash);
+                if (targetElement) {
+                    setTimeout(() => {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(121, 233, 108, 0.3), 0 12px 40px rgba(0, 80, 40, 0.4)';
+                        
+                        setTimeout(() => {
+                            targetElement.style.boxShadow = '0 8px 32px rgba(0, 60, 30, 0.3)';
+                        }, 3000);
+                    }, 100);
+                }
+            }
+        });
+        
+        // 显示/隐藏复制按钮
+        document.querySelectorAll('.code-container').forEach(container => {
+            const copyBtn = container.querySelector('.copy-btn');
+            
+            container.addEventListener('mouseenter', function() {
+                copyBtn.classList.add('show');
+            });
+            
+            container.addEventListener('mouseleave', function() {
+                copyBtn.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>

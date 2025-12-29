@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冰川关卡代码详情</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(180deg, #0a0e2a 0%, #0c2b4b 50%, #0a1830 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(100, 200, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(100, 150, 255, 0.08) 0%, transparent 50%),
+                url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpath d="M0 0 L50 100 L100 0 Z" fill="rgba(100, 150, 255, 0.03)" /%3E%3C/svg%3E') repeat;
+            opacity: 0.4;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 雪花动画效果 */
+        @keyframes snow {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .snowflake {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.6;
+            animation: snow linear infinite;
+        }
+        
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: transparent;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+        }
+        
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(100, 200, 255, 0.8), 0 0 40px rgba(100, 200, 255, 0.6);
+            animation: glow 2s ease-in-out infinite alternate;
+            background: linear-gradient(to right, #7BDEFC, #4A90E2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(100, 200, 255, 0.6), 0 0 20px rgba(100, 200, 255, 0.4); }
+            to { text-shadow: 0 0 20px rgba(100, 200, 255, 0.8), 0 0 40px rgba(100, 200, 255, 0.6); }
+        }
+        
+        header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #b0d7ff;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 25px;
+            background: rgba(100, 200, 255, 0.2);
+            color: #7BDEFC;
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(100, 200, 255, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .back-btn:hover {
+            background: rgba(100, 200, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(100, 200, 255, 0.3);
+        }
+        
+        /* 冰川导航栏样式 */
+        .level-nav {
+            background: rgba(15, 30, 60, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 20, 60, 0.3);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 1200px;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            max-height: 2000px;
+            overflow: hidden;
+        }
+        
+        .level-nav.collapsed {
+            max-height: 80px;
+            cursor: pointer;
+            padding: 20px 25px;
+            width: auto;
+            min-width: 320px;
+        }
+        
+        .level-nav.collapsed:hover {
+            background: rgba(20, 40, 80, 0.8);
+            border-color: rgba(100, 200, 255, 0.3);
+        }
+        
+        .nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .nav-header h2 {
+            color: #7BDEFC;
+            font-size: 1.6rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 0 10px rgba(123, 222, 252, 0.5);
+        }
+        
+        .nav-header h2 i {
+            color: #4A90E2;
+            font-size: 1.4rem;
+            transition: transform 0.3s;
+        }
+        
+        .level-nav.collapsed .nav-header h2 i {
+            transform: rotate(-90deg);
+        }
+        
+        .collapse-toggle {
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            color: #7BDEFC;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .collapse-toggle:hover {
+            background: rgba(100, 200, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .level-nav.collapsed .collapse-toggle .toggle-text {
+            display: none;
+        }
+        
+        /* 搜索区域样式 */
+        .nav-content {
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .level-nav.collapsed .nav-content {
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        #searchInput {
+            width: 100%;
+            padding: 16px 20px;
+            padding-left: 50px;
+            background: rgba(10, 20, 40, 0.7);
+            border: 2px solid rgba(100, 200, 255, 0.3);
+            border-radius: 12px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            color: #e0e0e0;
+            backdrop-filter: blur(5px);
+        }
+        
+        #searchInput:focus {
+            outline: none;
+            border-color: #4A90E2;
+            background: rgba(15, 30, 60, 0.9);
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.3);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7BDEFC;
+            font-size: 1.3rem;
+        }
+        
+        .search-results {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            background: rgba(10, 20, 40, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        
+        .search-results.hidden {
+            display: none;
+        }
+        
+        .level-result {
+            display: block;
+            padding: 16px 25px;
+            text-decoration: none;
+            color: #b0d7ff;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .level-result:hover {
+            background: rgba(100, 200, 255, 0.15);
+            color: #7BDEFC;
+            transform: translateX(5px);
+        }
+        
+        .level-result:last-child {
+            border-bottom: none;
+        }
+        
+        .level-result .level-id {
+            display: inline-block;
+            width: 35px;
+            color: #4A90E2;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .level-result .level-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .no-results {
+            padding: 30px;
+            text-align: center;
+            color: #7BDEFC;
+            font-style: italic;
+        }
+        
+        .search-stats {
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #7BDEFC;
+            text-align: center;
+        }
+        
+        /* 关卡内容区域 */
+        .level-content {
+            margin-bottom: 60px;
+        }
+        
+        .level-section {
+            background: rgba(15, 30, 60, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 0;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 32px rgba(0, 20, 60, 0.3);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .level-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 30, 80, 0.4);
+            border-color: rgba(100, 200, 255, 0.3);
+        }
+        
+        .level-header {
+            background: linear-gradient(90deg, #1a3a6a 0%, #2a5a9a 100%);
+            color: white;
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.3);
+        }
+        
+        .level-header h3 {
+            font-size: 1.6rem;
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px rgba(123, 222, 252, 0.5);
+        }
+        
+        .code-container {
+            position: relative;
+            padding: 30px;
+        }
+        
+        pre {
+            background: #0a1525;
+            color: #c0e0ff;
+            padding: 25px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0;
+            tab-size: 4;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid rgba(100, 200, 255, 0.2);
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #2a5a9a, #1a3a6a);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(42, 90, 154, 0.3);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+        }
+        
+        .code-container:hover .copy-btn {
+            opacity: 1;
+        }
+        
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #3a6aaa, #2a5a9a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42, 90, 154, 0.4);
+        }
+        
+        .copy-btn.show {
+            opacity: 1;
+        }
+        
+        /* B站按钮样式 */
+        .bilibili-btn-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 0 30px;
+        }
+        
+        .bilibili-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #fb7299, #ff3852);
+            color: white;
+            padding: 18px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(251, 114, 153, 0.4);
+            border: none;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .bilibili-btn:hover {
+            background: linear-gradient(135deg, #ff8ab0, #ff5262);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(251, 114, 153, 0.5);
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* 装备图片样式 */
+        .equipment-image {
+            text-align: center;
+            margin: 30px 0;
+            padding: 0 30px 30px;
+        }
+        
+        .equipment-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+        }
+        
+        .image-caption {
+            margin-top: 15px;
+            color: #7BDEFC;
+            font-style: italic;
+            font-size: 1rem;
+        }
+        
+        /* 视频容器样式 */
+        .video-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 0 30px 30px;
+        }
+        
+        .video-container h4 {
+            color: #7BDEFC;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-shadow: 0 0 10px rgba(123, 222, 252, 0.5);
+        }
+        
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 20, 60, 0.4);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+        }
+        
+        .video-wrapper iframe,
+        .video-wrapper video {
+            width: 100%;
+            height: 450px;
+            display: block;
+            border: none;
+        }
+        
+        .video-caption {
+            margin-top: 15px;
+            color: #7BDEFC;
+            font-style: italic;
+            font-size: 1rem;
+        }
+        
+        /* 浮动返回顶部按钮 */
+        .floating-top-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: linear-gradient(135deg, #2a5a9a, #1a3a6a);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(0, 20, 60, 0.4);
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(20px);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+        }
+        
+        .floating-top-btn.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .floating-top-btn:hover {
+            background: linear-gradient(135deg, #3a6aaa, #2a5a9a);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 30, 80, 0.5);
+        }
+        
+        /* 复制成功提示 */
+        .copy-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 18px 28px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+            max-width: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .copy-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(100, 200, 255, 0.2);
+            color: #7BDEFC;
+            font-size: 1rem;
+            background: rgba(10, 20, 40, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .footer p:last-child {
+            color: #ff6b6b;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 80px;
+            }
+            
+            .level-nav {
+                top: 10px;
+                width: calc(100% - 20px);
+                padding: 20px;
+            }
+            
+            .level-nav.collapsed {
+                max-height: 70px;
+                padding: 15px 20px;
+                min-width: 280px;
+            }
+            
+            header h1 {
+                font-size: 2.5rem;
+            }
+            
+            header p {
+                font-size: 1.1rem;
+            }
+            
+            .back-btn {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+            
+            .nav-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .collapse-toggle {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            #searchInput {
+                padding: 14px 20px;
+                padding-left: 45px;
+                font-size: 1rem;
+            }
+            
+            .search-icon {
+                left: 15px;
+                font-size: 1.2rem;
+            }
+            
+            .level-header {
+                padding: 20px 25px;
+            }
+            
+            .level-header h3 {
+                font-size: 1.4rem;
+            }
+            
+            .code-container {
+                padding: 20px;
+            }
+            
+            pre {
+                padding: 20px;
+                font-size: 0.95rem;
+                max-height: 400px;
+            }
+            
+            .copy-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 15px;
+                width: 100%;
+                justify-content: center;
+                opacity: 1;
+            }
+            
+            .bilibili-btn {
+                padding: 15px 25px;
+                font-size: 1.1rem;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .video-wrapper iframe,
+            .video-wrapper video {
+                height: 300px;
+            }
+            
+            .video-container,
+            .equipment-image {
+                padding: 0 20px 20px;
+            }
+            
+            .floating-top-btn {
+                right: 20px;
+                bottom: 20px;
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .copy-notification {
+                left: 50%;
+                transform: translateX(-50%) translateY(10px);
+                width: 90%;
+                max-width: 300px;
+                text-align: center;
+                bottom: 80px;
+            }
+            
+            .copy-notification.show {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding-top: 70px;
+            }
+            
+            .level-nav {
+                top: 5px;
+                width: calc(100% - 10px);
+                padding: 15px;
+            }
+            
+            .level-nav.collapsed {
+                max-height: 60px;
+                padding: 12px 15px;
+                min-width: 250px;
+            }
+            
+            header {
+                padding: 40px 15px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+            
+            .nav-header h2 {
+                font-size: 1.2rem;
+            }
+            
+            .level-header h3 {
+                font-size: 1.2rem;
+            }
+            
+            .video-wrapper iframe,
+            .video-wrapper video {
+                height: 200px;
+            }
+            
+            .floating-top-btn {
+                right: 15px;
+                bottom: 15px;
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 雪花效果 -->
+    <div id="snowflakes"></div>
+    
+    <div class="container">
+        <header id="page-top">
+            <h1><i class="fas fa-icicles"></i> kelvintaph冰川</h1>
+            <p>冰川关卡代码，可点击复制<br>
+                <span style="color: #7BDEFC">有些关卡需要特定的装备，请自行查看代码选择装备</span></p>
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> 返回目录页</a>
+        </header>
+        
+        <section class="level-nav collapsed" id="levelNav">
+            <div class="nav-header">
+                <h2><i class="fas fa-search"></i> 关卡搜索导航 ← 点击搜索！</h2>
+                <button class="collapse-toggle" id="collapseToggle">
+                    <i class="fas fa-chevron-down" id="collapseIcon"></i>
+                    <span class="toggle-text">收起搜索栏</span>
+                </button>
+            </div>
+            
+            <div class="nav-content">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="输入关卡名称或编号进行搜索">
+                </div>
+                <div class="search-results hidden" id="searchResults">
+                    <!-- 搜索结果将在这里显示 -->
+                </div>
+                <div class="search-stats" id="searchStats">
+                    共28个关卡，输入关键词搜索
+                </div>
+            </div>
+        </section>
+        
+        <div class="level-content" id="levelContent">
+            <!-- 关卡代码将通过JavaScript动态生成 -->
+        </div>
+    </div>
+    
+    <!-- 浮动返回顶部按钮 -->
+    <button class="floating-top-btn" id="floatingTopBtn">
+        <i class="fas fa-arrow-up"></i> 返回顶部
+    </button>
+    
+    <footer class="footer">
+        <p>冰川关卡代码详情</p>
+        <p>注意：代码仅供参考，不建议直接抄！</p>
+    </footer>
+    
+    <div class="copy-notification" id="copyNotification">
+        <i class="fas fa-check-circle"></i> 代码已复制到剪贴板！
+    </div>
+
+    <script>
+        // 创建雪花效果
+        function createSnowflakes() {
+            const snowflakesContainer = document.getElementById('snowflakes');
+            const snowflakeCount = 30;
+            
+            for (let i = 0; i < snowflakeCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                
+                // 随机大小
+                const size = Math.random() * 6 + 3;
+                snowflake.style.width = `${size}px`;
+                snowflake.style.height = `${size}px`;
+                
+                // 随机位置
+                snowflake.style.left = `${Math.random() * 100}vw`;
+                
+                // 随机动画时长
+                const duration = Math.random() * 10 + 5;
+                snowflake.style.animationDuration = `${duration}s`;
+                
+                // 随机延迟
+                const delay = Math.random() * 5;
+                snowflake.style.animationDelay = `${delay}s`;
+                
+                // 随机透明度
+                snowflake.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                snowflakesContainer.appendChild(snowflake);
+            }
+        }
+        
+        // 页面加载后创建雪花
+        window.addEventListener('load', createSnowflakes);
+        
+        // 关卡代码数据（为保持代码简洁，只保留少量示例）
+        const levelCodes = [
+            {
+                id: 1,
+                name: "绕圈",
+                code: `center = Vector(40, 34)
+partner = hero.findByType("peasant")[0]
+while True:
+    vector = Vector.subtract(partner.pos, center)
+    moveToPos = Vector.subtract(center, vector)
+    hero.move(moveToPos)`
+            },
+            {
+                id: 2,
+                name: "滑走",
+                code: `goalPoint = Vector(78, 34)
+while True:
+    goal = Vector.subtract(goalPoint, hero.pos)
+    goal = Vector.normalize(goal)
+    goal = Vector.multiply(goal, 10)
+    yak = hero.findNearestEnemy()
+    distance = hero.distanceTo(yak)
+    if distance < 10:
+        yak_vector = Vector.subtract(hero.pos, yak.pos)
+        yak_vector = Vector.normalize(yak_vector)
+        yak_vector = Vector.multiply(yak_vector, 10)
+        goal = Vector.add(yak_vector, goal)
+    moveToPos = Vector.add(hero.pos, goal)
+    hero.move(moveToPos)`
+            },
+            {
+                id: 3,
+                name: "调剂团",
+                code: `def avoidNearest(target):
+    nearest = hero.findNearest(firetraps)
+    h2t = Vector.subtract(target, hero.pos)
+    h2n = Vector.subtract(nearest.pos, hero.pos)
+    if hero.distanceTo(nearest) > 4:
+        step = Vector.normalize(h2t)
+        nPos = Vector.add(hero.pos, step)
+        hero.moveXY(nPos.x, nPos.y)
+        return
+    angle1 = Vector.heading(h2t)
+    angle2 = Vector.heading(h2n)
+    if target.x < nearest.pos.x:
+        angle1 = - angle1
+        angle2 = - angle2
+        angle1 = Math.PI - angle1
+        angle2 = Math.PI - angle2
+    if angle1 > angle2:
+        adVec = Vector.rotate(h2n, Math.PI / 2)
+    else:
+        adVec = Vector.rotate(h2n, - Math.PI / 2)
+        pass
+    nPos = Vector.add(hero.pos, adVec)
+    hero.moveXY(nPos.x, nPos.y)
+while True:
+    potion = hero.findFriendlyMissiles()[0]
+    firetraps = hero.findHazards()
+    omarn = hero.findByType("potion-master")[0]
+    if potion:
+        dest = potion.targetPos
+        avoidNearest(dest)
+        pass
+    else:
+        if omarn and hero.distanceTo(omarn) > 10:
+            # Move back to Omarn.
+            avoidNearest(omarn.pos)
+            pass
+        else:
+            hero.say("Hup, hup!")`
+            },
+            {
+                id: 4,
+                name: "轰炸行动",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    if enemy and hero.distanceTo(enemy) < 70:
+        O = Math.abs(enemy.pos.y - hero.pos.y)
+        A = Math.abs(enemy.pos.x - hero.pos.x)
+        angle = Math.atan2(O, A)
+        angle = angle * 180 / Math.PI
+        if enemy.pos.x < hero.pos.x:
+            angle = 180 - angle
+        hero.say(angle)`
+            },
+            {
+                id: 5,
+                name: "冷藏的生命",
+                code: `innerField = [
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,1,0,0,0,0,0,0],
+        [0,0,0,0,1,0,0,0,0,0],
+        [0,0,0,0,0,1,0,0,0,0],
+        [0,0,0,0,0,0,1,0,0,0],
+        [0,0,0,0,0,0,1,0,0,0],
+        [0,0,0,0,0,1,1,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0]
+        ]
+hero.findNearestEnemy().initField(innerField)
+while True:
+    hero.wait(60)`
+            },
+            {
+                id: 6,
+                name: "冰上的雪花",
+                code: `def degreesToRadians(degrees):
+    return Math.PI / 180 * degrees
+def line(start, end):
+    full = Vector.subtract(end, start)
+    distance = full.magnitude()
+    if distance < 4:
+        hero.toggleFlowers(False)
+        hero.moveXY(start.x, start.y)
+        hero.toggleFlowers(True)
+        hero.moveXY(end.x, end.y)
+        return
+    half = Vector.divide(full, 2)
+    A = Vector.add(half, start)
+    rotate = Vector.rotate(half, degreesToRadians(90))
+    rotate = Vector.multiply(rotate, 2 / 3)
+    B = Vector.add(rotate, A)
+    line(start, A)
+    line(A, B)
+    line(B, A)
+    line(A, end)
+def flake(start, end):
+    side = Vector.subtract(end, start)
+    a = start
+    b = end
+    for i in range(6):
+        line(a, b)
+        a = b
+        side = Vector.rotate(side, degreesToRadians(60))
+        b = Vector.add(side, a)
+whiteXs = [Vector(12, 10), Vector(60, 10)]
+redXs = [Vector(64, 52), Vector(52, 52)]
+flake(redXs[0], redXs[1])
+line(whiteXs[0], whiteXs[1])`
+            },
+	        {
+		        id: 7,
+		        name: "冰球",
+		        code:`def commandAttacker(friend, item):
+    flag = hero.findFlag()
+    if flag:
+        self.command(friend, "move", flag.pos)
+        if friend.distanceTo(flag) < 2:
+            hero.removeFlag(flag)
+    else:
+        if item.pos.x > friend.pos.x:
+            self.command(friend, "move", item.pos)
+        else:
+            self.command(friend, "move", Vector(27, 38))
+def commandSoldiers(x, y, base=False):
+    move = 0;
+    for index, friend in enumerate(self.findFriends()):
+        if (index == 1 and y > 36):
+            if base:
+                self.command(friend, "move", {'x': 18, 'y': 43})
+            else:
+                self.command(friend, "move", {'x': x, 'y': y})
+        elif y <= 36 and index == 0:
+            if base:
+                self.command(friend, "move", {'x': 18, 'y': 39})
+            else:
+                self.command(friend, "move", {'x': x, 'y': y})
+def findTheY(x1, x2, y1, y2, x):
+    if (y2 != y1):
+        y = (x - x1) / (x2 - x1) * (y2 - y1) + y1
+    else:
+        y = y1
+    return y
+friends = self.findFriends()
+pos1 = []
+pos2 = []
+while True:
+    base = False
+    item = self.findNearest(self.findByType('ball'))
+    if pos2[1] != item.pos.y or pos2[0] != item.pos.x:
+        pos1[0] = pos2[0]
+        pos1[1] = pos2[1]
+        pos2[0] = item.pos.x
+        pos2[1] = item.pos.y
+    if len(pos1) > 0 and len(pos2) > 0:
+        yCatch = findTheY(pos1[0], pos2[0], pos1[1], pos2[1], 18)
+        if yCatch > 50:
+            yCatch = 50 - (yCatch - 50)
+        elif yCatch < 20:
+            yCatch = 20 - (20 - yCatch)
+        if (yCatch > 44 or yCatch < 28):
+            yCatch = 39
+        # self.say(yCatch)
+        if (item and yCatch):
+            if pos2[1] > pos1[1] and yCatch > 5 and yCatch < 20:
+                base = True
+            commandSoldiers(18, yCatch, base)
+    commandAttacker(friends[2], item)`
+	        },
+            {
+                id: 8,
+                name: "kelvintaph十字军",
+		        code: `def moveTo(position, fast=True):
+    if (hero.isReady("jump") and fast):
+        hero.jumpTo(position)
+    else:
+        hero.move(position)
+def commandTroops():
+    for index, friend in enumerate(hero.findFriends()):
+        enemies = hero.findEnemies()
+        witch = hero.findNearest(hero.findByType('witch'))
+        if len(enemies) > 0 and witch:
+            if friend.type == 'paladin':
+                CommandPaladin(friend)
+            else:
+                CommandSoldier(friend)
+        elif hero.now() < 10 and hero.now() > 5 and friend.type == 'paladin':
+            if (friend.canCast("heal")):
+                hero.command(friend, "cast", "heal", friend)
+            elif hero.now() < 7:
+                hero.command(friend, "move", {'x': 31, 'y': 40})
+            elif hero.now() < 12:
+                hero.command(friend, "move", {'x': 7, 'y': 40})
+        elif hero.now() < 15 and friend.type != 'archer':
+            worst = findWorstEnemy()
+            if (worst and friend.pos.x - worst.pos.x < 10):
+                hero.command(friend, "move", {'x': 50, 'y': 58})
+        elif friend.type == 'archer' and hero.now() < 15:
+            if hero.now() < 7:
+                hero.command(friend, "move", {'x': 6, 'y': 58})
+            else:
+                hero.command(friend, "move", {'x': 49, 'y': 58})
+        elif hero.now() < 17:
+            hero.command(friend, "move", {'x': 50, 'y': 39})
+        else:
+            hero.command(friend, "move", {'x': 78, 'y': 40})
+def CommandPaladin(paladin):
+    if (paladin.canCast("heal")):
+        target = lowestHealthFriend()
+        if target:
+            hero.command(paladin, "cast", "heal", target)
+    elif (paladin.health < 100):
+        hero.command(paladin, "shield")
+    else:
+        target = findWorstEnemy()
+        if (target):
+            hero.command(paladin, "attack", target)
+def CommandSoldier(soldier):
+    target = findWorstEnemy()
+    if (target):
+        hero.command(soldier, "attack", target)
+def findWorstEnemy():
+    witch = hero.findNearest(hero.findByType('witch'))
+    ogre = hero.findNearest(hero.findByType('ogre'))
+    skeleton = hero.findNearest(hero.findByType('skeleton'))
+    if witch:
+        return witch
+    elif ogre:
+        return ogre
+    elif skeleton:
+        return skeleton
+    else:
+        return None
+def lowestHealthFriend():
+    lowestHealth = 99999
+    lowestFriend = None
+    friends = hero.findFriends()
+    for friend in friends:
+        if friend.health < lowestHealth and friend.health < friend.maxHealth:
+            lowestHealth = friend.health
+            lowestFriend = friend
+    return lowestFriend
+def attack(target):
+    if target:
+        if (hero.distanceTo(target) > 10):
+            moveTo(target.pos)
+        elif (hero.isReady("bash")):
+            hero.bash(target)
+        else:
+            hero.attack(target)
+while True:
+    commandTroops()
+    brawler = hero.findNearest(hero.findByType('brawler'))
+    catapult = hero.findNearest(hero.findByType('catapult'))
+    if brawler and hero.distanceTo(brawler) > 15:
+        moveTo(brawler.pos, False)
+    elif brawler:
+        runaway = Vector.subtract(hero.pos, brawler.pos)
+        runaway = Vector.normalize(runaway)
+        runaway = Vector.multiply(runaway, 15)
+        direction = Vector.add(runaway, hero.pos)
+        moveTo(direction, False)
+    elif catapult:
+        attack(catapult)
+    else:
+        hero.move({'x': 78, 'y': 15})`
+            },
+            {
+                id: 9,
+                name: "法蛇储蓄",
+                code: `def onSpawn(event):
+    global coors
+    while True:
+        if friend:
+            if friend.distanceTo(Vector(coors[0], coors[1]))<40:
+                pet.moveXY(coorsn[0], coorsn[1])
+            else:
+                pet.moveXY(coors[0], coors[1])
+            pet.moveXY(friend.pos.x, friend.pos.y)
+        
+coors =  [60, 60]
+coorsn = [60, 60]
+friends = hero.findFriends()
+friend = friends[0]
+pet.on("spawn", onSpawn)
+path = [
+    [70, 57],#right top
+    #[72, 45],
+    #[14, 45],
+    #[14, 21],
+    #[70, 21],
+    [70, 11],#right bottom
+    [7, 8],#left bottom
+    [7, 57]#left Top
+]
+index = 0
+while True:    
+    friends = hero.findFriends()
+    friend = friends[0]
+    coors = path[index%len(path)]
+    coorsn = path[(index+1)%len(path)]
+    item = friend.findNearestItem()    
+    if item and friend.distanceTo(item.pos)<10:
+        moveto = item.pos
+    else:
+        moveto = Vector(coors[0], coors[1])
+    enemies = friend.findEnemies()
+    for enemy in enemies:
+        if friend.distanceTo(enemy) < 5:
+            vectorToH = Vector.subtract(friend.pos, enemy.pos)
+            vectorToH = Vector.normalize(vectorToH)
+            vectorToH = Vector.multiply(vectorToH, 5)
+            moveto = Vector.add(vectorToH, moveto)
+    hero.command(friend, "move", moveto)
+    if friend.distanceTo(Vector(coors[0], coors[1]))<5:
+        index+=1
+    if hero.canCast('haste', friend):
+        hero.cast('haste', friend)`
+            },
+            {
+                id: 10,
+                name: "队列管理",
+                code: `PHRASE_IN = " in"
+PHRASE_OUT = " out"
+IDLE = "idle"
+workers = hero.findByType("peasant", hero.findFriends())
+queue = []
+while True:
+    for worker in workers:
+        if worker.status is IDLE:
+            hero.say(worker.id + PHRASE_IN)
+            queue.append(worker)
+    item = hero.findNearestItem()
+    if item and len(queue)>0:
+        worker =  queue[0]
+        hero.say(worker.id + PHRASE_OUT)
+        queue.remove(worker)`
+            },
+            {
+                id: 11,
+                name: "双队列",
+                code: `while True:
+    item = hero.findNearestItem()
+    unit = hero.findNearestFriend()
+    if not item or not unit:
+        continue
+    if item.type == 'potion' and unit.type == "soldier":
+        hero.say(unit.id)
+    elif item.type == 'sword' and unit.type == "peasant":
+        hero.say(unit.id)
+    hero.say("Next")`
+            },
+            {
+                id: 12,
+                name: "第一个出局",
+                code: `units = hero.findFriends()
+sergeant = hero.findByType("paladin", units)[0]
+scout = hero.findByType("griffin-rider", units)[0]
+soldiers = hero.findByType("soldier", units)
+peasants = hero.findByType("peasant", units)
+for soldier in soldiers:
+    sergeant.enqueue(soldier)
+for peasant in peasants:
+    sergeant.enqueue(peasant)
+while True:
+    enemy = scout.findNearestEnemy()
+    if enemy:
+        for s in soldiers:
+            sergeant.dequeue()
+        break
+while True:
+    enemy = scout.findNearestEnemy()
+    if not enemy:
+        for s in peasants:
+            sergeant.dequeue()
+        break`
+            },
+            {
+                id: 13,
+                name: "链接的钥匙",
+                code: `peasantLinkedList = hero.findNearest(hero.findFriends())
+doorIndex = 0
+doorDistance = 12
+currentPeasant = peasantLinkedList
+while True:
+    pos = {"x": 20 + doorIndex * doorDistance, "y": 34}
+    hero.command(currentPeasant, "dropItem", pos)
+    hero.command(currentPeasant, "move", Vector(hero.pos.x+10+doorIndex, hero.pos.y))
+    currentPeasant = currentPeasant.next
+    if not currentPeasant:
+        break
+    doorIndex +=1
+hero.say('all')
+hero.moveXY(16, 34)
+while True:
+    enemy = hero.findNearestEnemy()
+    item = hero.findNearestItem()
+    if enemy:
+        hero.attack(enemy)
+    elif item:
+        hero.move(item.pos)
+    else:
+        hero.moveXY(64, 34)`
+            },
+            {
+                id: 14,
+                name: "密钥栈",
+                code: `hero.moveXY(45, 34)
+peasant = hero.findByType("peasant")[0]
+goldKey = peasant.findByType("gold-key")[0]
+silverKey = peasant.findByType("silver-key")[0]
+bronzeKey = peasant.findByType("bronze-key")[0]
+hero.command(peasant, "pickUpItem", goldKey)
+hero.command(peasant, "pickUpItem", silverKey)
+hero.command(peasant, "pickUpItem", bronzeKey)
+hero.command(peasant, "dropItem", {"x": 40, "y": 34})
+hero.command(peasant, "dropItem", {"x": 31, "y": 34})
+hero.command(peasant, "dropItem", {"x": 21, "y": 34})
+hero.command(peasant, "move", {"x": 73, "y": 36})
+hero.moveXY(14, 34)
+hero.jumpTo(Vector(14, 50))
+hero.moveXY(11, 58)
+hero.moveXY(14, 44)
+while not(hero.isReady('jump')):
+    hero.wait()
+hero.jumpTo(Vector(14, 34))
+hero.moveXY(14, 34)
+while not(hero.isReady('jump')):
+    hero.wait()
+hero.jumpTo(Vector(14, 22))
+hero.moveXY(10, 11)`
+            },
+            {
+                id: 15,
+                name: "堆栈分类",
+                code: `yetiPos = {"x": 60, "y": 36}
+yakPos = {"x": 40, "y": 52}
+skeletonPos = {"x": 58, "y": 56}
+peasant = hero.findFriends()[0]
+items = peasant.findItems()
+for item in items:
+    # Command the peasant "pickUpItem" an item:
+    hero.command(peasant, "pickUpItem", item)
+    pass
+while True:
+    topItem = peasant.peekItem()
+    if not topItem:
+        break
+    if topItem.type is "potion":
+        hero.command(peasant, "dropItem", yakPos)
+    if topItem.type is "mushroom":
+        hero.command(peasant, "dropItem", yetiPos)
+    if topItem.type is "lightstone":
+        hero.command(peasant, "dropItem", skeletonPos)`
+            },
+            {
+                id: 16,
+                name: "炼金堆",
+                code: `yeti = hero.findNearestEnemy()
+peasant = hero.findFriends()[0]
+items = peasant.findItems()
+for item in items:
+    if item.type!="gold-key":
+        hero.command(peasant, "pickUpItem", item)
+key = peasant.findNearestByType("gold-key")
+hero.command(peasant, "pickUpItem", key)
+hero.command(peasant, "dropItem", Vector(40, 36))
+while True:
+    item = peasant.peekItem()
+    if not(item):
+        break
+    if item.type == "potion":
+        hero.command(peasant, "dropItem", hero.pos)
+    elif item.type == "mushroom":
+        hero.command(peasant, "dropItem", yeti.pos)
+while True:
+    hero.attack(yeti)`
+            },
+            {
+                id: 17,
+                name: "分形化",
+                code: `def degreesToRadians(degrees):
+    return Math.PI / 180 * degrees
+def koch(start, end):
+    full = Vector.subtract(end, start)
+    distance = full.magnitude()
+    if distance < 3:
+        hero.toggleFlowers(False)
+        hero.moveXY(start.x, start.y)
+        hero.toggleFlowers(True)
+        hero.moveXY(end.x, end.y)
+        return
+    third = Vector.multiply(full, 1 / 3)
+    A = Vector.add(start, third)
+    B = Vector.add(A, Vector.rotate(third, degreesToRadians(60)))
+    C = Vector.add(A, third)
+    koch(start, A);
+    koch(A, B);
+    koch(B, C);
+    koch(C, end);
+whiteXs = [Vector(6, 6), Vector(74, 6), Vector(74, 61), Vector(6, 61)]
+hero.setFlowerColor("white");
+koch(whiteXs[0], whiteXs[1]);
+koch(whiteXs[1], whiteXs[2]);
+koch(whiteXs[2], whiteXs[3]);
+koch(whiteXs[3], whiteXs[0]);`
+            },
+            {
+                id: 18,
+                name: "磨刀",
+                code: `while True:
+    flag = hero.findFlag()
+    if flag:
+        hero.throwPos(flag.pos)
+        hero.removeFlag(flag)`
+            },
+            {
+                id: 19,
+                name: "精准逆转",
+                code: `center = Vector(40, 35)
+punch_array = []
+enemies = hero.findEnemies()
+friend = hero.findFriends()[0]
+ball = self.findNearest(self.findByType('ball'))
+ballPoss = Vector(ball.pos.x, ball.pos.y)
+for enemy in enemies:
+    s2b = Vector.multiply(Vector.normalize(Vector.subtract(ballPoss, enemy.pos)), 7)
+    b2p = ball.pos.add(s2b)
+    punch_array.append(b2p)
+distance = 100
+while len(punch_array) > 0:
+    min_dist, min_index = 999, -1
+    for index, punch in enumerate(punch_array):
+        if min_dist > Vector.subtract(punch, friend.pos).magnitude():
+            min_dist = Vector.subtract(punch, friend.pos).magnitude()
+            min_index = index
+    vector = punch_array.pop(min_index)
+    hero.command(friend, 'move', vector)
+    hero.wait(1)
+    hero.command(friend, 'move', center)
+    hero.wait(1)
+    hero.command(friend, 'move', vector)`
+            },
+            {
+                id: 20,
+                name: "kelvintaph柱子",
+                code: `stump1 = hero.findByType("stump")[0]  # This is where the peasants start.
+stump2 = hero.findByType("stump")[1]
+stump3 = hero.findByType("stump")[2]
+def move(frm, to):
+    hero.say(frm + '=>' + to)
+    if frm == 2:
+        hero.pickUpItem(stump1)
+    elif frm == 1:
+        hero.pickUpItem(stump2)
+    else:
+        hero.pickUpItem(stump3)
+    if to == 2:
+        hero.dropItem(stump1)
+    elif to == 1:
+        hero.dropItem(stump2)
+    else:
+        hero.dropItem(stump3)
+def hanoi(n, frm, to, via):
+    if (n == 1):
+        move(frm, to)
+        pass
+    else:
+        pass
+        hanoi(n - 1, frm, via, to);
+        move(frm, to)
+        hanoi(n - 1, via, to, frm);
+hanoi(5, 2, 3, 1)`
+            },
+            {
+                id: 21,
+                name: "素数之路",
+                code: `def primeCheck(number):
+    for i in range(2,(number**0.5)):
+        if number % i == 0:
+            return False
+    return True
+friends = hero.findFriends()
+mines = hero.findHazards()
+firstMines = []
+for mine in mines:
+    if mine.pos.y > 30 and mine.pos.x < 80:
+        if primeCheck(mine.value):
+            firstMines.append(mine)
+for mine in firstMines:
+    if mine.pos.x > (hero.pos.x - 25):
+        hero.moveXY(mine.pos.x + 10, mine.pos.y)
+        hero.moveXY(mine.pos.x, mine.pos.y)
+        hero.moveXY(hero.pos.x - 10, hero.pos.y)
+        for friend in friends:
+            hero.command(friend, "move", {"x": mine.pos.x + 10, "y": mine.pos.y})
+            hero.wait(1.6)
+            hero.command(friend, "move", {"x": mine.pos.x, "y": mine.pos.y})
+            hero.command(friend, "move", {"x": mine.pos.x - 10, "y": mine.pos.y})
+hero.moveXY(2, 15)
+for friend in friends:
+    hero.command(friend, "move", {"x": 2, "y": 15})
+secondMines = []
+for mine in mines:
+    if mine.pos.y < 30 and mine.pos.x < 80:
+        if primeCheck(mine.value):
+            secondMines.append(mine)
+while hero.pos.x < 75:
+    for mine in secondMines:
+        if mine.pos.x < (hero.pos.x + 25) and mine.pos.x > hero.pos.x:
+            hero.moveXY(mine.pos.x - 10, mine.pos.y)
+            hero.moveXY(mine.pos.x, mine.pos.y)
+            hero.moveXY(hero.pos.x + 10, hero.pos.y)
+            for friend in friends:
+                hero.command(friend, "move", {"x": mine.pos.x - 5, "y": mine.pos.y})
+                hero.wait(1.6)
+                hero.command(friend, "move", {"x": mine.pos.x, "y": mine.pos.y})
+                hero.command(friend, "move", {"x": mine.pos.x + 12, "y": mine.pos.y})`
+            },
+            {
+                id: 22,
+                name: "编码订单",
+                code: `summonTypes = {"a": "archer", "s": "soldier", "p": "peasant", "g": "griffin-rider", "P": "paladin", "A": "artillery"}
+def summonTroops(num, coorX, coorY):
+    type = summonTypes[num]
+    if type != 'artillery' and hero.gold > hero.costOf(type):
+        hero.summon(type)
+    friends = hero.findByType(summonTypes[num], hero.findFriends())
+    hero.command(friends[len(friends) - 1], 'move', {'x': int(coorX), 'y': int(coorY)})
+sign = hero.findByType("sign")[0]
+message = sign.message
+for index in range(0, len(message), 5):
+    type = message.substr(index, 1)
+    x = message.substr(index + 1, 2)
+    y = message.substr(index + 3, 2)
+    summonTroops(type, x, y)`
+            },
+            {
+                id: 23,
+                name: "Binary Deployment",
+                code: `units = ['soldier', 'archer', 'griffin-rider']
+for i in range(len(hero.findFriends())):
+    result = ""
+    unit = hero.findFriends()[i]
+    if unit.type == "paladin":
+        divide = 2
+    else:
+        divide = 3
+    number = unit.deployment
+    while number >= divide:
+        a = number % divide
+        number = (number - a) / divide
+        result = a + result
+    result = number + result
+    while len(result) < 8:
+        result = '0' + result
+    for k in range(len(result)):
+        m = result[k]
+        hero.summon(units[m])
+        hero.command(hero.built[len(hero.built) - 1], "move", {'x': 14 + k * 6, 'y': unit.pos.y})`
+            },
+            {
+                id: 24,
+                name: "无线电",
+                code: `def findBackupRobots():
+    robots = hero.findByType("robot-walker")
+    reserveRobots = []
+    for robot in robots:
+        if robot.health > 5000:
+            reserveRobots.push(robot)
+    return reserveRobots
+def replaceMissingLink(linkedList, broken, replacement):
+    current = linkedList
+    prev = None
+    while current:
+        if current == broken:
+            if prev:
+                prev.setNext(replacement)
+            replacement.setNext(current.next)
+            break
+        prev = current
+        current = current.next
+def diagnoseList(linkedList):
+    current = linkedList
+    while current:
+        if current.health <= 0:
+            #hero.say(current.health)
+            return current
+        current = current.next
+    return None
+robotList = hero.findNearest(hero.findFriends())
+while True:
+    backUpRobots = findBackupRobots()
+    brokenRobot = diagnoseList(robotList)
+    if brokenRobot and len(backUpRobots):
+        replaceMissingLink(robotList, brokenRobot, backUpRobots[0])`
+            },
+            {
+                id: 25,
+                name: "宝石生宝石",
+                code: `baseGem = hero.findByType("root-gem")[0]
+freeGems = hero.findByType("gem")
+freeGems[0].next = baseGem
+freeGems[1].next = freeGems[0]
+baseGem.next = freeGems[2]
+freeGems[2].next = freeGems[3]
+freeGems[3].next = freeGems[4]
+while True:
+    if hero.isPathClear(hero.pos, {"x": 76, "y": 34}):
+        hero.moveXY(76, 34)`
+            },
+            {
+                id: 26,
+                name: "计数链接",
+                code: `def elementByIndex(linkedList, index):
+    current = linkedList
+    for i in range(index):
+        current = current.next
+        if not(current):
+            break
+    return current
+cannonList = hero.findNearest(hero.findFriends())
+while True:
+    enemies = hero.findEnemies()
+    if len(enemies) > 0:
+        hero.say(elementByIndex(cannonList, len(enemies) - 1))`
+            },
+            {
+                id: 27,
+                name: "散列的牦牛",
+                code: `farmer = hero.findFriends()[0]
+yakNameList = farmer.yakList
+def hashName(name):
+    return (ord(name[0]) - 65) % 12
+for name in yakNameList:
+    cell = hashName(name)
+    hero.say(cell)`
+            },
+            {
+                id: 28,
+                name: "多边形现象",
+                code: `def degreesToRadians(degrees):
+    return Math.PI / 180 * degrees
+def polygon(start_, end_, side):
+    start = start_
+    end = end_
+    full = Vector.subtract(end, start)
+    distance = full.magnitude()
+    hero.toggleFlowers(False)
+    hero.moveXY(start.x, start.y)
+    hero.toggleFlowers(True)
+    for i in range(side):
+        hero.moveXY(end.x, end.y)
+        full = Vector.rotate(full, degreesToRadians(360 / side))
+        if distance > 10:
+            polygon(end, Vector.add(end, Vector.divide(full, 5)), side)
+        end = Vector.add(end, full)
+startOffset = Vector(-15, -15)
+endOffset = Vector(15, -15)
+startOffset = Vector(-15, -15)
+endOffset = Vector(15, -15)
+enemies = self.findEnemies()
+for enemy in enemies:
+    start = Vector.add(enemy.pos, startOffset)
+    end = Vector.add(enemy.pos, endOffset)
+    sides = enemy.sides
+    polygon(start, end, sides)`
+            }
+        ];
+        
+        // 生成关卡内容
+        const levelContent = document.getElementById('levelContent');
+        
+        levelCodes.forEach(level => {
+            const section = document.createElement('section');
+            section.className = 'level-section';
+            section.id = `level-${level.id}`;
+            
+            const codeHtml = `<div class="level-header">
+                <h3><i class="fas fa-snowflake"></i> ${level.id}. ${level.name}</h3>
+            </div>
+            <div class="code-container">
+                <pre><code id="code-${level.id}"></code></pre>
+                <button class="copy-btn" data-code-id="${level.id}">
+                    <i class="far fa-copy"></i> 复制代码
+                </button>
+            </div>`;
+            
+            section.innerHTML = codeHtml;
+            
+            const codeElement = section.querySelector(`#code-${level.id}`);
+            codeElement.textContent = level.code;
+            
+            levelContent.appendChild(section);
+        });
+        
+        // 为第8关添加装备图片
+        setTimeout(() => {
+            const level8Section = document.getElementById('level-8');
+            if (level8Section) {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'equipment-image';
+                imgContainer.innerHTML = `
+                    <img src="眼镜.png" alt="装备参考">
+                    <div class="image-caption">必须带的眼镜</div>
+                `;
+                level8Section.appendChild(imgContainer);
+            }
+        }, 100);
+        
+        // 为第7关添加视频按钮
+        setTimeout(() => {
+            const level7Section = document.getElementById('level-7');
+            if (level7Section) {
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'video-container';
+                buttonContainer.innerHTML = `
+                    <h4><i class="fas fa-video"></i> 通关视频参考</h4>
+                    <div class="bilibili-btn-container">
+                        <a href="https://www.bilibili.com/video/BV1B4BKBkEj3/" 
+                           target="_blank"
+                           class="bilibili-btn">
+                            <i class="fab fa-bilibili"></i> 
+                            <span>前往哔哩哔哩观看通关视频</span>
+                        </a>
+                    </div>
+                    <p class="video-caption">点击上方按钮跳转到哔哩哔哩观看完整通关流程</p>
+                `;
+                level7Section.appendChild(buttonContainer);
+            }
+        }, 150);
+        
+        // 为第18关添加视频按钮
+        setTimeout(() => {
+            const level18Section = document.getElementById('level-18');
+            if (level18Section) {
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'video-container';
+                buttonContainer.innerHTML = `
+                    <h4><i class="fas fa-video"></i> 通关视频参考</h4>
+                    <div class="bilibili-btn-container">
+                        <a href="https://www.bilibili.com/video/BV16nBKB2EQo/" 
+                           target="_blank"
+                           class="bilibili-btn">
+                            <i class="fab fa-bilibili"></i> 
+                            <span>前往哔哩哔哩观看通关视频</span>
+                        </a>
+                    </div>
+                    <p class="video-caption">点击上方按钮跳转到哔哩哔哩观看完整通关流程</p>
+                `;
+                level18Section.appendChild(buttonContainer);
+            }
+        }, 200);
+        
+        // 导航条收起功能
+        const levelNav = document.getElementById('levelNav');
+        const collapseToggle = document.getElementById('collapseToggle');
+        const collapseIcon = document.getElementById('collapseIcon');
+        const navHeader = document.querySelector('.nav-header');
+        
+        function toggleNavCollapse() {
+            levelNav.classList.toggle('collapsed');
+            
+            if (levelNav.classList.contains('collapsed')) {
+                collapseIcon.className = 'fas fa-chevron-down';
+                collapseToggle.querySelector('.toggle-text').textContent = '展开搜索栏';
+            } else {
+                collapseIcon.className = 'fas fa-chevron-up';
+                collapseToggle.querySelector('.toggle-text').textContent = '收起搜索栏';
+                
+                setTimeout(() => {
+                    document.getElementById('searchInput').focus();
+                }, 300);
+            }
+        }
+        
+        collapseToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleNavCollapse();
+        });
+        
+        navHeader.addEventListener('click', function(e) {
+            if (!e.target.closest('.collapse-toggle')) {
+                toggleNavCollapse();
+            }
+        });
+        
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchStats = document.getElementById('searchStats');
+        
+        function updateSearchResults(levels) {
+            searchResults.innerHTML = '';
+            
+            if (levels.length === 0) {
+                searchResults.innerHTML = '<div class="no-results">未找到匹配的关卡</div>';
+                searchResults.classList.remove('hidden');
+                searchStats.textContent = `共${levelCodes.length}个关卡，未找到匹配项`;
+                return;
+            }
+            
+            levels.forEach(level => {
+                const result = document.createElement('a');
+                result.href = `#level-${level.id}`;
+                result.className = 'level-result';
+                result.innerHTML = `
+                    <span class="level-id">${level.id}</span>
+                    <span class="level-name">${level.name}</span>
+                `;
+                
+                result.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        document.querySelectorAll('.level-section').forEach(section => {
+                            section.style.boxShadow = '0 8px 32px rgba(0, 20, 60, 0.3)';
+                        });
+                        
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(123, 222, 252, 0.3), 0 12px 40px rgba(0, 30, 80, 0.4)';
+                        
+                        setTimeout(() => {
+                            targetElement.style.boxShadow = '0 8px 32px rgba(0, 20, 60, 0.3)';
+                        }, 3000);
+                        
+                        // 收起搜索栏
+                        if (!levelNav.classList.contains('collapsed')) {
+                            toggleNavCollapse();
+                        }
+                    }
+                });
+                
+                searchResults.appendChild(result);
+            });
+            
+            searchResults.classList.remove('hidden');
+            searchStats.textContent = `共${levelCodes.length}个关卡，找到${levels.length}个匹配项`;
+        }
+        
+        // 初始显示所有关卡
+        updateSearchResults(levelCodes);
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                updateSearchResults(levelCodes);
+            } else {
+                const filteredLevels = levelCodes.filter(level => {
+                    return level.name.toLowerCase().includes(searchTerm) || 
+                           level.id.toString().includes(searchTerm) ||
+                           level.code.toLowerCase().includes(searchTerm);
+                });
+                
+                updateSearchResults(filteredLevels);
+            }
+            
+            if (!levelNav.classList.contains('collapsed')) {
+                levelNav.classList.remove('collapsed');
+            }
+        });
+        
+        searchInput.addEventListener('focus', function() {
+            if (levelNav.classList.contains('collapsed')) {
+                toggleNavCollapse();
+            }
+        });
+        
+        // 复制功能
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const codeId = this.getAttribute('data-code-id');
+                const codeElement = document.getElementById(`code-${codeId}`);
+                if (codeElement) {
+                    copyToClipboard(codeElement.textContent);
+                }
+            });
+        });
+        
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            showCopyNotification();
+        }
+        
+        const copyNotification = document.getElementById('copyNotification');
+        
+        function showCopyNotification() {
+            copyNotification.classList.add('show');
+            setTimeout(() => {
+                copyNotification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 浮动返回顶部按钮
+        const floatingTopBtn = document.getElementById('floatingTopBtn');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                floatingTopBtn.classList.add('show');
+            } else {
+                floatingTopBtn.classList.remove('show');
+            }
+        });
+        
+        floatingTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // URL锚点处理
+        window.addEventListener('load', function() {
+            if (window.location.hash) {
+                const targetElement = document.querySelector(window.location.hash);
+                if (targetElement) {
+                    setTimeout(() => {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(123, 222, 252, 0.3), 0 12px 40px rgba(0, 30, 80, 0.4)';
+                        
+                        setTimeout(() => {
+                            targetElement.style.boxShadow = '0 8px 32px rgba(0, 20, 60, 0.3)';
+                        }, 3000);
+                    }, 100);
+                }
+            }
+        });
+        
+        // 显示/隐藏复制按钮
+        document.querySelectorAll('.code-container').forEach(container => {
+            const copyBtn = container.querySelector('.copy-btn');
+            
+            container.addEventListener('mouseenter', function() {
+                copyBtn.classList.add('show');
+            });
+            
+            container.addEventListener('mouseleave', function() {
+                copyBtn.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关卡代码目录 - 登录</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpath d="M0 0 L50 100 L100 0 Z" fill="rgba(255,255,255,0.05)" /%3E%3C/svg%3E') repeat;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        /* 登录界面样式 */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 12, 41, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 50px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .login-icon {
+            font-size: 4rem;
+            color: #f8c471;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .login-container h2 {
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(248, 196, 113, 0.5);
+        }
+        
+        .login-container p {
+            color: #d0d0d0;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #f8c471;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #f8c471;
+            box-shadow: 0 0 15px rgba(248, 196, 113, 0.5);
+        }
+        
+        .login-btn {
+            background: linear-gradient(135deg, #2132E6, #f8c471);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(33, 50, 230, 0.4);
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(33, 50, 230, 0.6);
+        }
+        
+        .error-message {
+            color: #ff5252;
+            background: rgba(255, 82, 82, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            border: 1px solid rgba(255, 82, 82, 0.3);
+        }
+        
+        .device-bound-message {
+            color: #4caf50;
+            background: rgba(76, 175, 80, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 82, 82, 0.2);
+            color: #ff5252;
+            border: 1px solid rgba(255, 82, 82, 0.5);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 100;
+            display: none;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 82, 82, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .current-user {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(33, 50, 230, 0.2);
+            color: #f8c471;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            border: 1px solid rgba(248, 196, 113, 0.3);
+            z-index: 100;
+            display: none;
+        }
+        
+        .main-content {
+            display: none; /* 默认隐藏，登录后显示 */
+        }
+        
+        /* 主内容样式 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 100px 0;
+            background: transparent;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(33, 50, 230, 0.8), 0 0 40px rgba(248, 196, 113, 0.6);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #2132E6, 0 0 20px #f8c471; }
+            to { text-shadow: 0 0 20px #2132E6, 0 0 40px #f8c471; }
+        }
+        
+        header p {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .sand-icon {
+            font-size: 5rem;
+            margin-bottom: 30px;
+            color: #f8c471;
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .instructions h2 {
+            color: #f8c471;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 0 10px rgba(248, 196, 113, 0.5);
+        }
+        
+        .instructions p, .instructions li {
+            color: #d0d0d0;
+            font-size: 1.1rem;
+        }
+        
+        .instructions ul {
+            padding-left: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 12px;
+            list-style-type: none;
+            position: relative;
+        }
+        
+        .instructions li::before {
+            content: '▹';
+            color: #2132E6;
+            position: absolute;
+            left: -20px;
+        }
+        
+        .directory-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            margin-bottom: 60px;
+        }
+        
+        .directory-container h2 {
+            color: #f8c471;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(248, 196, 113, 0.5);
+        }
+        
+        .levels-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        
+        .level-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            color: #e0e0e0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .level-item:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(33, 50, 230, 0.5);
+            background: rgba(33, 50, 230, 0.2);
+        }
+        
+        .level-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #2132E6, #f8c471);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.4rem;
+            margin-right: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .level-item:hover .level-number {
+            transform: rotate(360deg);
+        }
+        
+        .level-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+        
+        .code-link {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .code-link p {
+            margin-bottom: 15px;
+        }
+        
+        .code-link a {
+            color: #f8c471;
+            text-decoration: none;
+            font-weight: 700;
+            padding: 15px 30px;
+            border: 2px solid #f8c471;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 10px;
+            box-shadow: 0 0 10px rgba(248, 196, 113, 0.5);
+        }
+        
+        .code-link a:hover {
+            background-color: #f8c471;
+            color: #2132E6;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(248, 196, 113, 0.8);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #a0a0a0;
+            font-size: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer p:last-child {
+            color: #ff5252;
+            font-weight: 700;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .levels-list {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                padding: 80px 0;
+            }
+            
+            header h1 {
+                font-size: 3rem;
+            }
+            
+            .current-user, .logout-btn {
+                position: relative;
+                top: 0;
+                left: 0;
+                right: 0;
+                margin: 10px auto;
+                width: 90%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录界面 -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-container">
+            <div class="login-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2>身份验证</h2>
+            <p>请输入您的凭据以访问关卡代码目录</p>
+            
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> 账号</label>
+                    <input type="text" id="username" class="form-input" placeholder="请输入账号" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-key"></i> 密码</label>
+                    <input type="password" id="password" class="form-input" placeholder="请输入密码" required>
+                </div>
+                
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i> 账号或密码错误，请重试
+                </div>
+                
+                <div class="device-bound-message" id="deviceBoundMessage">
+                    <i class="fas fa-info-circle"></i> 此设备已绑定账号 <span id="boundAccount"></span>，无法绑定其他账号
+                </div>
+                
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> 登录
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 当前用户信息 -->
+    <div class="current-user" id="currentUser">
+        <i class="fas fa-user-circle"></i> 当前用户: <span id="usernameDisplay"></span>
+    </div>
+    
+    <!-- 退出按钮 -->
+    <button class="logout-btn" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i> 退出登录
+    </button>
+    
+    <!-- 主内容（默认隐藏，登录后显示） -->
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <header>
+                <div class="sand-icon">
+                    <i class="fas fa-mountain-sun"></i>
+                </div>
+                <h1>关卡代码目录</h1>
+            </header>
+            
+            <section class="instructions">
+                <h2><i class="fas fa-info-circle"></i> 使用指南</h2>
+                <p>选择下方关卡，点击跳转</p>
+                <p>在代码详情页中：</p>
+                <ul>
+                    <li>鼠标经过代码区域会显示复制按钮</li>
+                    <li>点击复制按钮即可复制代码到剪贴板</li>
+                </ul>
+            </section>
+            
+            <div class="directory-container">
+                <h2>关卡传送门</h2>
+                <div class="levels-list">
+                    <a href="地牢.html" target="_blank" class="level-item" onclick="return checkLogin(event)">
+                        <div class="level-number">1</div>
+                        <span class="level-name">kithgard地牢</span>
+                    </a>
+                    <a href="森林.html" target="_blank" class="level-item" onclick="return checkLogin(event)">
+                        <div class="level-number">2</div>
+                        <span class="level-name">边地森林</span>
+                    </a>
+                    <a href="沙漠.html" target="_blank" class="level-item" onclick="return checkLogin(event)">
+                        <div class="level-number">3</div>
+                        <span class="level-name">sarven沙漠</span>
+                    </a>
+                    <a href="山峰.html" target="_blank" class="level-item" onclick="return checkLogin(event)">
+                        <div class="level-number">4</div>
+                        <span class="level-name">安息之云山峰</span>
+                    </a>
+                    <a href="冰川.html" target="_blank" class="level-item" onclick="return checkLogin(event)">
+                        <div class="level-number">5</div>
+                        <span class="level-name">kelvintaph冰川</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="code-link">
+                <p><a href="http://v.webzone.cc/" target="_blank" onclick="return checkLogin(event)">学校游戏网站入口</a></p>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <p>关卡代码目录</p>
+            <p>注意：代码仅供参考，不建议直接抄！</p>
+        </footer>
+    </div>
+    <!-- 賬號密碼 -->
+    <script>
+        const validAccounts = [
+            { username: "gameadmin", password: "Code@2024!" },
+            { username: "levelmaster", password: "Pass#Secure" },
+            { username: "codesharing", password: "Share@123" },
+            { username: "levelcode_724", password: "XyZ#928!pQ" },
+            { username: "gamepass_359", password: "aBc$761@rS" },
+            { username: "dev_access_186", password: "mNo*543&tU" },
+            { username: "coder_592", password: "vWx!234^yZ" },
+            { username: "stagekey_847", password: "dEf@678%gH" }
+        ];
+        
+        // 生成设备唯一标识符
+        function generateDeviceId() {
+            // 尝试从localStorage获取现有设备ID
+            let deviceId = localStorage.getItem('deviceId');
+            
+            // 如果没有，则生成一个新的设备ID
+            if (!deviceId) {
+                // 使用时间戳+随机数生成设备ID
+                deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('deviceId', deviceId);
+            }
+            
+            return deviceId;
+        }
+        
+        // 获取当前设备ID
+        const DEVICE_ID = generateDeviceId();
+        
+        // 设备-账号绑定管理
+        const DEVICE_BINDING_KEY = 'deviceAccountBindings';
+        
+        // 获取设备绑定数据
+        function getDeviceBindings() {
+            const bindings = localStorage.getItem(DEVICE_BINDING_KEY);
+            return bindings ? JSON.parse(bindings) : {};
+        }
+        
+        // 保存设备绑定数据
+        function saveDeviceBindings(bindings) {
+            localStorage.setItem(DEVICE_BINDING_KEY, JSON.stringify(bindings));
+        }
+        
+        // 检查设备是否已绑定账号
+        function isDeviceBound() {
+            const bindings = getDeviceBindings();
+            return bindings[DEVICE_ID] ? bindings[DEVICE_ID] : false;
+        }
+        
+        // 绑定设备到账号
+        function bindDeviceToAccount(username) {
+            const bindings = getDeviceBindings();
+            bindings[DEVICE_ID] = {
+                username: username,
+                boundAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
+            };
+            saveDeviceBindings(bindings);
+        }
+        
+        // 解绑设备
+        function unbindDevice() {
+            const bindings = getDeviceBindings();
+            if (bindings[DEVICE_ID]) {
+                delete bindings[DEVICE_ID];
+                saveDeviceBindings(bindings);
+            }
+        }
+        
+        // 检查账号是否已绑定其他设备
+        function isAccountBoundToOtherDevice(username) {
+            const bindings = getDeviceBindings();
+            for (const deviceId in bindings) {
+                if (deviceId !== DEVICE_ID && bindings[deviceId].username === username) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // 登录令牌
+        const AUTH_TOKEN = "game_access_token_" + Date.now();
+        
+        // 检查是否已经登录
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const authToken = localStorage.getItem('authToken');
+            const currentDeviceId = localStorage.getItem('currentDeviceId');
+            
+            // 检查设备是否匹配
+            const deviceMatch = currentDeviceId === DEVICE_ID;
+            
+            return isLoggedIn && authToken === AUTH_TOKEN && deviceMatch;
+        }
+        
+        // 登录验证
+        function validateLogin(username, password) {
+            // 验证账号密码
+            for (let account of validAccounts) {
+                if (account.username === username && account.password === password) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // 显示设备绑定信息
+        function showDeviceBoundInfo() {
+            const boundAccount = isDeviceBound();
+            if (boundAccount) {
+                document.getElementById('deviceBoundMessage').style.display = 'block';
+                document.getElementById('boundAccount').textContent = boundAccount.username;
+                return true;
+            }
+            return false;
+        }
+        
+        // 处理登录表单提交
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const deviceBoundMessage = document.getElementById('deviceBoundMessage');
+            
+            // 隐藏所有消息
+            errorMessage.style.display = 'none';
+            deviceBoundMessage.style.display = 'none';
+            
+            // 检查设备是否已绑定其他账号
+            const deviceBound = isDeviceBound();
+            if (deviceBound && deviceBound.username !== username) {
+                // 设备已绑定其他账号
+                showDeviceBoundInfo();
+                return;
+            }
+            
+            // 验证登录
+            if (validateLogin(username, password)) {
+                // 检查账号是否已绑定其他设备
+                if (isAccountBoundToOtherDevice(username)) {
+                    errorMessage.textContent = '此账号已在其他设备登录，无法在当前设备登录';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+                
+                // 登录成功
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('authToken', AUTH_TOKEN);
+                localStorage.setItem('username', username);
+                localStorage.setItem('currentDeviceId', DEVICE_ID);
+                
+                // 绑定设备到账号
+                bindDeviceToAccount(username);
+                
+                // 更新绑定时间
+                const bindings = getDeviceBindings();
+                bindings[DEVICE_ID].lastLogin = new Date().toISOString();
+                saveDeviceBindings(bindings);
+                
+                // 隐藏登录界面，显示主内容
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('currentUser').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'block';
+                document.getElementById('usernameDisplay').textContent = username;
+            } else {
+                // 登录失败
+                errorMessage.style.display = 'block';
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+            }
+        });
+        
+        // 处理退出登录
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            // 清除登录状态
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('username');
+            localStorage.removeItem('currentDeviceId');
+            
+            // 解绑设备
+            unbindDevice();
+            
+            // 显示登录界面，隐藏主内容
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('currentUser').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            
+            // 清空表单
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('deviceBoundMessage').style.display = 'none';
+        });
+        
+        // 页面加载时检查登录状态
+        window.addEventListener('DOMContentLoaded', function() {
+            if (checkAuth()) {
+                // 已经登录，直接显示主内容
+                const username = localStorage.getItem('username');
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('currentUser').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'block';
+                document.getElementById('usernameDisplay').textContent = username;
+            } else {
+                // 未登录，显示登录界面
+                document.getElementById('loginOverlay').style.display = 'flex';
+                document.getElementById('mainContent').style.display = 'none';
+                document.getElementById('currentUser').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+                
+                // 显示设备绑定信息
+                showDeviceBoundInfo();
+            }
+        });
+        
+        // 检查登录状态后跳转
+        function checkLogin(event) {
+            if (!checkAuth()) {
+                event.preventDefault();
+                alert('请先登录！');
+                // 显示登录界面
+                document.getElementById('loginOverlay').style.display = 'flex';
+                document.getElementById('mainContent').style.display = 'none';
+                document.getElementById('currentUser').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+                return false;
+            }
+            return true;
+        }
+        
+        // 添加对页面内所有链接的点击事件监听
+        document.addEventListener('click', function(e) {
+            // 检查是否是外部链接
+            if (e.target.tagName === 'A' && e.target.href && 
+                !e.target.href.includes('javascript:') && 
+                !e.target.href.startsWith('#') &&
+                !e.target.href.includes('v.webzone.cc')) {
+                
+                // 如果是页面内的链接，检查登录状态
+                if (e.target.href.includes('.html') || e.target.href.includes(window.location.hostname)) {
+                    if (!checkAuth()) {
+                        e.preventDefault();
+                        alert('请先登录！');
+                        document.getElementById('loginOverlay').style.display = 'flex';
+                        document.getElementById('mainContent').style.display = 'none';
+                        document.getElementById('currentUser').style.display = 'none';
+                        document.getElementById('logoutBtn').style.display = 'none';
+                    }
+                }
+            }
+        });
+        
+        // 显示设备信息（调试用）
+        console.log('设备ID:', DEVICE_ID);
+        console.log('设备绑定状态:', isDeviceBound());
+        console.log('所有设备绑定:', getDeviceBindings());
+    </script>
+</body>
+</html>

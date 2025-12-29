@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地牢关卡代码详情</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(180deg, #0c0c0c 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(75, 0, 130, 0.06) 0%, transparent 50%),
+                url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"%3E%3Cpath d="M0 0 L50 100 L100 0 Z" fill="rgba(139, 0, 0, 0.03)" /%3E%3C/svg%3E') repeat;
+            opacity: 0.4;
+            z-index: -1;
+        }
+        
+        /* 地牢火炬光效 */
+        @keyframes torchFlicker {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        .torch-effect {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255, 69, 0, 0.3), transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            animation: torchFlicker 2s ease-in-out infinite;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: transparent;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(139, 0, 0, 0.2);
+        }
+        
+        header h1 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(139, 0, 0, 0.8), 0 0 40px rgba(178, 34, 34, 0.6);
+            animation: dungeonGlow 2s ease-in-out infinite alternate;
+            background: linear-gradient(to right, #8B0000, #4B0082);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @keyframes dungeonGlow {
+            from { text-shadow: 0 0 10px rgba(139, 0, 0, 0.6), 0 0 20px rgba(178, 34, 34, 0.4); }
+            to { text-shadow: 0 0 20px rgba(139, 0, 0, 0.8), 0 0 40px rgba(178, 34, 34, 0.6); }
+        }
+        
+        header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #ffb3b3;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 25px;
+            background: rgba(139, 0, 0, 0.2);
+            color: #ff4d4d;
+            padding: 12px 28px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .back-btn:hover {
+            background: rgba(139, 0, 0, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(139, 0, 0, 0.3);
+        }
+        
+        /* 地牢导航栏样式 */
+        .level-nav {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 0, 0, 0.2);
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 1200px;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            max-height: 2000px;
+            overflow: hidden;
+        }
+        
+        .level-nav.collapsed {
+            max-height: 80px;
+            cursor: pointer;
+            padding: 20px 25px;
+            width: auto;
+            min-width: 320px;
+        }
+        
+        .level-nav.collapsed:hover {
+            background: rgba(40, 40, 40, 0.8);
+            border-color: rgba(139, 0, 0, 0.3);
+        }
+        
+        .nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .nav-header h2 {
+            color: #ff4d4d;
+            font-size: 1.6rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+        }
+        
+        .nav-header h2 i {
+            color: #8B0000;
+            font-size: 1.4rem;
+            transition: transform 0.3s;
+        }
+        
+        .level-nav.collapsed .nav-header h2 i {
+            transform: rotate(-90deg);
+        }
+        
+        .collapse-toggle {
+            background: rgba(139, 0, 0, 0.1);
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            color: #ff4d4d;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .collapse-toggle:hover {
+            background: rgba(139, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .level-nav.collapsed .collapse-toggle .toggle-text {
+            display: none;
+        }
+        
+        /* 搜索区域样式 */
+        .nav-content {
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .level-nav.collapsed .nav-content {
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        #searchInput {
+            width: 100%;
+            padding: 16px 20px;
+            padding-left: 50px;
+            background: rgba(20, 20, 20, 0.7);
+            border: 2px solid rgba(139, 0, 0, 0.3);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            color: #e0e0e0;
+            backdrop-filter: blur(5px);
+        }
+        
+        #searchInput:focus {
+            outline: none;
+            border-color: #8B0000;
+            background: rgba(30, 30, 30, 0.9);
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ff4d4d;
+            font-size: 1.3rem;
+        }
+        
+        .search-results {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid rgba(139, 0, 0, 0.2);
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        
+        .search-results.hidden {
+            display: none;
+        }
+        
+        .level-result {
+            display: block;
+            padding: 16px 25px;
+            text-decoration: none;
+            color: #ffb3b3;
+            border-bottom: 1px solid rgba(139, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .level-result:hover {
+            background: rgba(139, 0, 0, 0.15);
+            color: #ff4d4d;
+            transform: translateX(5px);
+        }
+        
+        .level-result:last-child {
+            border-bottom: none;
+        }
+        
+        .level-result .level-id {
+            display: inline-block;
+            width: 35px;
+            color: #8B0000;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .level-result .level-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .no-results {
+            padding: 30px;
+            text-align: center;
+            color: #ff4d4d;
+            font-style: italic;
+        }
+        
+        .search-stats {
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #ff4d4d;
+            text-align: center;
+        }
+        
+        /* 关卡内容区域 */
+        .level-content {
+            margin-bottom: 60px;
+        }
+        
+        .level-section {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 0;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .level-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(139, 0, 0, 0.3);
+        }
+        
+        .level-header {
+            background: linear-gradient(90deg, #4B0082 0%, #8B0000 100%);
+            color: white;
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+        }
+        
+        .level-header h3 {
+            font-size: 1.6rem;
+            margin: 0;
+            font-family: 'MedievalSharp', cursive;
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+        }
+        
+        .code-container {
+            position: relative;
+            padding: 30px;
+        }
+        
+        pre {
+            background: #1a1a1a;
+            color: #ffb3b3;
+            padding: 25px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0;
+            tab-size: 4;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid rgba(139, 0, 0, 0.2);
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #8B0000, #4B0082);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.3);
+            border: 1px solid rgba(139, 0, 0, 0.3);
+        }
+        
+        .code-container:hover .copy-btn {
+            opacity: 1;
+        }
+        
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #a50000, #5a0082);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 0, 0, 0.4);
+        }
+        
+        .copy-btn.show {
+            opacity: 1;
+        }
+        
+        /* B站按钮样式 */
+        .bilibili-btn-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 0 30px;
+        }
+        
+        .bilibili-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #fb7299, #ff3852);
+            color: white;
+            padding: 18px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(251, 114, 153, 0.4);
+            border: none;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .bilibili-btn:hover {
+            background: linear-gradient(135deg, #ff8ab0, #ff5262);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(251, 114, 153, 0.5);
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* 浮动返回顶部按钮 */
+        .floating-top-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: linear-gradient(135deg, #8B0000, #4B0082);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(20px);
+            border: 1px solid rgba(139, 0, 0, 0.3);
+        }
+        
+        .floating-top-btn.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .floating-top-btn:hover {
+            background: linear-gradient(135deg, #a50000, #5a0082);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* 复制成功提示 */
+        .copy-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, #8B0000, #4B0082);
+            color: white;
+            padding: 18px 28px;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(139, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+            max-width: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .copy-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(139, 0, 0, 0.2);
+            color: #ff4d4d;
+            font-size: 1rem;
+            background: rgba(20, 20, 20, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .footer p:last-child {
+            color: #ff6b6b;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 80px;
+            }
+            
+            .level-nav {
+                top: 10px;
+                width: calc(100% - 20px);
+                padding: 20px;
+            }
+            
+            .level-nav.collapsed {
+                max-height: 70px;
+                padding: 15px 20px;
+                min-width: 280px;
+            }
+            
+            header h1 {
+                font-size: 2.5rem;
+            }
+            
+            header p {
+                font-size: 1.1rem;
+            }
+            
+            .back-btn {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+            
+            .nav-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .collapse-toggle {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            #searchInput {
+                padding: 14px 20px;
+                padding-left: 45px;
+                font-size: 1rem;
+            }
+            
+            .search-icon {
+                left: 15px;
+                font-size: 1.2rem;
+            }
+            
+            .level-header {
+                padding: 20px 25px;
+            }
+            
+            .level-header h3 {
+                font-size: 1.4rem;
+            }
+            
+            .code-container {
+                padding: 20px;
+            }
+            
+            pre {
+                padding: 20px;
+                font-size: 0.95rem;
+                max-height: 400px;
+            }
+            
+            .copy-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 15px;
+                width: 100%;
+                justify-content: center;
+                opacity: 1;
+            }
+            
+            .bilibili-btn {
+                padding: 15px 25px;
+                font-size: 1.1rem;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .floating-top-btn {
+                right: 20px;
+                bottom: 20px;
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .copy-notification {
+                left: 50%;
+                transform: translateX(-50%) translateY(10px);
+                width: 90%;
+                max-width: 300px;
+                text-align: center;
+                bottom: 80px;
+            }
+            
+            .copy-notification.show {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding-top: 70px;
+            }
+            
+            .level-nav {
+                top: 5px;
+                width: calc(100% - 10px);
+                padding: 15px;
+            }
+            
+            .level-nav.collapsed {
+                max-height: 60px;
+                padding: 12px 15px;
+                min-width: 250px;
+            }
+            
+            header {
+                padding: 40px 15px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+            
+            .nav-header h2 {
+                font-size: 1.2rem;
+            }
+            
+            .level-header h3 {
+                font-size: 1.2rem;
+            }
+            
+            .floating-top-btn {
+                right: 15px;
+                bottom: 15px;
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 火炬光效 -->
+    <div id="torchEffects"></div>
+    
+    <div class="container">
+        <header id="page-top">
+            <h1><i class="fas fa-dungeon"></i> Kithgard地牢</h1>
+            <p>地牢关卡代码，可点击复制<br>
+                <span style="color: #ff4d4d">有些关卡需要特定的装备，请自行查看代码选择装备</span></p>
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> 返回目录页</a>
+        </header>
+        
+        <section class="level-nav collapsed" id="levelNav">
+            <div class="nav-header">
+                <h2><i class="fas fa-search"></i> 关卡搜索导航 ← 点击搜索！</h2>
+                <button class="collapse-toggle" id="collapseToggle">
+                    <i class="fas fa-chevron-down" id="collapseIcon"></i>
+                    <span class="toggle-text">收起搜索栏</span>
+                </button>
+            </div>
+            
+            <div class="nav-content">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="输入关卡名称或编号进行搜索">
+                </div>
+                <div class="search-results hidden" id="searchResults">
+                    <!-- 搜索结果将在这里显示 -->
+                </div>
+                <div class="search-stats" id="searchStats">
+                    共54个关卡，输入关键词搜索
+                </div>
+            </div>
+        </section>
+        
+        <div class="level-content" id="levelContent">
+            <!-- 关卡代码将通过JavaScript动态生成 -->
+        </div>
+    </div>
+    
+    <!-- 浮动返回顶部按钮 -->
+    <button class="floating-top-btn" id="floatingTopBtn">
+        <i class="fas fa-arrow-up"></i> 返回顶部
+    </button>
+    
+    <footer class="footer">
+        <p>地牢关卡代码详情</p>
+        <p>注意：代码仅供参考，不建议直接抄！</p>
+    </footer>
+    
+    <div class="copy-notification" id="copyNotification">
+        <i class="fas fa-check-circle"></i> 代码已复制到剪贴板！
+    </div>
+
+    <script>
+        // 创建火炬光效
+        function createTorchEffects() {
+            const torchContainer = document.getElementById('torchEffects');
+            const torchCount = 5;
+            
+            for (let i = 0; i < torchCount; i++) {
+                const torch = document.createElement('div');
+                torch.classList.add('torch-effect');
+                
+                // 随机位置
+                torch.style.left = `${Math.random() * 100}vw`;
+                torch.style.top = `${Math.random() * 100}vh`;
+                
+                // 随机大小
+                const size = Math.random() * 80 + 40;
+                torch.style.width = `${size}px`;
+                torch.style.height = `${size}px`;
+                
+                // 随机动画延迟
+                const delay = Math.random() * 2;
+                torch.style.animationDelay = `${delay}s`;
+                
+                // 随机透明度
+                torch.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                torchContainer.appendChild(torch);
+            }
+        }
+        
+        // 页面加载后创建火炬效果
+        window.addEventListener('load', createTorchEffects);
+        
+        // 关卡代码数据（为保持代码简洁，删除了部分长代码）
+        const levelCodes = [
+            {
+                id: 1,
+                name: "kithgard地牢",
+                code: `hero.moveRight()
+hero.moveDown()
+hero.moveRight()`
+            },
+            {
+                id: 2,
+                name: "健忘的宝石将",
+                code: `hero.moveRight()
+hero.moveDown()
+hero.moveRight(2)
+hero.moveUp()
+hero.moveRight()`
+            },
+            {
+                id: 3,
+                name: "深藏的宝石",
+                code: `hero.moveRight()
+hero.moveDown()
+hero.moveUp()
+hero.moveUp()
+hero.moveRight()`
+            },
+            {
+                id: 4,
+                name: "逆时针回转",
+                code: `hero.moveDown(2)
+hero.moveRight()
+hero.moveUp()
+hero.moveRight()`
+            },
+            {
+                id: 5,
+                name: "幽影守卫",
+                code: `hero.moveRight()
+hero.moveUp()
+hero.moveRight()
+hero.moveDown()
+hero.moveRight()`
+            },
+            {
+                id: 6,
+                name: "不详的征兆",
+                code: `hero.moveRight(2)
+hero.moveUp()
+hero.moveRight(3)
+hero.moveDown()
+hero.moveRight()
+hero.moveDown()
+hero.moveRight()`
+            },
+			{
+				id: 7,
+				name: "狭路相逢",
+				code:`hero.moveRight()
+hero.moveLeft()
+hero.moveRight(2)`
+			},
+            {
+                id: 8,
+                name: "敌人的陷阱",
+				code: `hero.moveRight(3)
+hero.moveUp()
+hero.moveRight()
+hero.moveDown(3)
+hero.moveRight(2)`
+            },
+            {
+                id: 9,
+                name: "虚幻干扰",
+                code: `hero.moveRight()
+hero.moveDown(2)
+hero.moveUp(2)
+hero.moveRight(3)`
+            },
+            {
+                id: 10,
+                name: "工作中睡着",
+                code: `hero.moveUp()
+hero.moveRight(2)
+hero.attack("Bas")
+hero.attack("Bas")
+hero.attack("Vera")
+hero.attack("Vera")
+hero.moveRight()`
+            },
+            {
+                id: 11,
+                name: "机会有利",
+                code: `hero.moveRight()
+hero.attack("Krug")
+hero.attack("Krug")
+hero.moveRight()
+hero.moveUp()
+hero.attack("Grump")
+hero.attack("Grump")
+hero.moveLeft(2)`
+            },
+            {
+                id: 12,
+                name: "祸之火焰",
+                code: `hero.moveRight()
+hero.moveUp()
+hero.attack("Grumus")
+hero.attack("Grumus")
+hero.attack("Grumus")
+hero.attack("Grumus")
+hero.attack("Grumus")
+hero.attack("Grumus")
+hero.attack("Grumus")`
+            },
+            {
+                id: 13,
+                name: "循环又循环",
+                code: `while True:
+    hero.moveRight()
+    hero.moveUp()
+    hero.moveLeft()
+    hero.moveDown()`
+            },
+            {
+                id: 14,
+                name: "迷失在书库中",
+                code: `while True:
+    hero.moveRight()
+    hero.moveUp()
+    hero.moveLeft()
+    hero.moveDown()`
+            },
+            {
+                id: 15,
+                name: "迷一般的kithmaze",
+                code: `while True:
+    hero.moveRight()
+    hero.moveDown()
+    hero.moveRight(2)
+    hero.moveUp()`
+            },
+            {
+                id: 16,
+                name: "明智的攻击",
+                code: `hero.moveUp(2);
+hero.attack("Door A")
+hero.moveUp(2)
+sb = hero.findNearestEnemy()
+if sb:
+    hero.attack(sb)
+    hero.attack(sb)
+hero.moveDown(3)
+hero.moveRight(2)
+hero.moveUp()
+hero.moveRight(4)
+hero.moveUp()
+sb = hero.findNearestEnemy()
+if sb:
+    hero.attack(sb)
+        
+sb1 = hero.findNearestEnemy()
+if sb1:
+    hero.attack(sb1)  
+hero.moveUp(2)
+hero.moveRight()
+hero.moveDown(4)
+hero.moveLeft(3)
+hero.moveDown()
+hero.moveLeft(2)`
+            },
+            {
+                id: 17,
+                name: "kithmaze二度历险",
+                code: `while True:
+    hero.moveRight()
+    hero.moveUp()
+    hero.moveRight()
+    hero.moveDown()`
+            },
+            {
+                id: 18,
+                name: "再下一步",
+                code: `while True:
+    hero.moveRight(2)
+    hero.moveDown(1)`
+            },
+            {
+                id: 19,
+                name: "闹鬼的迷宫",
+                code: `while True:
+    hero.moveRight(2)
+    hero.moveUp(2)`
+            },
+            {
+                id: 20,
+                name: "逃脱",
+                code: `hero.moveRight()
+hero.attack("Weak Door")
+hero.moveRight()
+hero.attack("Door")`
+            },
+            {
+                id: 21,
+                name: "橱柜里的骷髅",
+                code: `hero.moveUp()
+hero.moveRight(2)
+hero.moveDown(2)
+while True:
+    hero.attack("Cupboard")`
+            },
+            {
+                id: 22,
+                name: "攻破突袭",
+                code: `hero.moveRight()
+hero.attack("Chest")
+hero.moveDown()
+while True:
+    hero.moveRight(3)
+    hero.moveDown(3`
+            },
+            {
+                id: 23,
+                name: "恐惧之门",
+                code: `while True:
+    hero.attack("Door")`
+            },
+            {
+                id: 24,
+                name: "轰轰",
+                code: `while True:
+    hero.attack("ball")
+    hero.attack('ball2')
+    hero.moveRight(3)
+    hero.attack("ball")
+    hero.attack('ball2')
+    hero.moveLeft(3)`
+            },
+            {
+                id: 25,
+                name: "辐射光环",
+                code: `while True:
+    hero.moveUp()
+    hero.moveDown()
+    hero.moveRight(2)`
+            },
+            {
+                id: 26,
+                name: "比剑更强大",
+                code: `password = 'Secret Message'
+hero.moveUp()
+hero.moveRight()
+hero.say(password)
+password = 'So Many Doors'
+hero.moveRight()
+hero.say(password)
+hero.moveRight()
+password = 'Let Me Out Of Here'
+hero.say(password)`
+            },
+            {
+                id: 27,
+                name: "老对手",
+                code: `enemy1 = "Kratt"
+enemy2 = "Gert"
+enemy3 = "Ursa"
+while True:
+    hero.attack(enemy1)
+    hero.attack(enemy2)
+    hero.attack(enemy3)`
+            },
+            {
+                id: 28,
+                name: "kithgard橱柜A",
+                code: `hero.moveDown()
+hero.moveLeft(2)
+hero.moveUp(2)
+while True:
+    hero.attack("Cupboard")`
+            },
+            {
+                id: 29,
+                name: "矮人骚乱",
+                code: `while True:
+    sb = hero.findNearestEnemy()
+    hero.attack(sb)`
+            },
+            {
+                id: 30,
+                name: "真名实姓",
+                code: `hero.moveRight()
+hero.attack("Brak")
+hero.attack("Brak")
+hero.moveRight()
+hero.attack("Treg")
+hero.attack("Treg")`
+            },
+            {
+                id: 31,
+                name: "焰中舞动",
+                code: `while True:
+    hero.moveRight()
+    hero.moveLeft()`
+            },
+            {
+                id: 32,
+                name: "kithgard橱柜B",
+                code: `hero.moveRight()
+hero.moveDown()
+hero.moveRight()
+hero.moveDown(2)
+while True:
+    hero.attack("Cupboard")`
+            },
+            {
+                id: 33,
+                name: "囚犯",
+                code: `hero.moveRight()
+hero.attack("Weak Door")
+hero.moveRight(3)
+hero.moveDown(2)
+hero.attack("Two")
+hero.attack("Two")
+hero.moveDown()`
+            },
+            {
+                id: 34,
+                name: "kithgard图书管理员",
+                code: `hero.moveRight()
+hero.say("Hush")
+hero.moveRight()`
+            },
+            {
+                id: 35,
+                name: "注释中的密语",
+                code: `hero.say("密码是什么？")
+hero.say("Achoo")
+hero.moveUp(2)`
+            },
+            {
+                id: 36,
+                name: "高举之剑",
+                code: `hero.attack("Rig")
+hero.attack("Rig")
+hero.attack("Gurt")
+hero.attack("Gurt")
+hero.attack("Ack")
+hero.attack("Ack")`
+            },
+            {
+                id: 37,
+                name: "严酷考验A",
+                code: `while True:
+    hero.moveLeft()
+    sb = hero.findNearestEnemy()
+    hero.attack(sb)
+    hero.attack(sb)`
+            },
+            {
+                id: 38,
+                name: "严酷考验B",
+                code: `while True:
+    hero.moveUp()
+    sb = hero.findNearestEnemy()
+    hero.attack(sb)
+    hero.attack(sb)`
+            },
+            {
+                id: 39,
+                name: "kithgard斗殴",
+                code: `while True:
+    item=hero.findNearestItem()
+    enemy=hero.findNearestEnemy()
+    if enemy:
+        if hero.isReady("bash"):
+            hero.bash(enemy)
+        elif hero.isReady("cleave"):
+            hero.cleave(enemy)
+        else:
+            hero.attack(enemy)
+    if item:
+        hero.moveXY(item.pos.x, item.pos.y)`
+            },
+            {
+                id: 40,
+                name: "骷髅怪",
+                code: `while True:
+    enemy = hero.findNearestEnemy()
+    hero.attack(enemy)`
+            },
+            {
+                id: 41,
+                name: "严酷考验",
+                code: `while True:
+    hero.moveRight()
+    sb = hero.findNearestEnemy()
+    hero.attack(sb)`
+            },
+            {
+                id: 42,
+                name: "毁灭天使",
+                code: `hero.moveDown()
+hero.moveRight()
+hero.moveDown()
+hero.moveUp()
+hero.moveLeft()
+hero.moveDown(2)
+hero.moveRight(3)
+hero.moveUp(3)
+while True:
+    enemy = hero.findNearestEnemy()
+    if enemy:
+        hero.attack(enemy)`
+            },
+            {
+                id: 43,
+                name: "机器人毁灭世界大战",
+                code: `while True:
+    hero.moveUp()
+    hero.moveUp()
+    hero.moveDown()
+    hero.moveDown()
+    hero.moveLeft()
+    hero.moveRight()
+    hero.moveDown()
+    hero.moveRight()
+    hero.moveRight()
+    break`
+            },
+            {
+                id: 44,
+                name: "战术打击",
+                code: `hero.moveDown()
+hero.moveRight()
+sb = hero.findNearestEnemy()
+hero.attack(sb)
+sb2 = hero.findNearestEnemy()
+hero.attack(sb2)
+hero.moveDown()`
+            },
+            {
+                id: 45,
+                name: "kithmaze最终历险",
+                code: `while True:
+    hero.moveRight()
+    hero.moveUp()
+    hero.moveRight()
+    enemy = hero.findNearestEnemy()
+    hero.attack(enemy)
+    hero.moveDown(2)
+    hero.moveUp()`
+            },
+            {
+                id: 46,
+                name: "kithgard之门",
+                code: `hero.moveDown()
+hero.buildXY("fence", 36, 34)
+hero.buildXY("fence", 36, 30)
+hero.buildXY("fence", 36, 27)
+hero.moveRight(3)`
+            },
+            {
+                id: 47,
+                name: "拉近距离",
+                code: `hero.moveRight()
+enemy = hero.findNearestEnemy()
+hero.attack(enemy)
+hero.moveRight(2)
+enemy2 = hero.findNearestEnemy()
+hero.attack(enemy2)
+hero.moveRight()`
+            },
+            {
+                id: 48,
+                name: "卑贱的魔徒",
+                code: `enemy = hero.findNearestEnemy()
+hero.attack(enemy)
+hero.attack(enemy)
+enemy2 = hero.findNearestEnemy()
+hero.attack(enemy2)
+hero.attack(enemy2)
+hero.moveRight()
+hero.moveDown()
+hero.moveRight()`
+            },
+            {
+                id: 49,
+                name: "名称大师",
+                code: `while True:
+    enemy1 = hero.findNearestEnemy()
+    hero.attack(enemy1)
+    enemy2 = hero.findNearestEnemy()
+    hero.attack(enemy2)
+    enemy3 = hero.findNearestEnemy()
+    hero.attack(enemy3)`
+            },
+            {
+                id: 50,
+                name: "成分鉴定",
+                code: `someVariableName = "a string"
+lolol = 42
+item = "a"
+item2 = "b"`
+            },
+            {
+                id: 51,
+                name: "换个名字",
+                code: `gemDude1 = hero.findNearestEnemy()
+hero.attack(gemDude1)
+hero.attack(gemDude1)
+gemDude2 = hero.findNearestEnemy()
+hero.attack(gemDude2)
+hero.attack(gemDude2)
+hero.moveUp()
+hero.moveRight()
+hero.moveRight()`
+            },
+            {
+                id: 52,
+                name: "洞穴求生",
+                code: `def Attack(target):
+    if target:
+        if hero.distanceTo(target) < 15:
+            if hero.isReady("bash"):
+                hero.bash(target)
+            elif hero.isReady("cleave"):
+                hero.cleave(target)
+            else:
+                hero.attack(target)
+def getItem(item):
+    if item:
+        if item.type=="potion":
+            hero.moveXY(item.pos.x,item.pos.y)
+def getFlag(flag):
+    if flag:
+        hero.pickUpFlag(flag)
+while True:
+    enemy=hero.findNearestEnemy()
+    item=hero.findNearestItem()
+    flag=hero.findFlag()
+    getFlag(flag)
+    getItem(item)
+    Attack(enemy)`
+            },
+            {
+                id: 53,
+                name: "蜿蜒峡谷",
+                code: `这一关每个人地图不一样，自己做`
+            }
+        ];
+        
+        // 生成关卡内容
+        const levelContent = document.getElementById('levelContent');
+        
+        levelCodes.forEach(level => {
+            const section = document.createElement('section');
+            section.className = 'level-section';
+            section.id = `level-${level.id}`;
+            
+            const codeHtml = `<div class="level-header">
+                <h3><i class="fas fa-skull-crossbones"></i> ${level.id}. ${level.name}</h3>
+            </div>
+            <div class="code-container">
+                <pre><code id="code-${level.id}"></code></pre>
+                <button class="copy-btn" data-code-id="${level.id}">
+                    <i class="far fa-copy"></i> 复制代码
+                </button>
+            </div>`;
+            
+            section.innerHTML = codeHtml;
+            
+            const codeElement = section.querySelector(`#code-${level.id}`);
+            codeElement.textContent = level.code;
+            
+            levelContent.appendChild(section);
+        });
+        
+        // 导航条收起功能
+        const levelNav = document.getElementById('levelNav');
+        const collapseToggle = document.getElementById('collapseToggle');
+        const collapseIcon = document.getElementById('collapseIcon');
+        const navHeader = document.querySelector('.nav-header');
+        
+        function toggleNavCollapse() {
+            levelNav.classList.toggle('collapsed');
+            
+            if (levelNav.classList.contains('collapsed')) {
+                collapseIcon.className = 'fas fa-chevron-down';
+                collapseToggle.querySelector('.toggle-text').textContent = '展开搜索栏';
+            } else {
+                collapseIcon.className = 'fas fa-chevron-up';
+                collapseToggle.querySelector('.toggle-text').textContent = '收起搜索栏';
+                
+                setTimeout(() => {
+                    document.getElementById('searchInput').focus();
+                }, 300);
+            }
+        }
+        
+        collapseToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleNavCollapse();
+        });
+        
+        navHeader.addEventListener('click', function(e) {
+            if (!e.target.closest('.collapse-toggle')) {
+                toggleNavCollapse();
+            }
+        });
+        
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchStats = document.getElementById('searchStats');
+        
+        function updateSearchResults(levels) {
+            searchResults.innerHTML = '';
+            
+            if (levels.length === 0) {
+                searchResults.innerHTML = '<div class="no-results">未找到匹配的关卡</div>';
+                searchResults.classList.remove('hidden');
+                searchStats.textContent = `共${levelCodes.length}个关卡，未找到匹配项`;
+                return;
+            }
+            
+            levels.forEach(level => {
+                const result = document.createElement('a');
+                result.href = `#level-${level.id}`;
+                result.className = 'level-result';
+                result.innerHTML = `
+                    <span class="level-id">${level.id}</span>
+                    <span class="level-name">${level.name}</span>
+                `;
+                
+                result.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        document.querySelectorAll('.level-section').forEach(section => {
+                            section.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
+                        });
+                        
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(139, 0, 0, 0.3), 0 12px 40px rgba(0, 0, 0, 0.4)';
+                        
+                        setTimeout(() => {
+                            targetElement.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
+                        }, 3000);
+                        
+                        // 收起搜索栏
+                        if (!levelNav.classList.contains('collapsed')) {
+                            toggleNavCollapse();
+                        }
+                    }
+                });
+                
+                searchResults.appendChild(result);
+            });
+            
+            searchResults.classList.remove('hidden');
+            searchStats.textContent = `共${levelCodes.length}个关卡，找到${levels.length}个匹配项`;
+        }
+        
+        // 初始显示所有关卡
+        updateSearchResults(levelCodes);
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                updateSearchResults(levelCodes);
+            } else {
+                const filteredLevels = levelCodes.filter(level => {
+                    return level.name.toLowerCase().includes(searchTerm) || 
+                           level.id.toString().includes(searchTerm) ||
+                           level.code.toLowerCase().includes(searchTerm);
+                });
+                
+                updateSearchResults(filteredLevels);
+            }
+            
+            if (!levelNav.classList.contains('collapsed')) {
+                levelNav.classList.remove('collapsed');
+            }
+        });
+        
+        searchInput.addEventListener('focus', function() {
+            if (levelNav.classList.contains('collapsed')) {
+                toggleNavCollapse();
+            }
+        });
+        
+        // 复制功能
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const codeId = this.getAttribute('data-code-id');
+                const codeElement = document.getElementById(`code-${codeId}`);
+                if (codeElement) {
+                    copyToClipboard(codeElement.textContent);
+                }
+            });
+        });
+        
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            showCopyNotification();
+        }
+        
+        const copyNotification = document.getElementById('copyNotification');
+        
+        function showCopyNotification() {
+            copyNotification.classList.add('show');
+            setTimeout(() => {
+                copyNotification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 浮动返回顶部按钮
+        const floatingTopBtn = document.getElementById('floatingTopBtn');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                floatingTopBtn.classList.add('show');
+            } else {
+                floatingTopBtn.classList.remove('show');
+            }
+        });
+        
+        floatingTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // URL锚点处理
+        window.addEventListener('load', function() {
+            if (window.location.hash) {
+                const targetElement = document.querySelector(window.location.hash);
+                if (targetElement) {
+                    setTimeout(() => {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                        targetElement.style.boxShadow = '0 0 0 3px rgba(139, 0, 0, 0.3), 0 12px 40px rgba(0, 0, 0, 0.4)';
+                        
+                        setTimeout(() => {
+                            targetElement.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
+                        }, 3000);
+                    }, 100);
+                }
+            }
+        });
+        
+        // 显示/隐藏复制按钮
+        document.querySelectorAll('.code-container').forEach(container => {
+            const copyBtn = container.querySelector('.copy-btn');
+            
+            container.addEventListener('mouseenter', function() {
+                copyBtn.classList.add('show');
+            });
+            
+            container.addEventListener('mouseleave', function() {
+                copyBtn.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>
